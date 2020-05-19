@@ -1,0 +1,22 @@
+{% extends "tasks/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="content-section">
+  	<form method="POST">
+  		{% csrf_token %}
+  		<fieldset class="form-group">
+  			<legend class="border-bottom mb-4"> Join Today </legend>
+  			{{ form | crispy }}
+  		</fieldset>
+  		<fieldset class="form-group">
+  			<button type="Submit" class="btn btn-primary">Register</button>
+  		</fieldset>
+  	</form>
+  	<div class="border-top pt-2">
+  		<small class="text-muted"> 
+  			Already Have An Account? <a class="ml-2" href="{% url 'login' %}"> Login </a>
+  		</small>
+  	</div>
+  </div>
+{% endblock content %}
