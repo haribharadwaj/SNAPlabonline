@@ -1,0 +1,10 @@
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+  <h1 class="mt-4">Psychoacoustics on the web</h1>
+  <p>Task name = {{ info.taskname }}. Trial Number = {{ info.trialnum }} </p>
+
+  <div class="container">
+    <a href="{% url 'users-register' %}" type="button" class="btn btn-primary"> Get Started </a>
+  </div>
+{% endblock content %}

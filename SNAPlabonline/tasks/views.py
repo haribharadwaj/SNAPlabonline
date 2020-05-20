@@ -2,7 +2,8 @@ import json
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import TaskCreationForm, RunTrialForm
+from .forms import TaskCreationForm, ResponseForm
+from .models import Response, Task
 
 # Create your views here.
 
@@ -23,17 +24,49 @@ def create_task(request):
         form = TaskCreationForm()
     return render(request, 'tasks/create_task.html', {'form': form})
 
+
 @login_required
-def run_task(request, trialnum=1):
+def run_task(request, **kwargs):
+    task_name = kwargs['taskname']
+    trialnum = kwargs['trialnum']
+    task = Task.objects.get(name=task_name)
+    taskcontext = get_task_context(task, trialnum)
     if request.method == 'POST':
-        form = RunTrialForm(request.POST)
+        form = ResponseForm(request.POST)
         form.instance.subject = request.user
         form.instance.trialnum = trialnum
+        form.instance.parent_task = task
         if form.is_valid():
             form.save()
             taskname = form.cleaned_data.get('name')
-            messages.success(request, f'{taskname} task created!')
-            return redirect('tasks-home')
+            messages.success(request, f'Trial {trialnum} of {task_name} done!')
+            return redirect('run-task', taskname=task_name, trialnum=trialnum + 1)
     else:
-        form = RunTrialForm()
-    return render(request, 'tasks/run_task.html', {'form': form})
+        form = ResponseForm()
+        form.instance.trialnum = trialnum
+        form.instance.subject = request.user
+        form.instance.parent_task = task
+    context = {'taskcontext': taskcontext, 'trialnum': trialnum, 'form': form}
+    return render(request, 'tasks/response_form.html', {'trial': context})
+
+
+@login_required
+def test_param(request, **kwargs):
+    info = {'taskname': kwargs['taskname'],
+            'trialnum': kwargs['trialnum']}
+    return render(request, 'tasks/test.html', {'info': info})
+
+
+def get_task_context(task, trialnum):
+    with open(task.trialinfo.path) as fp:
+        info = json.load(fp)
+    stim_url = 'stimuli/' + info['stimuli'][trialnum - 1]
+    prompt = info['prompt']
+    instructions = info['instructions']
+    choices = info['choices']
+    icon_url = task.icon.url
+
+    return {'stim_url': stim_url, 'prompt': prompt,
+            'instructions': instructions, 'choices': choices,
+            'icon_url': icon_url}
+

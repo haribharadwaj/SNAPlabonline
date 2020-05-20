@@ -27,17 +27,15 @@ class Task(models.Model):
         return f'Task: {self.name}'
 
 
-
 class Response(models.Model):
-    parenttask = models.ForeignKey(Task, on_delete=models.CASCADE)
+    parent_task = models.ForeignKey(Task, on_delete=models.CASCADE)
     trialnum = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),])
     subject = models.ForeignKey(User,
                                 on_delete=models.SET_NULL,
                                 null=True)
-    nafcanswer = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),])
-    openanswer = models.TextField()
+    answer = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),])
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'nAFC Response for task {self.parenttask.name}'
+        return f'nAFC Response for task {self.parent_task.name}'
 

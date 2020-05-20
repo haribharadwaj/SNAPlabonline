@@ -1,0 +1,6 @@
+{
+	"prompt": "Select on of the three options",
+	"instructions": ["Wear Headphones", "Do Task"],
+	"choices": ["FIRST", "SECOND", "THIRD"],
+	"stimuli": ["aud.wav"]
+}

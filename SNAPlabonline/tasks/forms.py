@@ -7,8 +7,8 @@ class TaskCreationForm(forms.ModelForm):
 		fields = ['name', 'icon', 'trialinfo']
 
 
-class RunTrialForm(forms.ModelForm):
+class ResponseForm(forms.ModelForm):
 	class Meta:
 		model = Response
-		fields = ['nafcanswer', 'openanswer']
+		fields = ['answer']
 

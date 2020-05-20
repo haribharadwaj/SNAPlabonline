@@ -16,15 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from tasks import views as task_views
 from users import views as users_views
 
 urlpatterns = [
 	path('', task_views.index, name='tasks-home'),
 	path('createtask/', task_views.create_task, name='create-task'),
-	path('runtask/', task_views.run_task, name='run-task'),
+	path('runtask/<taskname>/<int:trialnum>/', task_views.run_task, name='run-task'),
 	path('register/', users_views.register, name='users-register'),
 	path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
 	path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('admin/', admin.site.urls),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
