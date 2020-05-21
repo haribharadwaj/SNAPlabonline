@@ -1,34 +1,33 @@
 {% extends "tasks/base.html" %}
-{% load crispy_forms_tags %}
-
 {% block content %}
   <div class="content-section">
-      <div class="media">
-        <img class="rounded-circle account-img" src="{{ trial.taskcontext.icon_url }}">
-        <div class="media-body">
-          <h2 class="account-heading">Trial {{ trial.trialnum }} </h2>
-          <audio controls>
-            <source src="{{ MEDIA_URL }}{{ trial.taskcontext.stim_url }}" type="audio/wav">
-            Your browser does not support the audio tag.
-          </audio> 
-        </div>
-      </div>
-      <form method="POST">
-      {% csrf_token %}
-      <div class="btn-group" data-toggle="buttons">
-        {% for option in trial.taskcontext.choices %}
-          <label class="btn btn-primary">
-            <input type="radio" name="options" id="option1"> {{ option }}
-          </label>
+
+    <div class="content-section">
+      <h3> Instructions </h3>
+      <ul class="list">
+        {% for inst in trial.taskcontext.instructions %}
+          <li class="h4"> {{ inst }} </li>
         {% endfor %}
-      </div>
-        <fieldset class="form-group">
-          <legend class="border-bottom mb-4"> Trial {{ trial.taskcontent.prompt }} </legend>
-          {{ trial.form | crispy }}
-        </fieldset>
-        <fieldset class="form-group">
-          <button type="Submit" class="btn btn-primary">Submit</button>
-        </fieldset>
-      </form>
+      </ul>
+    </div>
+
+    <img class="rounded-circle float-right" style="max-width: 20%" src="{{ trial.taskcontext.icon_url }}">
+
+    <h3>Trial {{ trial.trialnum }} </h3>
+    <h4 class="mb-2 mt-2"> {{ trial.taskcontext.prompt }} </h4>
+
+
+    <audio controls>
+      <source src="{{ MEDIA_URL }}{{ trial.taskcontext.stim_url }}" type="audio/wav">
+      Your browser does not support the audio tag.
+    </audio> 
+
+    <form method="POST">
+    {% csrf_token %}
+      {% for option in trial.taskcontext.choices %}
+        <button type="Submit" name="answer" class="btn btn-secondary mt-2" value="{{ forloop.counter }}"> {{ option }} </button>
+      {% endfor %}
+    </form>
+
   </div>
 {% endblock content %}
