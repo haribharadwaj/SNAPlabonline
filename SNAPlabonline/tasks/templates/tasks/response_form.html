@@ -1,33 +1,39 @@
 {% extends "tasks/base.html" %}
 {% block content %}
-  <div class="content-section">
-
-    <div class="content-section">
-      <h3> Instructions </h3>
-      <ul class="list">
-        {% for inst in trial.taskcontext.instructions %}
-          <li class="h4"> {{ inst }} </li>
-        {% endfor %}
-      </ul>
-    </div>
-
+<div class="row">
+  <div class="col-md-4 content-section">
     <img class="rounded-circle float-right" style="max-width: 20%" src="{{ trial.taskcontext.icon_url }}">
+    <h3> Instructions </h3>
+    <ul class="list">
+      {% for inst in trial.taskcontext.instructions %}
+        <li class="h4"> {{ inst }} </li>
+      {% endfor %}
+    </ul>
+  </div>
 
+  <div class="col-md-8 mt-4">
     <h3>Trial {{ trial.trialnum }} </h3>
-    <h4 class="mb-2 mt-2"> {{ trial.taskcontext.prompt }} </h4>
+    <div class="progress">
+      <div class="progress-bar bg-success" role="progressbar" style="width: {{ trial.taskcontext.progress }}%" aria-valuenow="{{ trial.taskcontext.progress }}" aria-valuemin="0" aria-valuemax="100"> </div>
+    </div>
+    <h4 class="mb-2 mt-4"> {{ trial.taskcontext.prompt }} </h4>
 
-
-    <audio controls>
+    <div class="content-section"> 
+    <audio controls style="width: 100%">
       <source src="{{ MEDIA_URL }}{{ trial.taskcontext.stim_url }}" type="audio/wav">
       Your browser does not support the audio tag.
-    </audio> 
+    </audio>
+    </div>
 
     <form method="POST">
     {% csrf_token %}
       {% for option in trial.taskcontext.choices %}
-        <button type="Submit" name="answer" class="btn btn-secondary mt-2" value="{{ forloop.counter }}"> {{ option }} </button>
+        <button type="Submit" name="answer" class="btn btn-secondary mt-4" value="{{ forloop.counter }}">
+          {{ option }}
+        </button>
       {% endfor %}
     </form>
 
   </div>
+</div>
 {% endblock content %}

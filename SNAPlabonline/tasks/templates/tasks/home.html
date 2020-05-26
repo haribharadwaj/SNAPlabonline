@@ -2,9 +2,23 @@
 
 {% block content %}
   <h1 class="mt-4">Psychoacoustics on the web</h1>
-  <p>Welcome to Systems Neuroscience of Auditory Perception Lab's online portal! </p>
+  {% if user.is_authenticated %}
+    <p>Hello {{ user }}!
+  {% endif %}
+  Welcome to Systems Neuroscience of Auditory Perception Lab's online portal!
+  Please choose one of the tasks below to proceed! </p>
 
-  <div class="container">
-    <a href="{% url 'users-register' %}" type="button" class="btn btn-primary"> Get Started </a>
+  <div class="row">
+    {% for task in tasks %}
+        <div class="card shadow-sm mt-4 ml-4 hoverable" style="width: 18rem;">
+            <img class="card-img-top" src="{{ task.icon.url }}" alt="Card image cap">
+            <div class="card-body">
+                  <h5 class="card-title"> {{ task.displayname }} </h5>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                  <a href="{% url 'run-task' taskname=task.name trialnum=1 %}" class="btn btn-primary btn-block stretched-link">Run Task</a>
+            </div>
+        </div>
+    {% endfor %}
   </div>
+
 {% endblock content %}

@@ -1,6 +1,0 @@
-{
-	"prompt": "Select one of the three options",
-	"instructions": ["Wear Headphones", "Do Task"],
-	"choices": ["FIRST", "SECOND", "THIRD"],
-	"stimuli": ["aud.wav", "aud.wav", "aud.wav", "aud.wav"]
-}

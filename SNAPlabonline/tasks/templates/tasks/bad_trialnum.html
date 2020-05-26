@@ -1,0 +1,13 @@
+{% extends "tasks/base.html" %}
+{% block content %}
+  <div class="mt-4">
+    <h2> Umm.. Not sure how you landed here, but this trial does not exist for this task. </h2>
+  </div>
+
+	<div class="border-top pt-2">
+		<small class="text-muted"> 
+			<a href="{% url 'tasks-home' %}"> Back home </a>
+		</small>
+	</div>
+
+{% endblock content %}

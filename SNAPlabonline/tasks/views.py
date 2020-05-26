@@ -1,23 +1,27 @@
-import json
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from .forms import TaskCreationForm, ResponseForm
 from .models import Response, Task
+from .lookups import get_task_context
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'tasks/home.html')
+    tasks = Task.objects.all()
+    return render(request, 'tasks/home.html', {'tasks' : tasks})
+
 
 @login_required
+@permission_required('tasks.add_task', raise_exception=PermissionDenied)
 def create_task(request):
     if request.method == 'POST':
         form = TaskCreationForm(request.POST, request.FILES)
         form.instance.experimenter = request.user
         if form.is_valid():
             form.save()
-            taskname = form.cleaned_data.get('name')
+            taskname = form.cleaned_data.get('displayname')
             messages.success(request, f'{taskname} task created!')
             return redirect('tasks-home')
     else:
@@ -30,16 +34,34 @@ def run_task(request, **kwargs):
     task_name = kwargs['taskname']
     trialnum = kwargs['trialnum']
     task = Task.objects.get(name=task_name)
-    taskcontext = get_task_context(task, trialnum)
+    display_name = task.displayname
+    taskcontext = get_task_context(task, trialnum, request.user)
+
+    if taskcontext['done']:
+        return render(request, 'tasks/task_done.html', {'taskcontext': taskcontext})
+
+    if taskcontext['no_more_trials']:
+        return render(request, 'tasks/bad_trialnum.html', {'taskcontext': taskcontext})
+
     if request.method == 'POST':
         form = ResponseForm(request.POST)
         form.instance.subject = request.user
         form.instance.trialnum = trialnum
         form.instance.parent_task = task
+        if form.instance.answer == taskcontext['answer']:
+            form.instance.correct = True
+        else:
+            form.instance.correct = False
+
         if form.is_valid():
             form.save()
             taskname = form.cleaned_data.get('name')
-            messages.success(request, f'Trial {trialnum} of {task_name} done!')
+            if taskcontext['feedback']:
+                if form.instance.correct:
+                    messages.success(request, f'You got trial {trialnum} of {display_name} right!')
+                else:
+                    messages.error(request, f'You did not get trial {trialnum} of {display_name} right!')
+
             return redirect('run-task', taskname=task_name, trialnum=trialnum + 1)
     else:
         form = ResponseForm()
@@ -48,25 +70,4 @@ def run_task(request, **kwargs):
         form.instance.parent_task = task
     context = {'taskcontext': taskcontext, 'trialnum': trialnum, 'form': form}
     return render(request, 'tasks/response_form.html', {'trial': context})
-
-
-@login_required
-def test_param(request, **kwargs):
-    info = {'taskname': kwargs['taskname'],
-            'trialnum': kwargs['trialnum']}
-    return render(request, 'tasks/test.html', {'info': info})
-
-
-def get_task_context(task, trialnum):
-    with open(task.trialinfo.path) as fp:
-        info = json.load(fp)
-    stim_url = 'stimuli/' + info['stimuli'][trialnum - 1]
-    prompt = info['prompt']
-    instructions = info['instructions']
-    choices = info['choices']
-    icon_url = task.icon.url
-
-    return {'stim_url': stim_url, 'prompt': prompt,
-            'instructions': instructions, 'choices': choices,
-            'icon_url': icon_url}
 
