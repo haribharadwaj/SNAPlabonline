@@ -16,7 +16,7 @@ def get_task_context(task, trialnum, user):
     k = trialnum - 1  # Python index starts at zero
 
     if trialnum <= ntrials:
-        stim_url = 'stimuli/' + trials[k]['stimulus'][0]
+        stim_url = 'stimuli/' + trials[k]['stimulus']
         prompt = trials[k]['prompt']
         choices = trials[k]['choices']
         no_more_trials = False

@@ -1,0 +1,129 @@
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+  <h1 class="mt-4">Creating a New Online Listening Task</h1>
+  {% if user.is_authenticated %}
+    <p>Hello {{ user }}! </p>
+  {% endif %}
+  <p> This page provides information about creating and hosting a task on this website. </p>
+  <h2> Obtaining "Experimenter" credentials </h2>
+  <p>
+  SNAPlab members can create online tasks to be hosted on this website.
+  To get access, please first <a href="{% url 'users-register' %}"></a> create an account if you don't already have one.
+  Once you have an account, please e-mail the PI of SNAPlab requesting that your username be added to the "Experimenters" group, which then will allow you to create and host tasks here.
+  </p>
+
+  <h2> Uploading Task Details </h2>
+  <p>
+  Once you have your experimenter credentials, and have read this page fully, you can head over the <a href="{% url 'create-task' %}">task creation page</a> to create a new task.
+  While creating a task, you will need to specify:
+  <ol>
+    <li> A short codename for the task. This code name will be used in links and internally in our database to store information about the task and subject responses. </li>
+    <li> A display name that will be used to list your task on this website. </li>
+    <li> An icon image that can help you and visitors/subjects readily identify your task when it is listen on the website</li>
+    <li> A short description that will accompany your task in certain pages on the website.</li>
+    <li> Infortmation about the task itself in the form of a JSON file. <a href="https://www.json.org/json-en.html">JSON</a> is an easy, human-readable text-based format that can be used to specify data. Details of the JSON file requirement for providing task information is below. </li>
+  </ol>
+  </p>
+
+  <h2> JSON file format </h2>
+  <p> The JSON file that you upload during task creation contains all the information needed to run the task on this website. This JSON file should have a single object with the following fields: 
+   <table class="table content-section">
+    <thead>
+      <tr>
+        <th scope="col"> Field Name </th>
+        <th scope="col"> Description </th>
+      </tr>
+    </thead>
+      <tr>
+        <th scope="col">instructions</th>
+        <td>A list of strings. Each string in the list will be used as a separate instruction bullet. </td>
+      </tr>
+      <tr>
+        <th scope="col">feedback</th>
+        <td>A boolean value. If true, feedback will be provided as message boxes at the end of each trial. </td>
+      </tr>
+      <tr>
+        <th scope="col">serveraudio</th>
+        <td>A boolean value. If true, this means that you will upload the audio stimuli for your task directly into the file system of our web server. This is possible if the total size of your audio files is less than 200 MB or so. For larger tasks, please upload your files to a separate storage server (e.g., AWS S3 bucket, or your Purdue WWW folder) and use links from the server for specifying your stimuli.</td>
+      </tr>
+      <tr>
+        <th scope="col">trials</th>
+        <td>A list of trial objects. Each trial object has four fields for specifying the stimulus, prompt, response choices, and correct answer for that trial. </td>
+      </tr>
+    </table>
+
+  The <strong>trials</strong> field as mentioned above is a list of trial objects.
+  Each trial object has four fields:
+  <table class="table content-section">
+    <thead>
+      <tr>
+        <th scope="col"> Field Name </th>
+        <th scope="col"> Description </th>
+      </tr>
+    </thead>
+      <tr>
+        <th scope="col">prompt</th>
+        <td> A sting that is used as thte prompt message for the trial. </td>
+      </tr>
+      <tr>
+        <th scope="col">choices</th>
+        <td>A list of strings. When the trial is displayed, each string in the list will have a button associated with it. </td>
+      </tr>
+      <tr>
+        <th scope="col">stimulus</th>
+        <td>A string which specifies the filename (if stored on this webserver), or preferably, a URL pointing to the audio file that is served from a different storage server (like AWS S3 bucket or Purdue WWW folder).</td>
+      </tr>
+      <tr>
+        <th scope="col">answer</th>
+        <td>Integer. A value indicating which item in the choices list is the correct answer for the trial. This is used to provide feedback (if <strong>feedback</strong> is true for the task), and used by backend programs to calculate scores and other metrics. </td>
+      </tr>
+    </table>
+
+    The contents of an example JSON file are shown below.
+    With the JSON format, objects are placed within curly brackets, as in { and },
+    lists within [ and ] and strings within " and ". 
+    <pre>
+      <code>
+{
+  "instructions": ["Wear Headphones", "Do Task"],
+  "feedback": true,
+  "serveraudio": true,
+  "trials":[
+    {
+    "prompt": "Select one of the three options",
+    "choices": ["FIRST", "SECOND", "THIRD"],
+    "stimulus": "aud.wav",
+    "answer": 3
+    },
+    {
+    "prompt": "Select one of the three options",
+    "choices": ["FIRST", "SECOND", "THIRD"],
+    "stimulus": "aud.wav",
+    "answer": 1
+    },
+    {
+    "prompt": "Select one of the three options",
+    "choices": ["FIRST", "SECOND", "THIRD"],
+    "stimulus": "aud.wav",
+    "answer": 2
+    }
+  ]
+}
+      </code>
+    </pre>
+  
+  This task has three trials, and incidentally happens to use the same audio file in all three trials (not common).
+  For a typical 3-AFC task using the method of constant stimuli to construct psychometric functions,
+  all trials will have the same three strings in the <strong>choices</strong> field,
+  have the same <strong>prompt</strong>, but different <strong>stimulus</strong> files for each trial.
+  However, requiring the JSON file to specify a list of choices and prompts for each trial allows the experimenter to interleave arbitrarily different kinds of trials.
+  For instance, you might have a main task with one type of trials, and then mix in trials that help test whether the subject is wearing headphones, or mix in trials that might help get a metric of data quality and whether the subject is paying attention to the task at hand, and so on.
+
+  </p>
+  <p>
+  Note that when using files like "aud.wav" that are to be hosted on the server, talk to the PI to see how to get your audio files there. The preferred method will be to host your files somewhere else on the web and include URLs to them, for instance "https://web.ics.purdue.edu/~mypurduename/media/trial1.wav".
+  </p>
+
+  <p> Happy experimenting!  </p>
+{% endblock content %}

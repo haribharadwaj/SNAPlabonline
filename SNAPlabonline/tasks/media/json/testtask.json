@@ -1,6 +1,7 @@
 {
 	"instructions": ["Wear Headphones", "Do Task"],
 	"feedback": true,
+	"serveraudio": true,
 	"trials":[
 		{
 		"prompt": "Select one of the three options",
@@ -16,7 +17,8 @@
 		},
 		{
 		"prompt": "Select one of the six options",
-		"choices": ["FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH", "SIXTH"],
+		"choices": ["FIRST", "SECOND", "THIRD", "FOURTH",
+			"FIFTH", "SIXTH"],
 		"stimulus": "aud.wav",
 		"answer": 3
 		}

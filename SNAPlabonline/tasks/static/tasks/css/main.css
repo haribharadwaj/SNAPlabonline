@@ -20,7 +20,6 @@ ul {
   background-color: #8e8981;
 }
 
-
 .content-section {
   background: #ffffff;
   padding: 10px 20px;
@@ -28,4 +27,12 @@ ul {
   border-radius: 3px;
   margin-bottom: 20px;
   margin-top: 20px;
+}
+
+pre code {
+  background-color: #eeeeee;
+  display: block;
+  padding: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
 }

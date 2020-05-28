@@ -54,6 +54,7 @@ class Response(models.Model):
                                 null=True)
     answer = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),])
     date_posted = models.DateTimeField(default=timezone.now)
+    correct = models.BooleanField(null=True)
 
     def __str__(self):
         return f'nAFC Response for task {self.parent_task.name}'

@@ -19,7 +19,7 @@
     <h4 class="mb-2 mt-4"> {{ trial.taskcontext.prompt }} </h4>
 
     <div class="content-section"> 
-    <audio controls style="width: 100%">
+    <audio controls autoplay style="width: 100%">
       <source src="{{ MEDIA_URL }}{{ trial.taskcontext.stim_url }}" type="audio/wav">
       Your browser does not support the audio tag.
     </audio>

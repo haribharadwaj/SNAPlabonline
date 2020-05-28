@@ -12,6 +12,8 @@ def index(request):
     tasks = Task.objects.all()
     return render(request, 'tasks/home.html', {'tasks' : tasks})
 
+def for_lab_members(request):
+    return render(request, 'tasks/labmembers.html')
 
 @login_required
 @permission_required('tasks.add_task', raise_exception=PermissionDenied)
@@ -27,6 +29,7 @@ def create_task(request):
     else:
         form = TaskCreationForm()
     return render(request, 'tasks/create_task.html', {'form': form})
+
 
 
 @login_required
@@ -48,7 +51,8 @@ def run_task(request, **kwargs):
         form.instance.subject = request.user
         form.instance.trialnum = trialnum
         form.instance.parent_task = task
-        if form.instance.answer == taskcontext['answer']:
+
+        if int(request.POST['answer']) == taskcontext['answer']:
             form.instance.correct = True
         else:
             form.instance.correct = False
@@ -60,7 +64,7 @@ def run_task(request, **kwargs):
                 if form.instance.correct:
                     messages.success(request, f'You got trial {trialnum} of {display_name} right!')
                 else:
-                    messages.error(request, f'You did not get trial {trialnum} of {display_name} right!')
+                    messages.warning(request, f'You did not get trial {trialnum} of {display_name} right!')
 
             return redirect('run-task', taskname=task_name, trialnum=trialnum + 1)
     else:
