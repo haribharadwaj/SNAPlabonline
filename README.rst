@@ -23,7 +23,7 @@ The goals of this web app (once fully developed) are:
 	* `MTurk <https://www.mturk.com>`_
 	* `Prolific <https://www.prolific.co>`_
 
-*	Play uncompressed, high fidelity audio on a varietty of browser
+*	Play uncompressed, high fidelity audio on a variety of browsers
 	across both computers and mobile devices.
 
 *	Implement login-based authentication for security
