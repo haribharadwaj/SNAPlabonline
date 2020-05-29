@@ -10,7 +10,6 @@ from jsonschema import (
     validate, 
     exceptions as jsonschema_exceptions
 )
-from django.utils.translation import gettext_lazy as _
 
 
 # Create your models here.
@@ -24,11 +23,11 @@ using strings/text anyway. So decide to keep
 such info within json file and lookup at runtime.
 '''
 
-def taskjson_validate(taskjson,
+def taskjson_validate(value,
     taskschema= settings.MEDIA_ROOT + '/schema/taskschema.json'):
  
     # FileFields give FieldFile which are alreay like fp
-    inst = json.load(taskjson)  
+    inst = json.load(value)  
 
     with open(taskschema) as fp:
         schema = json.load(fp)
@@ -36,8 +35,9 @@ def taskjson_validate(taskjson,
     try:
         status = validate(inst, schema)
     except jsonschema_exceptions.ValidationError as e:
-        print(e.message)
-        raise ValidationError(_(e.message), code='invalid')
+        prefix = 'JSON file not valid: '
+        raise ValidationError(prefix + e.message,
+            params={'value': value})
     return status
 
 
