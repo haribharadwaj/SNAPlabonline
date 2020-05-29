@@ -3,16 +3,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
-from django.conf import settings
-import json
-from jsonschema import (
-    validate, 
-    exceptions as jsonschema_exceptions
-)
+from .validators import taskjson_validate
 
-
-# Create your models here.
 '''
 Model that holds task information.
 A separate model for trials is not created:
@@ -22,24 +14,6 @@ and the best way to do that within is a db is
 using strings/text anyway. So decide to keep
 such info within json file and lookup at runtime.
 '''
-
-def taskjson_validate(value,
-    taskschema= settings.MEDIA_ROOT + '/schema/taskschema.json'):
- 
-    # FileFields give FieldFile which are alreay like fp
-    inst = json.load(value)  
-
-    with open(taskschema) as fp:
-        schema = json.load(fp)
-
-    try:
-        status = validate(inst, schema)
-    except jsonschema_exceptions.ValidationError as e:
-        prefix = 'JSON file not valid: '
-        raise ValidationError(prefix + e.message,
-            params={'value': value})
-    return status
-
 
 class Task(models.Model):
     name = models.CharField(
@@ -74,6 +48,7 @@ class Task(models.Model):
         return f'Task: {self.displayname}'
 
 
+
 class Response(models.Model):
     parent_task = models.ForeignKey(Task, on_delete=models.CASCADE)
     trialnum = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),])
@@ -86,3 +61,16 @@ class Response(models.Model):
 
     def __str__(self):
         return f'nAFC Response for task {self.parent_task.name}'
+
+
+'''
+
+# Model for a study that we can direct participants to
+class Experiment(models.Model):
+    title = models.CharField(default='SNAPlab Study',
+        max_length=24,
+        help_text='Short title for study')
+    welcome_message = models.TextField(default='',
+        help_text='A welcome screen message suitable for display in the landing page for your subjects')
+    task1 = models.ManyToManyField(Task)
+'''
