@@ -1,7 +1,8 @@
-.. raw:: html
-
-    <img src=".https://github.com/haribharadwaj/SNAPlabonline/raw/master/SNAPlabonline/tasks/static/tasks/ims/cloudhearinglogo2.png" width="100px">
-
+.. image:: https://github.com/haribharadwaj/SNAPlabonline/raw/master/SNAPlabonline/tasks/static/tasks/ims/cloudhearinglogo2.png
+	:width: 401px
+	:height: 323px
+	:scale: 20%
+	:align: right
 SNAPlab Online -- A Web Application for Online Psychoacoustics
 ==============================================================
 
