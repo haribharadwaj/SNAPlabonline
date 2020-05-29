@@ -1,3 +1,9 @@
+.. image:: SNAPlabOnlineLogo
+   :target: https://github.com/haribharadwaj/SNAPlabonline/raw/master/SNAPlabonline/tasks/static/tasks/ims/cloudhearinglogo2.png
+   :height: 100px
+   :alt: SNAPlab Online
+   :align: right
+
 SNAPlab Online -- A Web Application for Online Psychoacoustics
 ==============================================================
 
