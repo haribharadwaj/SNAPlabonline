@@ -3,6 +3,15 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+from django.conf import settings
+import json
+from jsonschema import (
+    validate, 
+    exceptions as jsonschema_exceptions
+)
+from django.utils.translation import gettext_lazy as _
+
 
 # Create your models here.
 '''
@@ -14,6 +23,24 @@ and the best way to do that within is a db is
 using strings/text anyway. So decide to keep
 such info within json file and lookup at runtime.
 '''
+
+def taskjson_validate(taskjson,
+    taskschema= settings.MEDIA_ROOT + '/schema/taskschema.json'):
+ 
+    # FileFields give FieldFile which are alreay like fp
+    inst = json.load(taskjson)  
+
+    with open(taskschema) as fp:
+        schema = json.load(fp)
+
+    try:
+        status = validate(inst, schema)
+    except jsonschema_exceptions.ValidationError as e:
+        print(e.message)
+        raise ValidationError(_(e.message), code='invalid')
+    return status
+
+
 class Task(models.Model):
     name = models.CharField(
         max_length=24,
@@ -35,7 +62,8 @@ class Task(models.Model):
 
     trialinfo = models.FileField(upload_to='json/',
         verbose_name='Trial Info',
-        help_text='JSON file with task information')
+        help_text='JSON file with task information',
+        validators=[taskjson_validate])
 
     tasktype = models.SmallIntegerField(choices=TASK_TYPES, null=True)
 
@@ -58,4 +86,3 @@ class Response(models.Model):
 
     def __str__(self):
         return f'nAFC Response for task {self.parent_task.name}'
-
