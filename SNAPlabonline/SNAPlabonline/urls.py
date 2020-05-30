@@ -25,7 +25,7 @@ urlpatterns = [
 	path('', task_views.index, name='tasks-home'),
 	path('createtask/', task_views.create_task, name='create-task'),
 	path('labmembers/', task_views.for_lab_members, name='tasks-labmembers'),
-	path('runtask/<taskname>/<int:trialnum>/', task_views.run_task, name='run-task'),
+	path('runtask/<taskname>/', task_views.run_task, name='run-task'),
 	path('register/', users_views.register, name='users-register'),
 	path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
 	path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),

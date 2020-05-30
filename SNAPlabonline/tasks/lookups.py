@@ -1,8 +1,18 @@
 import json
-from .models import Response
+from .models import Response, Task
 
-def get_task_context(task, trialnum, user):
-    icon_url = task.icon.url
+
+def user_next_trial(task_id, user):
+    # Returns: context
+    # trialnum first incomplete trial for user for given task.
+    # If task completed by user, returns None
+
+    resps_user = Response.objects.filter(subject_id=user.id)
+    resps_user_task = resps_user.filter(parent_task_id=task_id)
+
+    task = Task.objects.get(pk=task_id)
+    display_name = task.displayname
+
     with open(task.trialinfo.path) as fp:
         info = json.load(fp)
 
@@ -10,40 +20,41 @@ def get_task_context(task, trialnum, user):
     instructions = info['instructions']
     feedback = info['feedback']
 
-    # Trial level info
+    # Get trials info from task
     trials = info['trials']
     ntrials = len(trials)
-    k = trialnum - 1  # Python index starts at zero
 
-    if trialnum <= ntrials:
+    # Get icon from task
+    icon_url = task.icon.url
+
+    done = True
+    for k in range(ntrials):
+        trialnum = k + 1
+        if not resps_user_task.filter(trialnum=trialnum).exists():
+            done = False
+            break
+
+    if done:
+        trialnum = None
+
+    # If there are more trials to be done:
+    if trialnum is not None:
+        k = trialnum - 1  # Python index starts at zero
         stim_url = 'stimuli/' + trials[k]['stimulus']
         prompt = trials[k]['prompt']
         choices = trials[k]['choices']
-        no_more_trials = False
         answer = trials[k]['answer']
+        progress = k * 100./ntrials
     else:
         stim_url = None
-        no_more_trials = True
         prompt = ''
         choices = []
         answer = None
-
-    done = user_completed_task(task.pk, user, ntrials)
-    progress = (trialnum - 1) * 100./ntrials
+        progress = 100.
 
     return {'stim_url': stim_url, 'prompt': prompt,
             'instructions': instructions, 'choices': choices,
             'icon_url': icon_url, 'done': done,
-            'no_more_trials': no_more_trials,
             'ntrials': ntrials, 'progress': progress,
-            'feedback': feedback, 'answer': answer}
-
-def user_completed_task(task_id, user, ntrials):
-    resps_user = Response.objects.filter(subject_id=user.id)
-    resps_user_task = resps_user.filter(parent_task_id=task_id)
-
-    for k in range(ntrials):
-        if not resps_user_task.filter(trialnum=(k+1)).exists():
-            return False
-    # If response to all trials exist, then:
-    return True
+            'feedback': feedback, 'answer': answer,
+            'trialnum': trialnum, 'display_name': display_name}

@@ -17,7 +17,7 @@
             <div class="card-body">
                   <h5 class="card-title"> {{ task.displayname }} </h5>
                   <p class="card-text"> {{ task.descr }} </p>
-                  <a href="{% url 'run-task' taskname=task.name trialnum=1 %}" class="btn btn-outline-primary btn-block stretched-link">Run Task</a>
+                  <a href="{% url 'run-task' taskname=task.name %}" class="btn btn-outline-primary btn-block stretched-link">Run Task</a>
             </div>
         </div>
     {% endfor %}

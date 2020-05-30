@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from .forms import TaskCreationForm, ResponseForm
 from .models import Response, Task
-from .lookups import get_task_context
+from .lookups import user_next_trial
 
 # Create your views here.
 
@@ -35,22 +35,17 @@ def create_task(request):
 @login_required
 def run_task(request, **kwargs):
     task_name = kwargs['taskname']
-    trialnum = kwargs['trialnum']
-    task = Task.objects.get(name=task_name)
-    display_name = task.displayname
-    taskcontext = get_task_context(task, trialnum, request.user)
+
+    taskcontext = user_next_trial(task_name, request.user)
 
     if taskcontext['done']:
         return render(request, 'tasks/task_done.html', {'taskcontext': taskcontext})
 
-    if taskcontext['no_more_trials']:
-        return render(request, 'tasks/bad_trialnum.html', {'taskcontext': taskcontext})
-
     if request.method == 'POST':
         form = ResponseForm(request.POST)
         form.instance.subject = request.user
-        form.instance.trialnum = trialnum
-        form.instance.parent_task = task
+        form.instance.trialnum = taskcontext['trialnum']
+        form.instance.parent_task_id = task_name
 
         if int(request.POST['answer']) == taskcontext['answer']:
             form.instance.correct = True
@@ -59,19 +54,21 @@ def run_task(request, **kwargs):
 
         if form.is_valid():
             form.save()
-            taskname = form.cleaned_data.get('name')
             if taskcontext['feedback']:
+                trialnum = taskcontext['trialnum']
+                display_name = taskcontext['display_name']
                 if form.instance.correct:
-                    messages.success(request, f'You got trial {trialnum} of {display_name} right!')
+                    messages.success(request, f'You got trial {trialnum} of {display_name} right')
                 else:
                     messages.warning(request, f'You did not get trial {trialnum} of {display_name} right!')
 
-            return redirect('run-task', taskname=task_name, trialnum=trialnum + 1)
+            return redirect('run-task', taskname=task_name)
     else:
         form = ResponseForm()
-        form.instance.trialnum = trialnum
+        form.instance.trialnum = taskcontext['trialnum']
         form.instance.subject = request.user
-        form.instance.parent_task = task
-    context = {'taskcontext': taskcontext, 'trialnum': trialnum, 'form': form}
+        form.instance.parent_task_id = task_name
+
+    context = {'taskcontext': taskcontext, 'form': form}
     return render(request, 'tasks/response_form.html', {'trial': context})
 
