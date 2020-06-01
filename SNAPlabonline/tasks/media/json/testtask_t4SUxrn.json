@@ -1,0 +1,26 @@
+{
+	"instructions": ["Wear Headphones", "Do Task"],
+	"feedback": true,
+	"serveraudio": true,
+	"trials":[
+		{
+		"prompt": "Select one of the three options",
+		"choices": ["FIRST", "SECOND", "THIRD"],
+		"stimulus": "aud.wav",
+		"answer": 1
+		},
+		{
+		"prompt": "Select one of the four options",
+		"choices": ["FIRST", "SECOND", "THIRD", "FOURTH"],
+		"stimulus": "aud.wav",
+		"answer": 2
+		},
+		{
+		"prompt": "Select one of the six options",
+		"choices": ["FIRST", "SECOND", "THIRD", "FOURTH",
+			"FIFTH", "SIXTH"],
+		"stimulus": "aud.wav",
+		"answer": 3
+		}
+	]
+}

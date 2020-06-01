@@ -20,12 +20,22 @@ from django.conf import settings
 from django.conf.urls.static import static
 from tasks import views as task_views
 from users import views as users_views
+from tasks.views import (
+    TaskListView,
+    TaskCreateView,
+    TaskUpdateView,
+    TaskDeleteView
+    )
 
 urlpatterns = [
 	path('', task_views.index, name='tasks-home'),
-	path('createtask/', task_views.create_task, name='create-task'),
-	path('labmembers/', task_views.for_lab_members, name='tasks-labmembers'),
-	path('runtask/<taskname>/', task_views.run_task, name='run-task'),
+	# path('createtask/', task_views.create_task, name='create-task'),
+    path('task/new/', TaskCreateView.as_view(), name='create-task'),
+    path('task/<pk>/update/', TaskUpdateView.as_view(), name='update-task'),
+	path('runtask/<taskurl>/', task_views.run_task, name='run-task'),
+    path('mytasks/', TaskListView.as_view(), name='mytasks'),
+    path('task/<pk>/delete/', TaskDeleteView.as_view(), name='delete-task'),
+    path('labmembers/', task_views.for_lab_members, name='tasks-labmembers'),
 	path('register/', users_views.register, name='users-register'),
 	path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
 	path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),

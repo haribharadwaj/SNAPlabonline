@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator
 from .validators import taskjson_validate
+from secrets import token_urlsafe
 
 '''
 Model that holds task information.
@@ -43,6 +44,9 @@ class Task(models.Model):
 
     experimenter = models.ForeignKey(User, null=True,
                                      on_delete=models.SET_NULL)
+    task_url = models.CharField(max_length=32, unique=True,
+        default=token_urlsafe(32))
+    date_created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f'Task: {self.displayname}'

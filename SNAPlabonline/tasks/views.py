@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import (login_required,
+    permission_required)
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+    PermissionRequiredMixin, UserPassesTestMixin)
+
 from django.core.exceptions import PermissionDenied
+from django.views.generic import (ListView,
+    CreateView, UpdateView, DeleteView)
 from .forms import TaskCreationForm, ResponseForm
 from .models import Response, Task
 from .lookups import user_next_trial
@@ -28,15 +34,15 @@ def create_task(request):
             return redirect('tasks-home')
     else:
         form = TaskCreationForm()
-    return render(request, 'tasks/create_task.html', {'form': form})
-
+    return render(request, 'tasks/task_create.html', {'form': form})
 
 
 @login_required
 def run_task(request, **kwargs):
-    task_name = kwargs['taskname']
+    task_url = kwargs['taskurl']
 
-    taskcontext = user_next_trial(task_name, request.user)
+    taskcontext = user_next_trial(task_url, request.user)
+    task_name = taskcontext['task_name']
 
     if taskcontext['done']:
         return render(request, 'tasks/task_done.html', {'taskcontext': taskcontext})
@@ -62,7 +68,7 @@ def run_task(request, **kwargs):
                 else:
                     messages.warning(request, f'You did not get trial {trialnum} of {display_name} right!')
 
-            return redirect('run-task', taskname=task_name)
+            return redirect('run-task', taskurl=task_url)
     else:
         form = ResponseForm()
         form.instance.trialnum = taskcontext['trialnum']
@@ -72,3 +78,51 @@ def run_task(request, **kwargs):
     context = {'taskcontext': taskcontext, 'form': form}
     return render(request, 'tasks/response_form.html', {'trial': context})
 
+
+
+class TaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'tasks.add_task'
+    permission_denied_message = 'Experimenter credentials needed to create tasks'
+    model = Task
+    fields = ['name', 'displayname', 'descr', 'icon', 'trialinfo']
+    success_url = '/mytasks/'
+
+    def form_valid(self, form):
+        form.instance.experimenter = self.request.user
+        return super().form_valid(form)
+
+
+class TaskListView(LoginRequiredMixin, ListView):
+
+    def get_queryset(self):
+        # Return only tasks of logged in experimenter from new to old
+        return Task.objects.filter(experimenter=self.request.user).order_by('-date_created')
+
+
+class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Task
+    fields = ['name', 'displayname', 'descr', 'icon', 'trialinfo']
+    success_url = '/mytasks/'
+
+    def form_valid(self, form):
+        form.instance.experimenter = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        task = self.get_object()
+        if self.request.user == task.experimenter:
+            return True
+        else:
+            return False
+
+
+class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Task
+    success_url = '/mytasks/'
+
+    def test_func(self):
+        task = self.get_object()
+        if self.request.user == task.experimenter:
+            return True
+        else:
+            return False

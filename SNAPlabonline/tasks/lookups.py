@@ -2,16 +2,17 @@ import json
 from .models import Response, Task
 
 
-def user_next_trial(task_id, user):
+def user_next_trial(task_url, user):
     # Returns: context
     # trialnum first incomplete trial for user for given task.
     # If task completed by user, returns None
 
     resps_user = Response.objects.filter(subject_id=user.id)
-    resps_user_task = resps_user.filter(parent_task_id=task_id)
+    task = Task.objects.get(task_url=task_url)
+    resps_user_task = resps_user.filter(parent_task_id=task.pk)
 
-    task = Task.objects.get(pk=task_id)
     display_name = task.displayname
+    task_name = task.name
 
     with open(task.trialinfo.path) as fp:
         info = json.load(fp)
@@ -57,4 +58,5 @@ def user_next_trial(task_id, user):
             'icon_url': icon_url, 'done': done,
             'ntrials': ntrials, 'progress': progress,
             'feedback': feedback, 'answer': answer,
-            'trialnum': trialnum, 'display_name': display_name}
+            'trialnum': trialnum, 'display_name': display_name,
+            'task_name': task_name}

@@ -12,3 +12,7 @@ class ResponseForm(forms.ModelForm):
 		model = Response
 		fields = ['answer']
 
+class TaskEditForm(forms.ModelForm):
+	class Meta:
+		model = Task
+		fields = ['displayname', 'descr', 'icon', 'trialinfo']
