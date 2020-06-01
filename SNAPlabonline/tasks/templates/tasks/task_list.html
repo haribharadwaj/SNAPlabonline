@@ -9,10 +9,20 @@
         <div class="card shadow-sm mt-4 ml-4 hoverable" style="width: 18rem;">
             <img class="card-img-top" src="{{ task.icon.url }}" alt="Card image cap">
             <div class="card-body">
-                  <h5 class="card-title"> {{ task.displayname }} </h5>
-                  <p class="card-text"> {{ task.descr }} </p>
-                  <a href="{% url 'run-task' taskurl=task.task_url %}" class="btn btn-outline-primary btn-block stretched-link">Run Task</a>
+				<h5 class="card-title"> {{ task.displayname }} </h5>
+				<p class="card-text"> {{ task.descr }} </p>
+				<a href="{% url 'run-task' taskurl=task.task_url %}" class="btn btn-outline-primary btn-lg btn-block">
+					Run Task
+				</a>
             </div>
+            <div class="d-flex justify-content-between">
+				<a href="{% url 'update-task' pk=task.name %}" class="btn btn-outline-secondary btn-sm ml-2 mb-2">
+					Modify
+				</a>
+				<a href="{% url 'delete-task' pk=task.name %}" class="btn btn-outline-danger btn-sm mr-2 mb-2">
+					Delete
+				</a>
+			</div>
         </div>
     {% empty %}
     	<p class="ml-4"> No tasks found.

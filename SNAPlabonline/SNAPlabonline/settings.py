@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os, json
 
 
-with open('/Users/hari/repos/SNAPlabonline/SNAPlabonline/config.json') as fp:
+with open('/Users/hari/repos/SNAPlabonline/config.json') as fp:
     config = json.load(fp)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -133,7 +133,7 @@ LOGIN_REDIRECT_URL = 'tasks-home'
 
 LOGIN_URL = 'login'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'tasks/media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
