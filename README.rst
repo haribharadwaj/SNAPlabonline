@@ -3,6 +3,8 @@ SNAPlab Online -- A Web Application for Online Psychoacoustics
 
 This is a bare-bones, but functional Web App for online
 hearing experiments designed using the `Django Framework <https://www.djangoproject.com>`_.
+The templates are rendered using basic `HTML5 <https://en.wikipedia.org/wiki/HTML5>`_ and
+styled using `Bootstrap <https://getbootstrap.com/>`_.
 The goals of this web app (once fully developed) are:
 
 *	Serve as a standalone web app that can be hosted

@@ -28,6 +28,9 @@ def user_next_trial(task_url, user):
     # Get icon from task
     icon_url = task.icon.url
 
+    # Check if audio is external:
+    serveraudio = info['serveraudio']
+
     done = True
     for k in range(ntrials):
         trialnum = k + 1
@@ -41,7 +44,11 @@ def user_next_trial(task_url, user):
     # If there are more trials to be done:
     if trialnum is not None:
         k = trialnum - 1  # Python index starts at zero
-        stim_url = 'stimuli/' + trials[k]['stimulus']
+        if serveraudio:
+            stim_url = 'stimuli/' + trials[k]['stimulus']
+        else:
+            stim_url = trials[k]['stimulus']
+
         prompt = trials[k]['prompt']
         choices = trials[k]['choices']
         answer = trials[k]['answer']

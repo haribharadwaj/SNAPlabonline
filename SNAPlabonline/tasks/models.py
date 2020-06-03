@@ -69,8 +69,8 @@ class Response(models.Model):
 
 '''
 
-# Model for a study that we can direct participants to
-class Experiment(models.Model):
+# Model for a study session that we can direct participants to
+class Session(models.Model):
     title = models.CharField(default='SNAPlab Study',
         max_length=24,
         help_text='Short title for study')

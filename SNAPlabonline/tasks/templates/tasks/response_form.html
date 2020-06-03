@@ -20,7 +20,11 @@
 
     <div class="content-section"> 
     <audio controls autoplay style="width: 100%">
-      <source src="{{ MEDIA_URL }}{{ trial.taskcontext.stim_url }}" type="audio/wav">
+      {% if trial.taskcontext.serveraudio %}
+        <source src="{{ MEDIA_URL }}{{ trial.taskcontext.stim_url }}" type="audio/wav">
+      {% else %}
+        <source src="{{ trial.taskcontext.stim_url }}" type="audio/wav">
+      {% endif %}
       Your browser does not support the audio tag.
     </audio>
     </div>
@@ -28,7 +32,7 @@
     <form method="POST">
     {% csrf_token %}
       {% for option in trial.taskcontext.choices %}
-        <button type="Submit" name="answer" class="btn btn-secondary mt-4" value="{{ forloop.counter }}">
+        <button type="Submit" name="answer" class="btn btn-outline-secondary mt-4" value="{{ forloop.counter }}">
           {{ option }}
         </button>
       {% endfor %}

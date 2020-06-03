@@ -8,6 +8,37 @@
   Welcome to Systems Neuroscience of Auditory Perception Lab (SNAPlab)'s online portal!
   SNAPlab is part of the <a href="http://www.purdue.edu/hhs/slhs/index.html"> Department of Speech, Language & Hearing Sciences </a>, and the <a href="http://engineering.purdue.edu/BME"> Weldon School of Biomedical Engineering </a> at <a href="http://www.purdue.edu/"> Purdue University</a>. At SNAPlab, we study the biological computations and neural circuits that underlie auditory perception. In particular, we are interested in how our ears and brains help us listen in complex everyday environments such as crowded restaurants and busy streets. This website is used by members of SNAPlab to host online listening experiments. </p>
 
-  <p> We are still in the development and testing phase of this website. Note that a login is required to be able to view the tasks and provide your responses, but you can easily create an account in a few clicks. If you are a lab member looking to create and host a new task, visit the <a href="{% url 'tasks-labmembers' %}"> lab members page</a>. </p>
+  <p> We are still in the development and testing phase of this website. Note that a login is required to be able to access most parts of this site, but you can easily rregister for an account in a few clicks by visiting the <a href="{% url 'users-register' %}"> registration page</a>. </p>
 
+    <div class="row">
+        <div class="col-sm-6">
+        <div class="card shadow-sm mt-4 ml-2 mr-2 hoverable">
+            <div class="card-body">
+                <h5 class="card-title"> Experimenter Area </h5>
+                <p class="card-text"> SNAPlab members can visit the "my tasks" page to view a list of your behavioral tasks or create new ones. Note that "experimenter" credentials are required to be able to create tasks.
+                </p>
+                <a href="{% url 'mytasks' %}" class="btn btn-outline-primary btn-lg btn-block stretched-link">
+                Let's check it out!
+                </a>
+            </div>
+        </div>
+        </div>
+
+        <div class="col-sm">
+        <div class="card shadow-sm-6 mt-4 ml-2 mr-2 hoverable">
+            <div class="card-body">
+                <h5 class="card-title"> Interested In Participating? </h5>
+                <p class="card-text"> We use Amazon Mechanical Turk  (MTurk) or Prolific.co to enrol research participants and compensate for time spent. Please use one of these routes to participate. </p>
+                <div class="d-flex justify-content-between">
+                    <a href="https://www.mturk.com/" class="btn btn-outline-secondary btn-lg">
+                    MTurk
+                    </a>
+                    <a href="https://www.prolific.co/" class="btn btn-outline-secondary btn-lg">
+                    Prolific
+                    </a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
 {% endblock content %}
