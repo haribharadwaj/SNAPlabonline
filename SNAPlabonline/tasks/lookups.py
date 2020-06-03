@@ -66,4 +66,4 @@ def user_next_trial(task_url, user):
             'ntrials': ntrials, 'progress': progress,
             'feedback': feedback, 'answer': answer,
             'trialnum': trialnum, 'display_name': display_name,
-            'task_name': task_name}
+            'task_name': task_name, 'serveraudio': serveraudio}

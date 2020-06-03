@@ -20,7 +20,7 @@
 
     <div class="content-section"> 
     <audio controls autoplay style="width: 100%">
-      {% if trial.taskcontext.serveraudio %}
+      {% if trial.taskcontext.serveraudio is True %}
         <source src="{{ MEDIA_URL }}{{ trial.taskcontext.stim_url }}" type="audio/wav">
       {% else %}
         <source src="{{ trial.taskcontext.stim_url }}" type="audio/wav">

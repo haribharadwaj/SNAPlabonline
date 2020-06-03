@@ -2,4 +2,5 @@
 config.json
 Pipfile
 Pipfile.lock
+db.sqlite3
 
