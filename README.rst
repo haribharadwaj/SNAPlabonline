@@ -5,6 +5,14 @@ This is a bare-bones, but functional Web App for online
 hearing experiments designed using the `Django Framework <https://www.djangoproject.com>`_.
 The templates are rendered using basic `HTML5 <https://en.wikipedia.org/wiki/HTML5>`_ and
 styled using `Bootstrap <https://getbootstrap.com/>`_.
+Currently, all experiment control is event driven,
+and new Django views are called to advance the experiment.
+However, the design of task and response models are compatible with
+future changes to front-end design.
+In particular, integration with `jsPsych <https://www.jspsych.org>`_
+should be relatively seamless.
+
+
 The goals of this web app (once fully developed) are:
 
 *	Serve as a standalone web app that can be hosted
