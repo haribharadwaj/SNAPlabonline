@@ -1,8 +1,4 @@
 .DS_Store
 config.json
-Pipfile
-Pipfile.lock
 db.sqlite3
-settings.py
-
 
