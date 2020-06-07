@@ -1,6 +1,8 @@
 SNAPlab Online -- A Web Application for Online Psychoacoustics
 ==============================================================
 
+[![Gitter](https://badges.gitter.im/PurdueSNAPlab/OnlinePsychoacoustics.svg)](https://gitter.im/PurdueSNAPlab/OnlinePsychoacoustics?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 This is a bare-bones, but functional Web App for online
 hearing experiments designed using the `Django Framework <https://www.djangoproject.com>`_.
 The templates are rendered using basic `HTML5 <https://en.wikipedia.org/wiki/HTML5>`_ and
