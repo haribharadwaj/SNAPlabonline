@@ -14,8 +14,8 @@ def user_next_trial(task_url, user):
     display_name = task.displayname
     task_name = task.name
 
-    with open(task.trialinfo.path) as fp:
-        info = json.load(fp)
+    
+    info = json.loads(task.trialinfo)
 
     # Overall info
     instructions = info['instructions']

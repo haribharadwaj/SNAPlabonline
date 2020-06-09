@@ -23,21 +23,25 @@ class Task(models.Model):
         help_text='Short codename for task (no spaces)',
         verbose_name='Name')
     displayname = models.CharField(max_length=80,
-        help_text='Human-friendly name for the task to be used for display',
+        help_text='Experimenter/Subject-friendly title or name for the task',
         default='',
         verbose_name= 'Display Name')
-    descr = models.TextField(default='',
-        help_text='Please provide a one- or two-sentence description',
+    descr = models.CharField(max_length=255, default='',
+        help_text='Please provide a one sentence description',
         verbose_name='Short description')
-    TASK_TYPES = ((1, 'nAFC'), (2, 'Open-Set'))
+    TASK_TYPES = (
+        (1, 'adaptive'),
+        (2, 'constant-fixed'),
+        (3, 'constant-randomized')
+        )
 
     icon = models.ImageField(upload_to='taskicons/',
                              help_text='Upload an image that will appear'
                             ' as an icon for this task')
 
-    trialinfo = models.FileField(upload_to='json/',
+    trialinfo = models.TextField(
         verbose_name='Trial Info',
-        help_text='JSON file with task information',
+        help_text='Paste the contents of JSON file with task information',
         validators=[taskjson_validate])
 
     tasktype = models.SmallIntegerField(choices=TASK_TYPES, null=True)

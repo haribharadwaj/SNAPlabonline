@@ -8,20 +8,65 @@ from jsonschema import (
 
 
 
+taskschema = """
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Task schema",
+    "description": "This schema attempts to validate the basic task JSONs uploaded by experimenters",
+    "type": "object",
+    "properties":
+        {
+        "instructions": {"type": "array", "items": {"type": "string"}},
+        "feedback": {"type": "boolean"},
+        "serveraudio": {"type": "boolean"},
+        "trials": 
+            {
+            "type": "array", 
+            "items":
+                {
+                "type": "object",
+                "properties":
+                    {
+                    "prompt": {"type": "string"},
+                    "choices":
+                        {
+                        "type": "array",
+                        "items":
+                            {
+                            "type": "string",
+                            "minItems": 1,
+                            "uniqueItems": true
+                            }
+                        },
+                    "stimulus": {"type": "string", "pattern": "(wav)$"},
+                    "answer": {"type": "integer", "minimum": 1}
+                    }
+                },
+            "minItems": 1
+            }
+        },
+    "required": ["instructions", "feedback", "serveraudio", "trials"],
+    "additionalProperties": false
+}
+"""
+
 
 def taskjson_validate(value,
-    taskschema= settings.MEDIA_ROOT + '/schema/taskschema.json'):
+    taskschema=taskschema):
  
-    # FileFields give FieldFile which are alreay like fp
-    inst = json.load(value)  
+    # taskinfo is a TextField inttot which JSON string is pasted
+    try:
+        inst = json.loads(value)
+    except ValueError as ev:
+        raise ValidationError('Not a valid JSON string',
+            params={'value': value})
 
-    with open(taskschema) as fp:
-        schema = json.load(fp)
+    schema = json.loads(taskschema)
 
     try:
         status = validate(inst, schema)
     except jsonschema_exceptions.ValidationError as e:
-        prefix = 'JSON file not valid: '
+        prefix = 'Info not valid: '
         raise ValidationError(prefix + e.message,
             params={'value': value})
     return status

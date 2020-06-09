@@ -84,7 +84,7 @@ class TaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = 'tasks.add_task'
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = Task
-    fields = ['name', 'displayname', 'descr', 'icon', 'trialinfo']
+    fields = ['name', 'displayname', 'descr', 'icon', 'tasktype', 'trialinfo']
     success_url = '/mytasks/'
 
     def form_valid(self, form):
