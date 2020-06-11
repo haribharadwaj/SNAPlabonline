@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'tasks',
     'users',
+    'jspsych',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',

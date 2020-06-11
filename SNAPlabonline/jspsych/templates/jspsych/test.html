@@ -1,0 +1,86 @@
+{% extends 'jstask/base.html' %}
+{% load static %}
+{% block script %}
+
+	/* create timeline */
+    var timeline = [];
+
+    timeline.push({
+	  type: 'fullscreen',
+	  fullscreen_mode: true
+	});
+
+    /* define welcome message trial */
+    var welcome = {
+      type: 'html-keyboard-response',
+      stimulus: 'Welcome to the experiment. Press any key to begin.'
+    };
+    timeline.push(welcome);
+
+    var audtrial_1 = {
+      type: 'hari-audio-button-response',
+      stimulus: '{% static 'jstask/wav/aud.wav' %}',
+      prompt: 'Listen to the sound and pick which of the three sounds is noise!',
+      choices: ['FIRST', 'SECOND', 'THIRD'],
+    };
+    timeline.push(audtrial_1);
+
+
+    var feedback = {
+      type: 'image-keyboard-response',
+      stimulus: '{% static 'jstask/img/correct.png' %}',
+      stimulus_height: 200,
+      stimulus_duration: 500,
+      trial_duration: 500,
+      prompt: '<p> You got that right! </p>',
+      choices: jsPsych.NO_KEYS,
+      post_trial_gap: 500
+    };
+    timeline.push(feedback);
+
+	var audtrial_2 = {
+      type: 'hari-audio-button-response',
+      stimulus: '{% static 'jstask/wav/aud.wav' %}',
+      prompt: 'Listen to the sound and pick which of the three sounds is noise!',
+      choices: ['FIRST', 'SECOND', 'THIRD'],
+      on_finish: function() {
+        saveSingleTrial(jsPsych.data.getLastTrialData().json())
+      }
+    };
+    timeline.push(audtrial_2);
+
+
+    var feedback = {
+      type: 'image-keyboard-response',
+      stimulus: '{% static 'jstask/img/wrong.png' %}',
+      stimulus_height: 200,
+      stimulus_duration: 500,
+      trial_duration: 500,
+      prompt: '<p> You did not get that right! </p>',
+      choices: jsPsych.NO_KEYS,
+      post_trial_gap: 500
+    };
+
+    timeline.push(feedback);
+    // exit fullscreen mode
+	timeline.push({
+	  type: 'fullscreen',
+	  fullscreen_mode: false
+	});
+
+    var audfiles = ['{% static 'jstask/wav/aud.wav' %}'];
+    var imfiles = ['{% static 'jstask/img/correct.png' %}', '{% static 'jstask/img/wrong.png' %}'];
+
+    /* start the experiment */
+    jsPsych.init({
+      timeline: timeline,
+      preload_audio: audfiles,
+      preload_images: imfiles,
+      show_progress_bar: true,
+      on_finish: function() {
+      	saveData(jsPsych.data.get().json())
+        jsPsych.data.displayData();
+      }
+    });
+
+{% endblock script %}

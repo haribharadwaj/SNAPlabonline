@@ -1,22 +1,13 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
-from django.core.validators import MinValueValidator
-from .validators import taskjson_validate
 from secrets import token_urlsafe
+from .validators import taskjson_validate
 
-'''
-Model that holds task information.
-A separate model for trials is not created:
-This is because, response options for each trial
-should ideally be a list of variable length,
-and the best way to do that within is a db is 
-using strings/text anyway. So decide to keep
-such info within json file and lookup at runtime.
-'''
 
-class Task(models.Model):
+# Create your models here.
+
+class Jstask(models.Model):
     name = models.CharField(
         max_length=24,
         primary_key=True,
@@ -55,29 +46,19 @@ class Task(models.Model):
         return f'Task: {self.displayname}'
 
 
-
-class Response(models.Model):
-    parent_task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    trialnum = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),])
-    subject = models.ForeignKey(User,
-                                on_delete=models.SET_NULL,
-                                null=True)
-    answer = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),])
+class OneShotResponse(models.Model):
+    parent_task = models.ForeignKey(Jstask, on_delete=models.CASCADE)
+    data = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)
-    correct = models.BooleanField(null=True)
 
     def __str__(self):
-        return f'nAFC Response for task {self.parent_task.name}'
+        return 'One shot response'
 
 
-'''
+class SingleTrialResponse(models.Model):
+    parent_task = models.ForeignKey(Jstask, on_delete=models.CASCADE)
+    data = models.TextField()
+    date_posted = models.DateTimeField(default=timezone.now)
 
-# Model for a study session that we can direct participants to
-class Session(models.Model):
-    title = models.CharField(default='SNAPlab Study',
-        max_length=24,
-        help_text='Short title for study')
-    welcome_message = models.TextField(default='',
-        help_text='A welcome screen message suitable for display in the landing page for your subjects')
-    task1 = models.ManyToManyField(Task)
-'''
+    def __str__(self):
+        return 'Single Trial Response'

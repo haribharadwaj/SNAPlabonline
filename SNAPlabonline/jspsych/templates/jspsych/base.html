@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My experiment</title>
+        <script src="{% static 'jstask/jspsych-6/jspsych.js' %}"></script>
+        <script src="{% static 'jstask/jspsych-6/plugins/jspsych-html-keyboard-response.js' %}"></script>
+        <script src="{% static 'jstask/js/customplugins/hari-audio-button-response.js' %}"></script>
+        <script src="{% static 'jstask/jspsych-6/plugins/jspsych-image-keyboard-response.js' %}"></script>
+        <script src="{% static 'jstask/jspsych-6/plugins/jspsych-audio-keyboard-response.js' %}"></script>
+        <script src="{% static 'jstask/jspsych-6/plugins/jspsych-fullscreen.js' %}"></script>
+
+        <link href="{% static 'jstask/css/customjspsych.css' %}" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="{% static 'jstask/js/csrfhelper.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jstask/js/datasavehelper.js' %}"></script>
+    <script type="text/javascript">
+        {% block script %}
+        {% endblock script %}
+    </script>
+    </body>
+</html>
