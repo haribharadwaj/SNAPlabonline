@@ -14,9 +14,10 @@ within the *jspsych* app.
 However, a rudimentary server-side implementation 
 with new HTTP responses to advance the experiment
 is also available within the *tasks* app.
-However, the design of task and response models are compatible with
-future changes to front-end design.
 
+
+Goals
++++++
 
 The goals of this web app (once fully developed) are:
 
