@@ -19,6 +19,7 @@ taskschema = """
         "instructions": {"type": "array", "items": {"type": "string"}},
         "feedback": {"type": "boolean"},
         "serveraudio": {"type": "boolean"},
+        "estimatedduration": {"type": "number"},
         "trials": 
             {
             "type": "array", 

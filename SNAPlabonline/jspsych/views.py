@@ -6,7 +6,9 @@ from django.contrib.auth.mixins import (LoginRequiredMixin,
 from django.views.generic import (ListView,
     CreateView, UpdateView, DeleteView)
 from .models import (OneShotResponse, SingleTrialResponse,
-	Jstask)
+    Jstask, ObscureLink, Subject)
+from secrets import token_urlsafe
+from .lookups import get_task_context
 
 
 # Create your views here.
@@ -15,6 +17,7 @@ def testview(request):
     return render(request, 'jstask/test.html')
 
 
+# Views for responding to AJAX requests from jsPsych
 @ensure_csrf_cookie
 def create_OneShotResponse(request):
     if request.is_ajax() and request.method == 'POST':
@@ -38,7 +41,18 @@ def create_TrialResponse(request):
 
 
 
-# Views for working with Jstask
+
+# Creates a cryptopgraphically good URL token unless 
+# an unused one exists already in our database
+def create_link(length=32):
+    obj = ObscureLink.objects.filter(used=False).first()
+    if obj:
+        return obj.link
+    else:
+        link = token_urlsafe(length)
+        ObscureLink.objects.create(link=link, used=True)
+        return link
+
 
 class JstaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = 'tasks.add_task'
@@ -49,6 +63,7 @@ class JstaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
+        form.instance.task_url = create_link()
         return super().form_valid(form)
 
 
@@ -86,3 +101,26 @@ class JstaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return True
         else:
             return False
+
+
+def run_task(request, **kwargs):
+    task_url = kwargs['taskurl']
+    subject = request.session.get('subj', None)
+
+    if subject is None:
+        # For now just do an Anon hash value
+        # Later we'll redirect to consent/ID request pages etc.
+        # Maybe even put this on a decorator like @login_required
+        # These will likely be: @consent_required and @subjid_required
+        subject = 'ANON' + token_urlsafe(16)
+        request.session['subj'] = subject
+        Subject.objects.create(subjid=subject)
+
+
+    # Gets the info for where the subject left off
+    taskcontext = get_task_context(task_url, subject)    
+
+    if taskcontext['done']:
+        return render(request, 'tasks/task_done.html', {'taskcontext': taskcontext})
+
+    return render(request, 'jspsych/jstask_run.html', {'task': taskcontext})

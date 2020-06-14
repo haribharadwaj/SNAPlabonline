@@ -6,6 +6,8 @@ from django.core.validators import MinValueValidator
 from .validators import taskjson_validate
 from secrets import token_urlsafe
 
+
+
 '''
 Model that holds task information.
 A separate model for trials is not created:
@@ -70,14 +72,3 @@ class Response(models.Model):
         return f'nAFC Response for task {self.parent_task.name}'
 
 
-'''
-
-# Model for a study session that we can direct participants to
-class Session(models.Model):
-    title = models.CharField(default='SNAPlab Study',
-        max_length=24,
-        help_text='Short title for study')
-    welcome_message = models.TextField(default='',
-        help_text='A welcome screen message suitable for display in the landing page for your subjects')
-    task1 = models.ManyToManyField(Task)
-'''

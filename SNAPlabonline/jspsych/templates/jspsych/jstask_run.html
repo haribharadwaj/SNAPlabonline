@@ -1,0 +1,42 @@
+{% extends 'jspsych/base.html' %}
+{% load static %}
+{% block script %}
+
+    /* create timeline */
+    var subject = '{{ task.subject }}'
+    var timeline = [];
+
+    {% for inst in task.instructions %}
+        var welcome = {
+          type: 'html-button-response',
+          choices: ['Continue'],
+          stimulus: '{{ inst }}'
+        };
+    timeline.push(welcome);
+    {% endfor %}
+
+    {% for trial in task.trials %}
+        var jstrial = {
+          type: '{{ trial.plugin }}',
+          stimulus: '{% static  'jspsych/wav/'|add:trial.stimulus  %}',
+          prompt: '{{ trial.prompt }}',
+          choices: {{ trial.choices|safe }},
+          on_finish: function() {
+            saveSingleTrial(jsPsych.data.getLastTrialData().json())
+            }
+        };
+        timeline.push(jstrial);
+    {% endfor %}
+
+
+    /* start the experiment */
+    jsPsych.init({
+      timeline: timeline,
+      show_progress_bar: true,
+      on_finish: function() {
+        saveData(jsPsych.data.get().json())
+        jsPsych.data.displayData();
+      }
+    });
+
+{% endblock script %}

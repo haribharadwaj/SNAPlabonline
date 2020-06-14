@@ -19,6 +19,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from tasks import views as task_views
+from jspsych import views as jspsych_views
 from users import views as users_views
 from jspsych.views import (
     JstaskListView,
@@ -32,7 +33,7 @@ urlpatterns = [
 	# path('createtask/', task_views.create_task, name='create-task'),
     path('task/new/', JstaskCreateView.as_view(), name='create-task'),
     path('task/<pk>/update/', JstaskUpdateView.as_view(), name='update-task'),
-	path('runtask/<taskurl>/', task_views.run_task, name='run-task'),
+	path('runtask/<taskurl>/', jspsych_views.run_task, name='run-task'),
     path('mytasks/', JstaskListView.as_view(), name='mytasks'),
     path('task/<pk>/delete/', JstaskDeleteView.as_view(), name='delete-task'),
     path('labmembers/', task_views.for_lab_members, name='tasks-labmembers'),
@@ -52,6 +53,8 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
         name='password_reset_complete'),
     path('admin/', admin.site.urls),
+    path('savejspdata/', jspsych_views.create_OneShotResponse, name='savejspdata'),
+    path('savejsptrial/', jspsych_views.create_TrialResponse, name='savejsptrial')
 ]
 
 if settings.DEBUG:

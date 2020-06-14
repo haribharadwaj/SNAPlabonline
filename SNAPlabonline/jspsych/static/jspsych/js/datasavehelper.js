@@ -5,8 +5,9 @@ function saveData(data){
 	$.ajax(
 		{
 		    type: 'POST',
-		    url: 'savejspdata/',
+		    url: '/savejspdata/',
 		    data: {
+		    	// Need to add parent task and study fields
 		    	'jsPsychData': data
 			},
 		    success: function(){
@@ -22,8 +23,9 @@ function saveSingleTrial(data){
 	$.ajax(
 		{
 		    type: 'POST',
-		    url: 'savejsptrial/',
+		    url: '/savejsptrial/',
 		    data: {
+		    	// Need to add parent task and study fields
 		    	'jsPsychData': data
 			},
 		    success: function(){
