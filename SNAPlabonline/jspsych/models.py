@@ -1,31 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.core.validators import MinLengthValidator
+from users.models import Subject
+from django.core.validators import MinLengthValidator, MinValueValidator
 from .validators import taskjson_validate
 
-
-# Create your models here.
-
-# Model for anonymous subjects (not authenticated users)
-class Subject(models.Model):
-    subjid = models.CharField(
-        max_length=32,
-        primary_key=True,
-        help_text='Enter your ID from Prolific (or) MTurk (or) from SNAPlab',
-        verbose_name='Participant ID')
-    date_added = models.DateTimeField(default=timezone.now)
-    consented = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f'Subject: {self.subjid}'
-
-
-# Just having a DB table for obscure links to manage collisions better
-class ObscureLink(models.Model):
-    link = models.CharField(max_length=32,
-        validators=[MinLengthValidator(16)])
-    used = models.BooleanField(default=False)
 
 
 # Task model for method of constant stimuli
@@ -48,8 +27,8 @@ class Jstask(models.Model):
         )
 
     icon = models.ImageField(upload_to='taskicons/',
-                             help_text='Upload an image that will appear'
-                            ' as an icon for this task')
+        default='taskicons/task_default.png',
+        help_text='Upload an image that will appear as an icon for this task')
 
     trialinfo = models.TextField(
         verbose_name='Trial Info',
@@ -60,7 +39,7 @@ class Jstask(models.Model):
 
     experimenter = models.ForeignKey(User, null=True,
                                      on_delete=models.SET_NULL)
-    task_url = models.CharField(max_length=32, unique=True)
+    task_url = models.SlugField(max_length=32, unique=True)
     date_created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -81,7 +60,7 @@ class Study(models.Model):
         related_name='study_task2_set', null=True)
     experimenter = models.ForeignKey(User, null=True,
                                      on_delete=models.SET_NULL)
-    study_url = models.CharField(max_length=32, unique=True)
+    study_url = models.SlugField(max_length=32, unique=True)
     date_created = models.DateTimeField(default=timezone.now)
 
 
@@ -89,9 +68,9 @@ class OneShotResponse(models.Model):
     parent_task = models.ForeignKey(Jstask, on_delete=models.CASCADE)
     parent_study = models.ForeignKey(Study, on_delete=models.SET_NULL,
         null=True)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE,
-        null=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     data = models.TextField()
+    interactions = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -102,10 +81,11 @@ class SingleTrialResponse(models.Model):
     parent_task = models.ForeignKey(Jstask, on_delete=models.CASCADE)
     parent_study = models.ForeignKey(Study, on_delete=models.SET_NULL,
         null=True)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE,
-        null=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     data = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)
+    trialnum = models.PositiveSmallIntegerField(validators=[MinValueValidator(2)],
+        null=True)
 
     def __str__(self):
         return 'Single Trial Response'

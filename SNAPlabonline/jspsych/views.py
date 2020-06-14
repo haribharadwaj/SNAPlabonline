@@ -6,9 +6,10 @@ from django.contrib.auth.mixins import (LoginRequiredMixin,
 from django.views.generic import (ListView,
     CreateView, UpdateView, DeleteView)
 from .models import (OneShotResponse, SingleTrialResponse,
-    Jstask, ObscureLink, Subject)
+    Jstask)
+from users.models import Subject
+from .lookups import get_task_context, create_task_slug
 from secrets import token_urlsafe
-from .lookups import get_task_context
 
 
 # Create your views here.
@@ -22,18 +23,37 @@ def testview(request):
 def create_OneShotResponse(request):
     if request.is_ajax() and request.method == 'POST':
         dat = request.POST['jsPsychData']
-        resp = OneShotResponse.objects.create(data=dat)
+        subjid = request.POST['subjid']
+        subj = Subject.objects.get(subjid=subjid)
+        task_url = request.POST['task_url']
+        task = Jstask.objects.get(task_url=task_url)
+        interactions = request.POST['interactionData']
+        resp = OneShotResponse(data=dat,
+            subject=subj,
+            parent_task=task,
+            interactions=interactions)
         resp.save()
-        return JsonResponse({'success': True})
+        json_resp = {'success': True, 
+        'message': f'The data for {subjid} was saved'}
+        return JsonResponse(json_resp)
     else:
-        return JsonResponse({'success': False})
+        return JsonResponse({'success': False,
+            'message': 'Sorry! Only POSTs can save data'})
 
 
 @ensure_csrf_cookie
 def create_TrialResponse(request):
     if request.is_ajax() and request.method == 'POST':
         dat = request.POST['jsPsychData']
-        resp = SingleTrialResponse.objects.create(data=dat)
+        subjid = request.POST['subjid']
+        subj = Subject.objects.get(subjid=subjid)
+        task_url = request.POST['task_url']
+        task = Jstask.objects.get(task_url=task_url)
+        trialnum = request.POST['trialnum']
+        resp = SingleTrialResponse(data=dat,
+            subject=subj,
+            parent_task=task,
+            trialnum=trialnum)
         resp.save()
         return JsonResponse({'success': True})
     else:
@@ -41,21 +61,8 @@ def create_TrialResponse(request):
 
 
 
-
-# Creates a cryptopgraphically good URL token unless 
-# an unused one exists already in our database
-def create_link(length=32):
-    obj = ObscureLink.objects.filter(used=False).first()
-    if obj:
-        return obj.link
-    else:
-        link = token_urlsafe(length)
-        ObscureLink.objects.create(link=link, used=True)
-        return link
-
-
 class JstaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    permission_required = 'tasks.add_task'
+    permission_required = 'jspsych.add_jstask'
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = Jstask
     fields = ['name', 'displayname', 'descr', 'icon', 'tasktype', 'trialinfo']
@@ -63,7 +70,7 @@ class JstaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
-        form.instance.task_url = create_link()
+        form.instance.task_url = create_task_slug()
         return super().form_valid(form)
 
 
@@ -112,7 +119,7 @@ def run_task(request, **kwargs):
         # Later we'll redirect to consent/ID request pages etc.
         # Maybe even put this on a decorator like @login_required
         # These will likely be: @consent_required and @subjid_required
-        subject = 'ANON' + token_urlsafe(16)
+        subject = 'ANON' + token_urlsafe(12)
         request.session['subj'] = subject
         Subject.objects.create(subjid=subject)
 

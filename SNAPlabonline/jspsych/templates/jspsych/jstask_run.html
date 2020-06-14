@@ -3,8 +3,14 @@
 {% block script %}
 
     /* create timeline */
-    var subject = '{{ task.subject }}'
+    var subjid = '{{ task.subject }}';
+    var task_url = '{{ task.task_url }}';
+    var trialnum = 0; // This keeps an index only of the nAFC audio trials
     var timeline = [];
+    jsPsych.data.addProperties({
+        subject: subjid,
+        task_url: task_url
+    });
 
     {% for inst in task.instructions %}
         var welcome = {
@@ -22,7 +28,8 @@
           prompt: '{{ trial.prompt }}',
           choices: {{ trial.choices|safe }},
           on_finish: function() {
-            saveSingleTrial(jsPsych.data.getLastTrialData().json())
+            trialnum = trialnum + 1;
+            saveSingleTrial(jsPsych.data.getLastTrialData().json(), subjid, task_url, trialnum);
             }
         };
         timeline.push(jstrial);
@@ -34,7 +41,7 @@
       timeline: timeline,
       show_progress_bar: true,
       on_finish: function() {
-        saveData(jsPsych.data.get().json())
+        saveData(jsPsych.data.get().json(), subjid, task_url, jsPsych.data.getInteractionData().json());
         jsPsych.data.displayData();
       }
     });

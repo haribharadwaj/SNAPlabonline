@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
-	Jstask, OneShotResponse, SingleTrialResponse,
-	ObscureLink
+	Jstask, OneShotResponse,
+	SingleTrialResponse, Study
 	)
 
 # Register your models here.
@@ -9,4 +9,4 @@ from .models import (
 admin.site.register(Jstask)
 admin.site.register(OneShotResponse)
 admin.site.register(SingleTrialResponse)
-admin.site.register(ObscureLink)
+admin.site.register(Study)

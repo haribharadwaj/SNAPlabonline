@@ -117,7 +117,7 @@ jsPsych.plugins["hari-audio-button-response"] = (function() {
   
     //show prompt if there is one
     if (trial.prompt !== null) {
-      html += '<img src="/static/jstask/img/cloudhearinglogo2.png" alt="" width="100"></img>';
+      html += '<img src="/static/jspsych/img/cloudhearinglogo2.png" alt="" width="100"></img>';
       html += '<p>';
       html += trial.prompt;
       html += '</p>';

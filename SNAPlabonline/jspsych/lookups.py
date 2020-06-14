@@ -1,5 +1,34 @@
 import json
-from .models import SingleTrialResponse, Jstask, OneShotResponse
+from secrets import token_urlsafe
+from .models import (
+    SingleTrialResponse,
+    Jstask,
+    OneShotResponse,
+    Study
+    )
+
+
+# Creates a cryptopgraphically good slug unique for task
+def create_task_slug(length=32):
+    while True:
+        # Generate url-safe token
+        link = token_urlsafe(length)
+        # Check if token is already used by a Jstask instance
+        if not Jstask.objects.filter(task_url=link):
+            # If token not in use, then done
+            break
+    return link
+
+# Creates a cryptopgraphically good slug unique for study
+def create_study_slug(length=32):
+    while True:
+        # Generate url-safe token
+        link = token_urlsafe(length)
+        # Check if token is already used by a Jstask instance
+        if not Study.objects.get(task_url=link):
+            # If token not in use, then done
+            break
+    return link
 
 
 def subj_next_trial(task_url, subject):
@@ -99,4 +128,5 @@ def get_task_context(task_url, subject):
             'icon_url': icon_url, 'feedback': feedback,
             'display_name': display_name,
             'task_name': task_name, 'serveraudio': serveraudio,
-            'subject': subject, 'done': done}
+            'subject': subject, 'done': done,
+            'task_url': task_url}
