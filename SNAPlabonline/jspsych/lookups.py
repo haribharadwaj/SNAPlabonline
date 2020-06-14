@@ -95,7 +95,6 @@ def get_task_context(task_url, subject):
     else:
         done = True
 
-
     return {'instructions': instructions, 'trials': trials,
             'icon_url': icon_url, 'feedback': feedback,
             'display_name': display_name,
