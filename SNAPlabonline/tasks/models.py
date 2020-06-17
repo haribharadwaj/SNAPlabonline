@@ -8,6 +8,18 @@ from secrets import token_urlsafe
 
 
 
+# Creates a cryptopgraphically good slug unique for task
+def create_task_slug(length=32):
+    while True:
+        # Generate url-safe token
+        link = token_urlsafe(length)
+        # Check if token is already used by a Jstask instance
+        if not Task.objects.filter(task_url=link):
+            # If token not in use, then done
+            break
+    return link
+
+
 '''
 Model that holds task information.
 A separate model for trials is not created:
@@ -50,7 +62,7 @@ class Task(models.Model):
     experimenter = models.ForeignKey(User, null=True,
                                      on_delete=models.SET_NULL)
     task_url = models.CharField(max_length=32, unique=True,
-        default=token_urlsafe(32))
+        default=create_task_slug)
     date_created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

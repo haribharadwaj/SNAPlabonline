@@ -1,0 +1,17 @@
+{% extends "tasks/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="mt-4">
+    <h2 class="text-center"> Please Enter/Confirm Your {{ context.marketplace }} ID </h2>
+  	<form method="POST" class="content-section">
+  		{% csrf_token %}
+  		<fieldset class="form-group pt-2 pl-2">
+  			{{ context.form | crispy }}
+  		</fieldset>
+  		<fieldset class="form-group">
+  			<button type="Submit" class="btn btn-outline-primary">Continue</button>
+  		</fieldset>
+  	</form>
+  </div>
+{% endblock content %}

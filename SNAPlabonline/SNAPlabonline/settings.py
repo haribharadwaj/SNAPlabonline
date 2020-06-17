@@ -134,6 +134,10 @@ LOGIN_REDIRECT_URL = 'tasks-home'
 
 LOGIN_URL = 'login'
 
+CONSENT_URL = 'consent'
+
+SUBJID_URL = 'subject-entry'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'

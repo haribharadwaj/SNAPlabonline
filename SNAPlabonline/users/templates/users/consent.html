@@ -1,0 +1,45 @@
+{% extends "tasks/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="mt-4">
+    <h2 class="text-center">Welcome and Consent</h2>
+    <div class="pt-2">
+    <p>Thank you for participating in this online research study conducted by the Systems Neuroscience of Auditory Perception Lab (SNAPlab) at Purdue University! We appreciate it!</p>
+    </div>
+
+    <h4>Purpose</h4>
+    <div class="border-top pt-2">
+    <p>The purpose of this research is to help understand how our ears and brains help us interpret sounds. The long-term goals are to help those whose hearing is impaired, and to help improve how machines process sounds. </p>
+    </div>
+
+    <h4>Privacy/Confidentiality</h4>
+    <div class="border-top pt-2">
+    <p>We will <span class="font-weight-bold">never</span> ask for any information that will identify you (e.g., name, email address, full date of birth etc.). We will only request that you provide your {{ context.marketplace }} ID. We may ask for this ID in multiple places, just to be sure. For security and functionality, our website uses “cookies” (small bits of information that we will ask your browser to store).</p>
+    </div>
+
+    <h4>Compensation and Partial Completion</h4>
+    <div class="border-top pt-2">
+    <p>You will be paid for your time as described on {{ context.marketplace }}. Participation is voluntary and you can opt-out of the study at any time. If the study has multiple "parts", you will be compensated for the parts that you complete. Note that each part will have many questions and a part is considered completed when you submit your responses to all questions within that part. </p>
+    </div>
+
+    <h4>Contacting the Researcher</h4>
+    <div class="border-top pt-2">
+    <p>If you encounter any problems with our website or this study, you can contact the researcher anonymously via {{ context.marketplace }}. We will respond to your messages within 3-4 days (usually faster).</p>
+    </div>
+
+    <p>
+      If all of this sounds OK to you, please check the consent checkbox below and enter or confirm your {{ context.marketplace }} ID in the "Participiant ID" column to continue.
+    </p>
+
+  	<form method="POST" class="content-section">
+  		{% csrf_token %}
+  		<fieldset class="form-group">
+  			{{ context.form | crispy }}
+  		</fieldset>
+  		<fieldset class="form-group">
+  			<button type="Submit" class="btn btn-outline-primary">Continue</button>
+  		</fieldset>
+  	</form>
+  </div>
+{% endblock content %}

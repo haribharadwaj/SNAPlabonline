@@ -21,17 +21,16 @@ Privacy/Confidentiality
 We will **never** ask for any information that will identify you (e.g., name, email address, full date of birth etc.). We will only request that you provide your <PARTICIPANT MARKETPLACE> ID. We may ask for this ID in multiple places, just to be sure. For security and functionality, our website uses “cookies” (small bits of information that we will ask your browser to store).
 
 
-
 Payment
 =======
 You will be paid for your time as described on <PARTICIPANT MARKETPLACE>. Further payment breakdowns (if this is a multipart study) will be detailed on the study page that you will be taken to next after you provide consent.
 
 Opting Out
 ==========
-You can opt-out of participating in the study at any time. If this is a multipart study, you will be compensated for the parts that you complete.
+Participation is voluntary and you can opt-out of the study at any time. If this is a multipart study, you will be compensated for the parts that you complete.
 
 Contacting the Researcher
-======================
+=========================
 
 If you encounter any problems with our website or this study, you can contact the researcher anonymously via <PARTICIPANT MARKETPLACE>. We will respond to your messages within 3-4 days (usually faster).
 

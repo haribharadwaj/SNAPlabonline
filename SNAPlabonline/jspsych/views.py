@@ -10,6 +10,7 @@ from .models import (OneShotResponse, SingleTrialResponse,
 from users.models import Subject
 from .lookups import get_task_context, create_task_slug
 from secrets import token_urlsafe
+from users.decorators import subjid_required, consent_required
 
 
 # Create your views here.
@@ -110,18 +111,11 @@ class JstaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return False
 
 
+@subjid_required
+@consent_required
 def run_task(request, **kwargs):
     task_url = kwargs['taskurl']
-    subject = request.session.get('subj', None)
-
-    if subject is None:
-        # For now just do an Anon hash value
-        # Later we'll redirect to consent/ID request pages etc.
-        # Maybe even put this on a decorator like @login_required
-        # These will likely be: @consent_required and @subjid_required
-        subject = 'ANON' + token_urlsafe(12)
-        request.session['subj'] = subject
-        Subject.objects.create(subjid=subject)
+    subject = request.session['subjid']
 
 
     # Gets the info for where the subject left off

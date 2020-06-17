@@ -11,6 +11,8 @@ class Subject(models.Model):
         verbose_name='Participant ID')
     date_added = models.DateTimeField(default=timezone.now)
     consented = models.BooleanField(default=False)
+    latest_visit = models.DateTimeField(default=timezone.now)
+
 
     def __str__(self):
         return f'Subject: {self.subjid}'
