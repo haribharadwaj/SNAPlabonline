@@ -12,6 +12,7 @@ class Subject(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
     consented = models.BooleanField(default=False)
     latest_visit = models.DateTimeField(default=timezone.now)
+    latest_consent = models.DateTimeField(null=True)
 
 
     def __str__(self):

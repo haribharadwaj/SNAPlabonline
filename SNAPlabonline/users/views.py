@@ -56,6 +56,7 @@ def subject_consent(request, *args, **kwargs):
             subjid = request.session.get('subjid', None)
             subj = Subject.objects.get(subjid=subjid)
             subj.consented = consented
+            subj.latest_consent = timezone.now()
             subj.save()
 
             messages.success(request,

@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Indiana/Indianapolis'  # 'UTC'
+TIME_ZONE = 'UTC'  # 'America/Indiana/Indianapolis', but better to stick to UTC
 
 USE_I18N = True
 
