@@ -32,11 +32,12 @@ def consent_required(orig_func_view):
         subjid = request.session.get('subjid')
         subj = Subject.objects.get(subjid=subjid)
         if subj.consented:
-            delta = timezone.now() - subj.latest_consent
-            if delta < 183:
-                return orig_func_view(request, *args, **kwargs)
+            if subj.latest_consent is not None:
+                delta = timezone.now() - subj.latest_consent
+                if delta.days < 183:
+                    return orig_func_view(request, *args, **kwargs)
 
-        # If no consent or consent older than 6 months:
+        # If consent is absent (or) date unmarked (or) older than 6 months:
         # Assume CONSENT_URL view accepts <path:next> parameter 
         return redirect(settings.CONSENT_URL, next=request.path)
     return _wrapper
