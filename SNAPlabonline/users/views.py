@@ -4,9 +4,13 @@ from django.utils import timezone
 from .forms import (
     UserRegisterForm,
     SubjectForm,
-    ConsentForm
+    ConsentForm,
+    SubjectProfileForm
     )
 from .models import Subject
+from .decorators import subjid_required, consent_required
+
+
 
 def register(request):
     if request.method == 'POST':
@@ -58,11 +62,27 @@ def subject_consent(request, *args, **kwargs):
             subj.consented = consented
             subj.latest_consent = timezone.now()
             subj.save()
-
-            messages.success(request,
-                    f'Your consent to has been recorded. Thank you!')
             return redirect(next_url)
     else:
         form = ConsentForm()
     context = {'form': form, 'marketplace': 'Prolific'}
     return render(request, 'users/consent.html', {'context': context})
+
+
+@subjid_required
+@consent_required
+def core_survey(request, *args, **kwargs):
+    next_url = kwargs.get('next', 'tasks-home')
+    subjid = request.session.get('subjid', None)
+    if request.method == 'POST':
+        form = SubjectProfileForm(request.POST)
+        if form.is_valid():
+            subj = Subject.objects.get(subjid=subjid)
+            form.instance.subject = subj
+            form.save()
+            messages.success(request, f'Responses submitted for {subj.subjid}')
+            return redirect(next_url)
+    else:
+        form = SubjectProfileForm()
+    context = {'form': form, 'subjid': subjid}
+    return render(request, 'users/subject_survey.html', {'context': context})

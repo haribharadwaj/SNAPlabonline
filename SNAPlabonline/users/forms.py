@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .models import SubjectProfile
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
@@ -19,3 +20,9 @@ class SubjectForm(forms.Form):
 class ConsentForm(forms.Form):
 	consented = forms.BooleanField(required=True,
 		label='I understand the information presented here and am OK to proceed')
+
+class SubjectProfileForm(forms.ModelForm):
+	class Meta:
+		model = SubjectProfile
+		exclude = ['subject', ]
+

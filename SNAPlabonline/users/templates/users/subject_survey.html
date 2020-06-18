@@ -1,0 +1,18 @@
+{% extends "tasks/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="mt-4">
+    <h2 class="text-center"> About You </h2>
+    <h4>Participant ID: {{ context.subjid }} </h4>
+  	<form method="POST" class="content-section">
+  		{% csrf_token %}
+  		<fieldset class="form-group pt-2 pl-2">
+  			{{ context.form | crispy }}
+  		</fieldset>
+  		<fieldset class="form-group">
+  			<button type="Submit" class="btn btn-outline-primary">Submit</button>
+  		</fieldset>
+  	</form>
+  </div>
+{% endblock content %}
