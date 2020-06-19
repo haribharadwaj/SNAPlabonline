@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 
 # Model for anonymous subjects (not authenticated users)
@@ -19,16 +21,30 @@ class Subject(models.Model):
         return f'Subject: {self.subjid}'
 
 
+def adults_only(age):
+    message = _('Age of 18+ is needed for participation')
+    code = 'invalid'
+    if age < 18:
+        raise ValidationError(message=message, code=code)
+
+
 # Model for storing core hearing profile and demographic info
 class SubjectProfile(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    age = models.PositiveSmallIntegerField(null=True,
-        help_text='Enter your age in years')
+    age = models.PositiveSmallIntegerField(help_text='Enter your age in years',
+        null=True, validators=[adults_only,])
 
     
     # Useful for multiple fields
     OTHER = 'O'
     NOT_REPORTED = 'N'
+    YES = 'Y'
+    NO = 'NO'
+
+    YN_choices = (
+        (YES, 'Yes'),
+        (NO, 'No'),
+        )
 
     
     MALE = 'M'
@@ -48,8 +64,8 @@ class SubjectProfile(models.Model):
     HISPANIC = 'H'
     NOT_HISPANIC = 'NH'
     ethnicity_choices = (
-        (HISPANIC, 'Hispanic'),
-        (NOT_HISPANIC, 'NOT Hispanic'),
+        (HISPANIC, 'Hispanic or Latino'),
+        (NOT_HISPANIC, 'NOT Hispanic or Latino'),
         (NOT_REPORTED, 'Prefer Not To Answer')
         )
 
@@ -72,12 +88,13 @@ class SubjectProfile(models.Model):
         (NOT_REPORTED, 'Prefer Not To Answer'),
         )
 
-    enthnicity = models.CharField(max_length=2, choices=ethnicity_choices,
-        help_text='Select the category that best describes you')
+    ethnicity = models.CharField(max_length=2, choices=ethnicity_choices,
+        help_text='Select the category that best describes you', null=True)
     race = models.CharField(max_length=2, choices=race_choices,
-        help_text='Select the category that best describes you')
+        help_text='Select the category that best describes you', null=True)
 
-    american_english = models.BooleanField(null=True,
+
+    american_english = models.CharField(max_length=2, choices=YN_choices, null=True,
         verbose_name='Are you a native speaker of North American English?',
         help_text='For example, did you grow up in the United States/Canada from a young age (< 10 years)?')
 
@@ -93,9 +110,78 @@ class SubjectProfile(models.Model):
         verbose_name='Are you right or left handed?',
         help_text='Select an option that best describes you')
 
-    neuro = models.BooleanField(null=True, verbose_name='Have you been diagnosed with a neurological disorder?',
-        help_text='Choose yes only if formally diagnosed by  medical doctor')
+    neuro = models.CharField(max_length=2, null=True, choices=YN_choices,
+        verbose_name='Have you been diagnosed with a neurological disorder?',
+        help_text='Choose yes only if formally diagnosed by a certified professional (e.g., medical doctor)')
 
+    hl = models.CharField(max_length=2, null=True, choices=YN_choices,
+        verbose_name='Have you been diagnosed with hearing loss?',
+        help_text='Choose yes only if formally diagnosed by a certified professional (e.g., Audiologist / ENT)')
+
+    hl_dur = models.PositiveSmallIntegerField(null=True,
+        verbose_name='How long have you had hearing loss?',
+        help_text='Number of years since you were first given a hearing-loss diagnosis')
+
+    MILD = 'MI'
+    MODERATE = 'MO'
+    SEVERE = 'SE'
+    PROFOUND = 'PR'
+    SEVERE_TO_PROFOUND = 'SP'
+    UNKNOWN = 'UN'
+    hl_degree_choices = (
+        (MILD, 'Mild Hearing Loss'),
+        (MODERATE, 'Moderate Hearing Loss'),
+        (SEVERE, 'Severe Hearing Loss'),
+        (SEVERE_TO_PROFOUND, 'Severe-to-Profound Hearing Loss'),
+        (PROFOUND, 'Profound Hearing Loss'),
+        (UNKNOWN, 'I Do Not Know'),
+        (OTHER, 'Other')
+        )
+
+    hl_degree = models.CharField(max_length=2, default=UNKNOWN,
+        verbose_name='Degree of hearing loss', choices=hl_degree_choices,
+        help_text='If you happen to know you what degree you were diagnosed with, please enter here')
+
+    hl_write_in = models.CharField(max_length=256,
+        verbose_name='Please write in', null=True,
+        help_text='If you selected "Other" for degree of hearing loss')
+
+    GREEN = 'G'
+    YELLOW = 'Y'
+    RED = 'R'
+    hl_subjective_choices = (
+        (GREEN, 'Is as good is better than or similar to others my age'),
+        (YELLOW, 'I have some trouble when there is background noise (e.g., at restaurants, busy streets)'),
+        (RED, 'I have more trouble than others my age in most situations')
+        )
+
+    hl_subjective = models.CharField(max_length=1, null=True,
+        verbose_name='Hearing Ability', choices=hl_subjective_choices,
+        help_text='How do you think your hearing compares to other people your age?')
+
+
+    T0 = 0
+    T1 = 1
+    T2 = 2
+    T3 = 3
+    T4 = 4
+    tinnitus_choices = (
+        (T0, 'Never'),
+        (T1, 'Occasionally (e.g., when it is quiet at night)'),
+        (T2, 'Persistently (it is noticeable all the time) but it does NOT bother me'),
+        (T3, 'All the time and it is bothersome, but I never sought treatment for it'),
+        (T4, 'I have bothersome tinnitus and I tried to get treatment for it')
+        )
+
+    tinnitus = models.PositiveSmallIntegerField(choices=tinnitus_choices,
+        verbose_name='Have you ever experienced tinnitus?',
+        help_text='Tinnitus is any ringing/buzzing/hissing/other sounds just in your ear'
+        ' when there is nothing near you that is actually producing the sound',
+        default=T0)
+
+    music = models.PositiveSmallIntegerField(verbose_name='Years of music training',
+        default=0,
+        help_text='Please count up the years of instrument practice or formal vocal training you have')
 
 
     
