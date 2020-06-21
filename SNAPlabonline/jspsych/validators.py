@@ -19,6 +19,7 @@ taskschema = """
         "instructions": {"type": "array", "items": {"type": "string"}},
         "feedback": {"type": "boolean"},
         "holdfeedback": {"type": "boolean"},
+        "feedbackdur": {"type": "number"},
         "serveraudio": {"type": "boolean"},
         "randomize": {"type": "boolean"},
         "estimatedduration": {"type": "number"},
@@ -54,7 +55,8 @@ taskschema = """
             "minItems": 1
             }
         },
-    "required": ["instructions", "feedback", "serveraudio", "trials", "isi"],
+    "required": ["instructions", "feedback", "holdfeedback",
+        "randomize", "serveraudio", "trials", "isi"],
     "additionalProperties": false
 }
 """

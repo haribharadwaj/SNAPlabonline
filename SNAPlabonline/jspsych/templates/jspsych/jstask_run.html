@@ -2,7 +2,7 @@
 {% load static %}
 {% block script %}
 
-    // Variables for handling feedback easily
+    /* Script-scope variables for handling feedback easily */
     var correct = false;  // will change dynamically
     var wrong_feedback_stim = '{% static 'jspsych/img/wrong.png' %}';
     var correct_feedback_stim = '{% static 'jspsych/img/correct.png' %}';
@@ -10,9 +10,14 @@
         var feedbackdur = null;
         var choices_feedback = ['Next'];
     {% else %}
+      {% if task.feedbackdur %}
+        var feedbackdur = {{ task.feedbackdur }};
+      {% else %}
         var feedbackdur = 500; // Hardcoding
+      {% endif %}
         var choices_feedback = [];
     {% endif %}
+
 
     /* create timeline */
     var subjid = '{{ task.subject }}';
@@ -44,6 +49,7 @@
             trialnum = trialnum + 1;
             data.trialnum = trialnum;
             var answer = {{ trial.answer }} - 1;
+            data.annot = '{{ trial.annot|escapejs }}';
             if (data.button_pressed == answer){
               correct = true;
               data.correct = true;  // Also write to trial's data object
@@ -87,6 +93,11 @@
       show_progress_bar: true,
       preload_images: images,
       default_iti: {{ task.isi }},
+    {% if task.randomize %}
+      randomize_order: true,
+    {% else %}
+      randomize_order: false,
+    {% endif %}
       on_finish: function() {
         saveData(jsPsych.data.get().json(), subjid, task_url, jsPsych.data.getInteractionData().json());
         jsPsych.data.displayData();
