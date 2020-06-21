@@ -39,10 +39,10 @@ def subject_entry(request, *args, **kwargs):
             subj.save()
             if was_just_created:
                 messages.success(request,
-                    f'Successfully enrolled {subjid} in the study. Welcome!')
+                    f'Received your ID: {subjid}. Welcome!')
             else:
                 messages.success(request,
-                    f'Successfully enrolled {subjid} in the study. Welcome Back!')
+                    f'Received your ID: {subjid}. Welcome Back!')
             return redirect(next_url)
     else:
         subjid = request.session.get('subjid', None)

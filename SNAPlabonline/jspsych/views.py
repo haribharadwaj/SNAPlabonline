@@ -11,6 +11,8 @@ from users.models import Subject
 from .lookups import get_task_context, create_task_slug
 from secrets import token_urlsafe
 from users.decorators import subjid_required, consent_required
+import json  # Needed to parse AJAX posts
+
 
 
 # Create your views here.
@@ -48,13 +50,15 @@ def create_TrialResponse(request):
         dat = request.POST['jsPsychData']
         subjid = request.POST['subjid']
         subj = Subject.objects.get(subjid=subjid)
-        task_url = request.POST['task_url']
+        task_url = request.POST['task_url']  # Retain as string
         task = Jstask.objects.get(task_url=task_url)
-        trialnum = request.POST['trialnum']
+        trialnum = json.loads(request.POST['trialnum'])  # Coerse to number
+        correct = json.loads(request.POST['correct'])  # Coerse to boolean
         resp = SingleTrialResponse(data=dat,
             subject=subj,
             parent_task=task,
-            trialnum=trialnum)
+            trialnum=trialnum,
+            correct=correct)
         resp.save()
         return JsonResponse({'success': True})
     else:
@@ -122,6 +126,8 @@ def run_task(request, **kwargs):
     taskcontext = get_task_context(task_url, subject)    
 
     if taskcontext['done']:
-        return render(request, 'tasks/task_done.html', {'taskcontext': taskcontext})
+        return render(request, 'tasks/task_done.html',
+            {'taskcontext': taskcontext})
 
-    return render(request, 'jspsych/jstask_run.html', {'task': taskcontext})
+    return render(request, 'jspsych/jstask_run.html',
+        {'task': taskcontext})

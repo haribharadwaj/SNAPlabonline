@@ -18,8 +18,11 @@ taskschema = """
         {
         "instructions": {"type": "array", "items": {"type": "string"}},
         "feedback": {"type": "boolean"},
+        "holdfeedback": {"type": "boolean"},
         "serveraudio": {"type": "boolean"},
+        "randomize": {"type": "boolean"},
         "estimatedduration": {"type": "number"},
+        "isi": {"type": "number"},
         "trials": 
             {
             "type": "array", 
@@ -28,7 +31,8 @@ taskschema = """
                 "type": "object",
                 "properties":
                     {
-                    "plugin": {"type": "string", "pattern": "^hari-audio-button-response$"},
+                    "plugin": {"type": "string",
+                        "pattern": "^(hari-audio-button-response|html-button-response)$"},
                     "prompt": {"type": "string"},
                     "choices":
                         {
@@ -50,7 +54,7 @@ taskschema = """
             "minItems": 1
             }
         },
-    "required": ["instructions", "feedback", "serveraudio", "trials"],
+    "required": ["instructions", "feedback", "serveraudio", "trials", "isi"],
     "additionalProperties": false
 }
 """

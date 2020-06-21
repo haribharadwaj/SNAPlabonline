@@ -2,6 +2,18 @@
 {% load static %}
 {% block script %}
 
+    // Variables for handling feedback easily
+    var correct = false;  // will change dynamically
+    var wrong_feedback_stim = '{% static 'jspsych/img/wrong.png' %}';
+    var correct_feedback_stim = '{% static 'jspsych/img/correct.png' %}';
+    {% if task.holdfeedback %}
+        var feedbackdur = null;
+        var choices_feedback = ['Next'];
+    {% else %}
+        var feedbackdur = 500; // Hardcoding
+        var choices_feedback = [];
+    {% endif %}
+
     /* create timeline */
     var subjid = '{{ task.subject }}';
     var task_url = '{{ task.task_url }}';
@@ -11,6 +23,7 @@
         subject: subjid,
         task_url: task_url
     });
+
 
     {% for inst in task.instructions %}
         var welcome = {
@@ -27,19 +40,53 @@
           stimulus: '{% static  'jspsych/wav/'|add:trial.stimulus  %}',
           prompt: '{{ trial.prompt }}',
           choices: {{ trial.choices|safe }},
-          on_finish: function() {
+          on_finish: function(data) {
             trialnum = trialnum + 1;
-            saveSingleTrial(jsPsych.data.getLastTrialData().json(), subjid, task_url, trialnum);
+            data.trialnum = trialnum;
+            var answer = {{ trial.answer }} - 1;
+            if (data.button_pressed == answer){
+              correct = true;
+              data.correct = true;  // Also write to trial's data object
+            } else {
+              correct = false;
+              data.correct = false;
+            }
+            saveSingleTrial(jsPsych.data.getLastTrialData().json(), subjid,
+              task_url, trialnum, correct);
             }
         };
         timeline.push(jstrial);
+
+        {% if task.feedback %}
+          var feedback = {
+            type: 'image-button-response',
+            stimulus: function(){
+              if (correct){
+                return correct_feedback_stim;
+              } else {
+                return wrong_feedback_stim;
+              }
+            },
+            stimulus_height: 200,
+            stimulus_duration: feedbackdur,
+            trial_duration: feedbackdur,
+            choices: choices_feedback
+          };
+
+          timeline.push(feedback);
+
+        {% endif %}
     {% endfor %}
 
+    /* List feedback image files for pre-loading as they are dynamic */
+    images = [wrong_feedback_stim, correct_feedback_stim];
 
     /* start the experiment */
     jsPsych.init({
       timeline: timeline,
       show_progress_bar: true,
+      preload_images: images,
+      default_iti: {{ task.isi }},
       on_finish: function() {
         saveData(jsPsych.data.get().json(), subjid, task_url, jsPsych.data.getInteractionData().json());
         jsPsych.data.displayData();

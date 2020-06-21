@@ -83,9 +83,9 @@ class SingleTrialResponse(models.Model):
         null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     data = models.TextField()
+    correct = models.BooleanField(null=True)
     date_posted = models.DateTimeField(default=timezone.now)
-    trialnum = models.PositiveSmallIntegerField(validators=[MinValueValidator(2)],
-        null=True)
+    trialnum = models.PositiveSmallIntegerField(null=True)
 
     def __str__(self):
         return 'Single Trial Response'

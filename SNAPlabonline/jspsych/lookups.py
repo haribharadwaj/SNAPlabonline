@@ -108,6 +108,9 @@ def get_task_context(task_url, subject):
     # Overall info
     instructions = info['instructions']
     feedback = info['feedback']
+    isi = info['isi']
+    holdfeedback = info['holdfeedback']
+    randomize = info['randomize']
 
     # Get trials info from task
     trials = info['trials']
@@ -129,4 +132,5 @@ def get_task_context(task_url, subject):
             'display_name': display_name,
             'task_name': task_name, 'serveraudio': serveraudio,
             'subject': subject, 'done': done,
-            'task_url': task_url}
+            'task_url': task_url, 'isi': isi,
+            'holdfeedback': holdfeedback, 'randomize': randomize}

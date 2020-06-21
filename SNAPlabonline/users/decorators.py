@@ -10,8 +10,8 @@ from .models import Subject
 def subjid_required(orig_func_view):
     @wraps(orig_func_view)
     def _wrapper(request, *args, **kwargs):
-        print('In SUBJID decorator!')
         subjid = request.session.get('subjid', None)
+        # TO DO: Check logic for logged-in users (usually experimenter)
         if subjid is None:
             # Assume SUBJID_URL view accepts <path:next> parameter 
             return redirect(settings.SUBJID_URL, next=request.path)

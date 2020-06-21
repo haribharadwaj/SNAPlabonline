@@ -11,7 +11,7 @@ function saveData(data, subjid, task_url, interactionData){
 		    	'jsPsychData': data,
 		    	'subjid': subjid,
 		    	'task_url': task_url,
-		    	'interactionData': interactionData
+		    	'interactionData': interactionData,
 			},
 		    success: function(){
 
@@ -21,7 +21,7 @@ function saveData(data, subjid, task_url, interactionData){
 }
 
 // Function to save data from single trial
-function saveSingleTrial(data, subjid, task_url, trialnum){
+function saveSingleTrial(data, subjid, task_url, trialnum, correct){
 // Use jQuery to send an AJAX post request to savejsptrial/
 	$.ajax(
 		{
@@ -32,7 +32,8 @@ function saveSingleTrial(data, subjid, task_url, trialnum){
 		    	'jsPsychData': data,
 		    	'subjid': subjid,
 		    	'task_url': task_url,
-		    	'trialnum': trialnum
+		    	'trialnum': trialnum,
+		    	'correct': correct
 			},
 		    success: function(){
 
@@ -40,3 +41,4 @@ function saveSingleTrial(data, subjid, task_url, trialnum){
 		}
 	);
 }
+
