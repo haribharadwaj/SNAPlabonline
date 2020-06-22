@@ -40,10 +40,15 @@
     {% endfor %}
 
     {% for trial in task.trials %}
+        {% if trial.plugin == 'hari-audio-button-response' %}
         var jstrial = {
           type: '{{ trial.plugin }}',
+          {% if task.serveraudio %}
           stimulus: '{% static  'jspsych/wav/'|add:trial.stimulus  %}',
-          prompt: '{{ trial.prompt }}',
+          {% else %}
+          stimulus: '{{ trial.stimulus|safe }}',
+          {% endif %}
+          prompt: '{{ trial.prompt|safe }}',
           choices: {{ trial.choices|safe }},
           on_finish: function(data) {
             trialnum = trialnum + 1;
@@ -63,24 +68,32 @@
         };
         timeline.push(jstrial);
 
-        {% if task.feedback %}
-          var feedback = {
-            type: 'image-button-response',
-            stimulus: function(){
-              if (correct){
-                return correct_feedback_stim;
-              } else {
-                return wrong_feedback_stim;
-              }
-            },
-            stimulus_height: 200,
-            stimulus_duration: feedbackdur,
-            trial_duration: feedbackdur,
-            choices: choices_feedback
-          };
+          {% if task.feedback %}
+            var feedback = {
+              type: 'image-button-response',
+              stimulus: function(){
+                if (correct){
+                  return correct_feedback_stim;
+                } else {
+                  return wrong_feedback_stim;
+                }
+              },
+              stimulus_height: 200,
+              stimulus_duration: feedbackdur,
+              trial_duration: feedbackdur,
+              choices: choices_feedback
+            };
 
-          timeline.push(feedback);
+            timeline.push(feedback);
 
+          {% endif %}
+        {% else %}
+        var jstrial = {
+          type: '{{ trial.plugin }}',
+          stimulus: '<p>{{ trial.prompt|safe }}</p>',
+          choices: {{ trial.choices|safe }}
+        };
+        timeline.push(jstrial);
         {% endif %}
     {% endfor %}
 
@@ -93,6 +106,7 @@
       show_progress_bar: true,
       preload_images: images,
       default_iti: {{ task.isi }},
+      use_webaudio: false,
     {% if task.randomize %}
       randomize_order: true,
     {% else %}

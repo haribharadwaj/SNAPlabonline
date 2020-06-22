@@ -33,7 +33,7 @@ taskschema = """
                 "properties":
                     {
                     "plugin": {"type": "string",
-                        "pattern": "^(hari-audio-button-response|html-button-response)$"},
+                        "enum": ["hari-audio-button-response", "html-button-response"]},
                     "prompt": {"type": "string"},
                     "choices":
                         {
@@ -49,7 +49,15 @@ taskschema = """
                     "answer": {"type": "integer", "minimum": 1},
                     "annot": {"type": "object"}
                     },
-                "required": ["plugin", "prompt", "stimulus", "answer"],
+                "if": {
+                "properties": {"plugin": {"const": "hari-audio-button-response"}}
+                },
+                "then": {
+                "required": ["plugin", "prompt", "stimulus", "answer"]
+                },
+                "else": {
+                "required": ["plugin", "prompt"]
+                },
                 "additionalProperties": false
                 },
             "minItems": 1
