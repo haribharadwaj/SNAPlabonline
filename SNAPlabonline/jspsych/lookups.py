@@ -115,9 +115,6 @@ def get_task_context(task_url, subject):
     # Get trials info from task
     trials = info['trials']
 
-    # Get icon from task
-    icon_url = task.icon.url
-
     # Check if audio is external
     serveraudio = info['serveraudio']
 
@@ -128,8 +125,7 @@ def get_task_context(task_url, subject):
         done = True
 
     return {'instructions': instructions, 'trials': trials,
-            'icon_url': icon_url, 'feedback': feedback,
-            'display_name': display_name,
+            'feedback': feedback, 'display_name': display_name,
             'task_name': task_name, 'serveraudio': serveraudio,
             'subject': subject, 'done': done,
             'task_url': task_url, 'isi': isi,
