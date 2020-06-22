@@ -21,21 +21,11 @@ class Jstask(models.Model):
     descr = models.CharField(max_length=255, default='',
         help_text='Please provide a one sentence description',
         verbose_name='Short description')
-    TASK_TYPES = (
-        (1, 'constant-fixed'),
-        (2, 'constant-randomized')
-        )
-
-    icon = models.ImageField(upload_to='taskicons/',
-        default='taskicons/task_default.png',
-        help_text='Upload an image that will appear as an icon for this task')
 
     trialinfo = models.TextField(
         verbose_name='Trial Info',
         help_text='Paste the contents of JSON file with task information',
         validators=[taskjson_validate])
-
-    tasktype = models.SmallIntegerField(choices=TASK_TYPES, null=True)
 
     experimenter = models.ForeignKey(User, null=True,
                                      on_delete=models.SET_NULL)
@@ -44,6 +34,37 @@ class Jstask(models.Model):
 
     def __str__(self):
         return f'Task: {self.displayname}'
+
+
+
+# Task model for method of constant stimuli
+class Jsrawtask(models.Model):
+    name = models.CharField(
+        max_length=24,
+        primary_key=True,
+        help_text='Short codename for task (no spaces)',
+        verbose_name='Name')
+    displayname = models.CharField(max_length=80,
+        help_text='Experimenter/Subject-friendly title or name for the task',
+        default='',
+        verbose_name= 'Display Name')
+    descr = models.CharField(max_length=255, default='',
+        help_text='Please provide a one sentence description',
+        verbose_name='Short description')
+
+    taskscript = models.TextField(
+        verbose_name='Task Script',
+        help_text='Paste the jsPsych code here, just the javascript part',
+        validators=[taskjson_validate])
+
+    experimenter = models.ForeignKey(User, null=True,
+                                     on_delete=models.SET_NULL)
+    task_url = models.SlugField(max_length=32, unique=True)
+    date_created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f'Task: {self.displayname}'
+
 
 
 # Model for a study session that we can direct participants to
