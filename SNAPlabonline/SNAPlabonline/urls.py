@@ -22,21 +22,21 @@ from tasks import views as task_views
 from jspsych import views as jspsych_views
 from users import views as users_views
 from jspsych.views import (
-    JstaskListView,
-    JstaskCreateView,
-    JstaskUpdateView,
-    JstaskDeleteView
+    ConstStimTaskListView,
+    ConstStimTaskCreateView,
+    ConstStimTaskUpdateView,
+    ConstStimTaskDeleteView
     )
 
 urlpatterns = [
 	path('', task_views.index, name='tasks-home'),
 	# path('createtask/', task_views.create_task, name='create-task'),
-    path('task/new/', JstaskCreateView.as_view(), name='create-task'),
-    path('task/<pk>/update/', JstaskUpdateView.as_view(), name='update-task'),
+    path('task/new/', ConstStimTaskCreateView.as_view(), name='create-task'),
+    path('task/<pk>/update/', ConstStimTaskUpdateView.as_view(), name='update-task'),
 	path('task/run/<taskurl>/', jspsych_views.run_task, name='run-task'),
     path('task/results/<taskurl>/', jspsych_views.download_task_results, name='download-results'),
-    path('mytasks/', JstaskListView.as_view(), name='mytasks'),
-    path('task/<pk>/delete/', JstaskDeleteView.as_view(), name='delete-task'),
+    path('mytasks/', ConstStimTaskListView.as_view(), name='mytasks'),
+    path('task/<pk>/delete/', ConstStimTaskDeleteView.as_view(), name='delete-task'),
     path('labmembers/', task_views.for_lab_members, name='tasks-labmembers'),
 	path('register/', users_views.register, name='users-register'),
     path('newsubject/<path:next>/', users_views.subject_entry, name='subject-entry'),
