@@ -1,14 +1,18 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.mixins import (LoginRequiredMixin,
     PermissionRequiredMixin, UserPassesTestMixin)
+from django.contrib.auth.decorators import (login_required,
+    permission_required)
+from django.core.exceptions import PermissionDenied
 from django.views.generic import (ListView,
     CreateView, UpdateView, DeleteView)
 from .models import (OneShotResponse, SingleTrialResponse,
     Jstask)
 from users.models import Subject
-from .lookups import get_task_context, create_task_slug
+from .lookups import (get_task_context, create_task_slug,
+    get_task_results)
 from secrets import token_urlsafe
 from users.decorators import subjid_required, consent_required
 import json  # Needed to parse AJAX posts
@@ -70,7 +74,7 @@ class JstaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = 'jspsych.add_jstask'
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = Jstask
-    fields = ['name', 'displayname', 'descr', 'icon', 'tasktype', 'trialinfo']
+    fields = ['name', 'displayname', 'descr', 'trialinfo']
     success_url = '/mytasks/'
 
     def form_valid(self, form):
@@ -88,7 +92,7 @@ class JstaskListView(LoginRequiredMixin, ListView):
 
 class JstaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Jstask
-    fields = ['name', 'displayname', 'descr', 'icon', 'trialinfo']
+    fields = ['name', 'displayname', 'descr', 'trialinfo']
     success_url = '/mytasks/'
 
     def form_valid(self, form):
@@ -131,3 +135,24 @@ def run_task(request, **kwargs):
 
     return render(request, 'jspsych/jstask_run.html',
         {'task': taskcontext})
+
+
+
+@login_required
+@permission_required('tasks.add_task', raise_exception=PermissionDenied)
+def download_task_results(request, **kwargs):
+    task_url = kwargs['taskurl']
+    experimenter = request.user
+    results_dict, filename = get_task_results(task_url, experimenter)
+
+    if results_dict is not None:
+        response = HttpResponse(content_type='application/json')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        json.dump(results_dict, response, indent=4, sort_keys=True)
+        return response
+    else:
+        forbidden_message = ('Looks like you are requesting results for '
+            'a task that you did not create ...')
+        raise PermissionDenied(forbidden_message)
+
+

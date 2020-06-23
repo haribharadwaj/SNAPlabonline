@@ -130,3 +130,19 @@ def get_task_context(task_url, subject):
             'subject': subject, 'done': done,
             'task_url': task_url, 'isi': isi,
             'holdfeedback': holdfeedback, 'randomize': randomize}
+
+
+def get_task_results(task_url, experimenter):
+    task = Jstask.objects.get(task_url=task_url)
+    if task.experimenter != experimenter:
+        return (None, None)
+    else:
+        resps = OneShotResponse.objects.filter(parent_task=task)
+        info = []
+        for resp in resps:
+            resp_info = json.loads(resp.data)
+            info += [resp_info]
+        fname = task.name + '_' + experimenter.username + '_results.json'
+        return (info, fname)
+
+

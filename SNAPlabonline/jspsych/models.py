@@ -7,8 +7,8 @@ from .validators import taskjson_validate
 
 
 
-# Task model for method of constant stimuli
-class Jstask(models.Model):
+# Base task model for storing most fields shared by all task types
+class BaseTask(models.Model):
     name = models.CharField(
         max_length=24,
         primary_key=True,
@@ -21,51 +21,28 @@ class Jstask(models.Model):
     descr = models.CharField(max_length=255, default='',
         help_text='Please provide a one sentence description',
         verbose_name='Short description')
+    experimenter = models.ForeignKey(User, null=True,
+                                     on_delete=models.SET_NULL)
+    task_url = models.SlugField(max_length=32, unique=True)
+    date_created = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f'Task: {self.displayname}'
+
+
+# Task model for method of constant stimuli
+class Jstask(BaseTask):
     trialinfo = models.TextField(
         verbose_name='Trial Info',
         help_text='Paste the contents of JSON file with task information',
         validators=[taskjson_validate])
 
-    experimenter = models.ForeignKey(User, null=True,
-                                     on_delete=models.SET_NULL)
-    task_url = models.SlugField(max_length=32, unique=True)
-    date_created = models.DateTimeField(default=timezone.now)
 
-    def __str__(self):
-        return f'Task: {self.displayname}'
-
-
-
-# Task model for method of constant stimuli
-class Jsrawtask(models.Model):
-    name = models.CharField(
-        max_length=24,
-        primary_key=True,
-        help_text='Short codename for task (no spaces)',
-        verbose_name='Name')
-    displayname = models.CharField(max_length=80,
-        help_text='Experimenter/Subject-friendly title or name for the task',
-        default='',
-        verbose_name= 'Display Name')
-    descr = models.CharField(max_length=255, default='',
-        help_text='Please provide a one sentence description',
-        verbose_name='Short description')
-
+# Task model for arbitrary jspsych script
+class Jsrawtask(BaseTask):
     taskscript = models.TextField(
         verbose_name='Task Script',
-        help_text='Paste the jsPsych code here, just the javascript part',
-        validators=[taskjson_validate])
-
-    experimenter = models.ForeignKey(User, null=True,
-                                     on_delete=models.SET_NULL)
-    task_url = models.SlugField(max_length=32, unique=True)
-    date_created = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f'Task: {self.displayname}'
-
-
+        help_text='Paste the jsPsych code here, just the javascript part')
 
 # Model for a study session that we can direct participants to
 # Studies can have up to 8 different tasks
