@@ -1,14 +1,13 @@
-from django.conf import settings
+from django.forms import ModelForm
 from django.core.exceptions import ValidationError
+from .models import Task
 import json
 from jsonschema import (
     validate, 
     exceptions as jsonschema_exceptions
 )
 
-
-
-taskschema = """
+const_stim_schema = """
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "jsPsych Task schema",
@@ -70,8 +69,8 @@ taskschema = """
 """
 
 
-def taskjson_validate(value,
-    taskschema=taskschema):
+def conststim_json_validate(value,
+    taskschema=const_stim_schema):
  
     # taskinfo is a TextField inttot which JSON string is pasted
     try:
@@ -89,3 +88,22 @@ def taskjson_validate(value,
         raise ValidationError(prefix + e.message,
             params={'value': value})
     return status
+
+
+
+class TaskForm(ModelForm):
+    class Meta:
+        model = Task
+        fields = ['name', 'displayname', 'descr', 'task_type', 'trialinfo']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        task_type = cleaned_data.get('task_type')
+        trialinfo = cleaned_data.get('trialinfo')
+        if task_type == self.instance.CONST_STIM:
+            conststim_json_validate(trialinfo)
+        else:
+            valerr = ValidationError('Only "Constant Stimulus n-AFC" supported for now',
+                code='invalid')
+            self.add_error('task_type', valerr)
+            self.add_error('trialinfo', valerr)

@@ -59,8 +59,11 @@ class Task(models.Model):
 
     tasktype = models.SmallIntegerField(choices=TASK_TYPES, null=True)
 
+    # Setting related_name because there is Task model in jspsych
+    # with foreignkey to User
     experimenter = models.ForeignKey(User, null=True,
-                                     on_delete=models.SET_NULL)
+                                     on_delete=models.SET_NULL,
+                                     related_name='serverside_task_set')
     task_url = models.CharField(max_length=32, unique=True,
         default=create_task_slug)
     date_created = models.DateTimeField(default=timezone.now)

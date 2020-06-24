@@ -2,7 +2,7 @@ import json
 from secrets import token_urlsafe
 from .models import (
     SingleTrialResponse,
-    ConstStimTask,
+    Task,
     OneShotResponse,
     Study
     )
@@ -13,8 +13,8 @@ def create_task_slug(length=32):
     while True:
         # Generate url-safe token
         link = token_urlsafe(length)
-        # Check if token is already used by a ConstStimTask instance
-        if not ConstStimTask.objects.filter(task_url=link):
+        # Check if token is already used by a Task instance
+        if not Task.objects.filter(task_url=link):
             # If token not in use, then done
             break
     return link
@@ -24,7 +24,7 @@ def create_study_slug(length=32):
     while True:
         # Generate url-safe token
         link = token_urlsafe(length)
-        # Check if token is already used by a ConstStimTask instance
+        # Check if token is already used by a Task instance
         if not Study.objects.get(task_url=link):
             # If token not in use, then done
             break
@@ -37,7 +37,7 @@ def subj_next_trial(task_url, subject):
     # If task completed by subject, returns None
 
     resps_subject = SingleTrialResponse.objects.filter(subject_id=subject)
-    task = ConstStimTask.objects.get(task_url=task_url)
+    task = Task.objects.get(task_url=task_url)
     resps_subject_task = resps_subject.filter(parent_task_id=task.pk)
 
     display_name = task.displayname
@@ -99,7 +99,7 @@ def subj_next_trial(task_url, subject):
 
 
 def get_task_context(task_url, subject):
-    task = ConstStimTask.objects.get(task_url=task_url)
+    task = Task.objects.get(task_url=task_url)
     display_name = task.displayname
     task_name = task.name
 
@@ -133,7 +133,7 @@ def get_task_context(task_url, subject):
 
 
 def get_task_results(task_url, experimenter):
-    task = ConstStimTask.objects.get(task_url=task_url)
+    task = Task.objects.get(task_url=task_url)
     if task.experimenter != experimenter:
         return (None, None)
     else:

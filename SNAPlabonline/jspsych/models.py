@@ -2,16 +2,11 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from users.models import Subject
-from django.core.validators import MinLengthValidator, MinValueValidator
-from .validators import taskjson_validate
 
 
-
-# Base task model for storing most fields shared by all task types
-# The idea is to multi-table inheritance, so this will create dbtable
-# However, objects of should NOT be created in order for child lookup
-# This makes possible one response and study model regardless of task type
-class BaseTask(models.Model):
+# Task model for generic task.
+# Behavior needs to be different based on task_type
+class Task(models.Model):
     name = models.CharField(
         max_length=24,
         primary_key=True,
@@ -43,35 +38,13 @@ class BaseTask(models.Model):
     task_type = models.PositiveSmallIntegerField(choices=choices_type,
         default=CONST_STIM)
 
+    trialinfo = models.TextField(
+        verbose_name='Trial Info',
+        help_text='Paste the contents of JSON file or script with task information')
+
     def __str__(self):
         return f'Task: {self.displayname}'
 
-
-# Task model for method of constant stimuli
-class ConstStimTask(BaseTask):
-    trialinfo = models.TextField(
-        verbose_name='Trial Info',
-        help_text='Paste the contents of JSON file with task information',
-        validators=[taskjson_validate])
-
-
-# Task model for arbitrary jspsych script
-class RawTask(BaseTask):
-    taskscript = models.TextField(
-        verbose_name='Task Script',
-        help_text='Paste the jsPsych code here, just the javascript part')
-
-
-class AdaptiveTask(BaseTask):
-    tasksinfo = models.TextField(
-        verbose_name='Task Details',
-        help_text='Paste the contents of JSON file for adaptive n-AFC task')
-
-
-class OpenSpeechTask(BaseTask):
-    tasksinfo = models.TextField(
-        verbose_name='Task Details',
-        help_text='Paste the contents of JSON file for adaptive 3-AFC task')
 
 
 # Model for a study session that we can direct participants to
@@ -83,29 +56,29 @@ class Study(models.Model):
     welcome_message = models.TextField(default='',
         help_text=('A welcome screen message suitable for display '
             'in the landing page for your subjects'))
-    task1 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task1 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task1_set', null=True)
-    task2 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task2 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task2_set', null=True)
-    task3 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task3 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task3_set', null=True)
-    task4 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task4 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task4_set', null=True)
-    task5 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task5 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task5_set', null=True)
-    task6 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task6 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task6_set', null=True)
-    task7 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task7 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task7_set', null=True)
-    task8 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task8 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task8_set', null=True)
-    task9 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task9 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task9_set', null=True)
-    task10 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task10 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task10_set', null=True)
-    task11 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task11 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task11_set', null=True)
-    task12 = models.ForeignKey(BaseTask, on_delete=models.SET_NULL,
+    task12 = models.ForeignKey(Task, on_delete=models.SET_NULL,
         related_name='study_task12_set', null=True)
 
     experimenter = models.ForeignKey(User, null=True,
@@ -115,7 +88,7 @@ class Study(models.Model):
 
 
 class OneShotResponse(models.Model):
-    parent_task = models.ForeignKey(BaseTask, on_delete=models.CASCADE)
+    parent_task = models.ForeignKey(Task, on_delete=models.CASCADE)
     parent_study = models.ForeignKey(Study, on_delete=models.SET_NULL,
         null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
@@ -128,7 +101,7 @@ class OneShotResponse(models.Model):
 
 
 class SingleTrialResponse(models.Model):
-    parent_task = models.ForeignKey(BaseTask, on_delete=models.CASCADE)
+    parent_task = models.ForeignKey(Task, on_delete=models.CASCADE)
     parent_study = models.ForeignKey(Study, on_delete=models.SET_NULL,
         null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)

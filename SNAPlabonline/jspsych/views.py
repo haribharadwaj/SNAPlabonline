@@ -9,13 +9,13 @@ from django.core.exceptions import PermissionDenied
 from django.views.generic import (ListView,
     CreateView, UpdateView, DeleteView)
 from .models import (OneShotResponse, SingleTrialResponse,
-    ConstStimTask)
+    Task)
 from users.models import Subject
 from .lookups import (get_task_context, create_task_slug,
     get_task_results)
-from secrets import token_urlsafe
 from users.decorators import subjid_required, consent_required
 import json  # Needed to parse AJAX posts
+from .forms import TaskForm
 
 
 
@@ -33,7 +33,7 @@ def create_OneShotResponse(request):
         subjid = request.POST['subjid']
         subj = Subject.objects.get(subjid=subjid)
         task_url = request.POST['task_url']
-        task = ConstStimTask.objects.get(task_url=task_url)
+        task = Task.objects.get(task_url=task_url)
         interactions = request.POST['interactionData']
         resp = OneShotResponse(data=dat,
             subject=subj,
@@ -55,7 +55,7 @@ def create_TrialResponse(request):
         subjid = request.POST['subjid']
         subj = Subject.objects.get(subjid=subjid)
         task_url = request.POST['task_url']  # Retain as string
-        task = ConstStimTask.objects.get(task_url=task_url)
+        task = Task.objects.get(task_url=task_url)
         trialnum = json.loads(request.POST['trialnum'])  # Coerse to number
         correct = json.loads(request.POST['correct'])  # Coerse to boolean
         resp = SingleTrialResponse(data=dat,
@@ -70,12 +70,11 @@ def create_TrialResponse(request):
 
 
 
-class ConstStimTaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    template_name = 'jspsych/task_form.html'
+class TaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = 'jspsych.add_jstask'
     permission_denied_message = 'Experimenter credentials needed to create tasks'
-    model = ConstStimTask
-    fields = ['name', 'displayname', 'descr', 'trialinfo']
+    model = Task
+    form_class = TaskForm
     success_url = '/mytasks/'
 
     def form_valid(self, form):
@@ -84,17 +83,16 @@ class ConstStimTaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, Creat
         return super().form_valid(form)
 
 
-class ConstStimTaskListView(LoginRequiredMixin, ListView):
+class TaskListView(LoginRequiredMixin, ListView):
     template_name = 'jspsych/task_list.html'
     def get_queryset(self):
         # Return only tasks of logged in experimenter from new to old
-        return ConstStimTask.objects.filter(experimenter=self.request.user).order_by('-date_created')
+        return Task.objects.filter(experimenter=self.request.user).order_by('-date_created')
 
 
-class ConstStimTaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = ConstStimTask
-    template_name = 'jspsych/task_form.html'
-    fields = ['name', 'displayname', 'descr', 'trialinfo']
+class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Task
+    form_class = TaskForm
     success_url = '/mytasks/'
 
     def form_valid(self, form):
@@ -109,8 +107,8 @@ class ConstStimTaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateVie
             return False
 
 
-class ConstStimTaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = ConstStimTask
+class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Task
     template_name = 'jspsych/task_confirm_delete.html'
     success_url = '/mytasks/'
 
