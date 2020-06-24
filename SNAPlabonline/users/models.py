@@ -112,14 +112,16 @@ class SubjectProfile(models.Model):
 
     neuro = models.CharField(max_length=2, null=True, choices=YN_choices,
         verbose_name='Have you been diagnosed with a neurological disorder?',
-        help_text='Choose yes only if formally diagnosed by a certified professional (e.g., medical doctor)')
+        help_text=('Choose yes only if formally diagnosed by a certified professional '
+            '(e.g., medical doctor)'))
 
     hl = models.CharField(max_length=2, null=True, choices=YN_choices,
         verbose_name='Have you been diagnosed with hearing loss?',
         help_text='Choose yes only if formally diagnosed by a certified professional (e.g., Audiologist / ENT)')
 
-    hl_dur = models.PositiveSmallIntegerField(null=True,
-        verbose_name='How long have you had hearing loss?',
+    hl_dur = models.PositiveSmallIntegerField(null=True, blank=True,
+        verbose_name=('If you selected "Yes" to being diagnosed with hearing loss, '
+            'how long would you say you have had hearing loss?'),
         help_text='Number of years since you were first given a hearing-loss diagnosis')
 
     MILD = 'MI'
@@ -138,26 +140,30 @@ class SubjectProfile(models.Model):
         (OTHER, 'Other')
         )
 
-    hl_degree = models.CharField(max_length=2, default=UNKNOWN,
-        verbose_name='Degree of hearing loss', choices=hl_degree_choices,
-        help_text='If you happen to know you what degree you were diagnosed with, please enter here')
+    hl_degree = models.CharField(max_length=2, default=UNKNOWN, blank=True,
+        verbose_name=('If you selected "Yes" to being diagnosed with hearing loss, '
+            'what is the degree of your hearing loss'), choices=hl_degree_choices,
+        help_text='If you happen to know your most recent diagnosis, please enter here')
 
-    hl_write_in = models.CharField(max_length=256,
-        verbose_name='Please write in', null=True,
-        help_text='If you selected "Other" for degree of hearing loss')
+    hl_write_in = models.CharField(max_length=256, blank=True,
+        verbose_name=('If you selected "Other" for degree of hearing loss, '
+            'please provide further information'), null=True,
+        help_text='In your own words, please provide any information')
 
     GREEN = 'G'
     YELLOW = 'Y'
     RED = 'R'
     hl_subjective_choices = (
-        (GREEN, 'Is as good is better than or similar to others my age'),
-        (YELLOW, 'I have some trouble when there is background noise (e.g., at restaurants, busy streets)'),
+        (GREEN, 'Is similar to or better than or others my age'),
+        (YELLOW, ('I have more trouble than others when there is background noise '
+            '(e.g., at restaurants, busy streets)')),
         (RED, 'I have more trouble than others my age in most situations')
         )
 
     hl_subjective = models.CharField(max_length=1, null=True,
         verbose_name='Hearing Ability', choices=hl_subjective_choices,
-        help_text='How do you think your hearing compares to other people your age?')
+        help_text=('In your own assessment, how do you think your hearing '
+            'compares to other people your age?'))
 
 
     T0 = 0
@@ -181,9 +187,8 @@ class SubjectProfile(models.Model):
 
     music = models.PositiveSmallIntegerField(verbose_name='Years of music training',
         default=0,
-        help_text='Please count up the years of instrument practice or formal vocal training you have')
+        help_text=('Please count up the years of '
+            'instrument practice or formal vocal training you have'))
 
-
-    
-
-
+    def __str__(self):
+        return f'Subject Profile: {self.subject.subjid}'

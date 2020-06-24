@@ -7,8 +7,57 @@
     <h4>Participant ID: {{ context.subjid }} </h4>
   	<form method="POST" class="content-section">
   		{% csrf_token %}
-  		<fieldset class="form-group pt-2 pl-2">
-  			{{ context.form | crispy }}
+  		<fieldset class="form-group pt-2 pl-2 pr-2">
+        <div class="form-row">
+          <div class="col-md mb-2">
+            {{ context.form.age|as_crispy_field }}
+          </div>
+          <div class="col-md mb-2">
+            {{ context.form.gender|as_crispy_field }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <p class="ml-1 mt-2"> Our federal funding agencies (e.g., National Institutes of Health) request us to report the percentage of study participants in each of their race/etthnicity categories. This is optional, so feel free to choose "Prefer Not To Answer": </p>
+          <div class="form-group col-md mb-2">
+            {{ context.form.ethnicity|as_crispy_field }}
+          </div>
+          <div class="form-group col-md mb-2">
+            {{ context.form.race|as_crispy_field }}
+          </div>
+        </div>
+
+          <div class="mt-4 mb-4">
+            {{ context.form.american_english|as_crispy_field }}
+            {{ context.form.right_handed|as_crispy_field }}
+          </div>
+
+
+        <p> Because we study how our ears and brain work together to help us process and interpret sounds, knowing your neurological status and hearing status will help us interpret your responses more accurately: </p>
+
+        {{ context.form.neuro|as_crispy_field }}
+
+        {{ context.form.hl|as_crispy_field }}
+
+        {{ context.form.hl_dur|as_crispy_field }}
+
+        <div class="form-row mb-4">
+          <div class="col-md mb-2">
+            {{ context.form.hl_degree|as_crispy_field }}
+          </div>
+          <div class="col-md mb-2">
+            {{ context.form.hl_write_in|as_crispy_field }}
+          </div>
+        </div>
+        
+
+        {{ context.form.hl_subjective|as_crispy_field }}
+
+        {{ context.form.tinnitus|as_crispy_field }}
+
+        {{ context.form.music|as_crispy_field }}
+
+
   		</fieldset>
   		<fieldset class="form-group">
   			<button type="Submit" class="btn btn-outline-primary">Submit</button>
@@ -16,3 +65,5 @@
   	</form>
   </div>
 {% endblock content %}
+
+
