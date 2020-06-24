@@ -60,6 +60,44 @@ const_stim_schema = """
                 "additionalProperties": false
                 },
             "minItems": 1
+            },
+        "volume": 
+            {
+            "type": "array", 
+            "items":
+                {
+                "type": "object",
+                "properties":
+                    {
+                    "plugin": {"type": "string",
+                        "enum": ["hari-audio-button-response", "html-button-response"]},
+                    "prompt": {"type": "string"},
+                    "choices":
+                        {
+                        "type": "array",
+                        "items":
+                            {
+                            "type": "string",
+                            "minItems": 1,
+                            "uniqueItems": true
+                            }
+                        },
+                    "stimulus": {"type": "string", "pattern": "(wav)$"},
+                    "answer": {"type": "integer", "minimum": 1},
+                    "annot": {"type": "object"}
+                    },
+                "if": {
+                "properties": {"plugin": {"const": "hari-audio-button-response"}}
+                },
+                "then": {
+                "required": ["plugin", "prompt", "stimulus"]
+                },
+                "else": {
+                "required": ["plugin", "prompt"]
+                },
+                "additionalProperties": false
+                },
+            "minItems": 1
             }
         },
     "required": ["instructions", "feedback", "holdfeedback",

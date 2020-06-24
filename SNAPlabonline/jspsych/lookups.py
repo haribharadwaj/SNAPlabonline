@@ -114,6 +114,7 @@ def get_task_context(task_url, subject):
 
     # Get trials info from task
     trials = info['trials']
+    voltrials = info['volume']
 
     # Check if audio is external
     serveraudio = info['serveraudio']
@@ -127,7 +128,7 @@ def get_task_context(task_url, subject):
     return {'instructions': instructions, 'trials': trials,
             'feedback': feedback, 'display_name': display_name,
             'task_name': task_name, 'serveraudio': serveraudio,
-            'subject': subject, 'done': done,
+            'subject': subject, 'done': done, 'voltrials': voltrials,
             'task_url': task_url, 'isi': isi,
             'holdfeedback': holdfeedback, 'randomize': randomize}
 

@@ -29,16 +29,47 @@
         task_url: task_url
     });
 
+    /* Volume adjustment phase */
+    {% for trial in task.voltrials %}
+      {% if trial.plugin == 'hari-audio-button-response' %}
+        var jstrial = {
+          type: '{{ trial.plugin }}',
+          {% if task.serveraudio %}
+          stimulus: '{% static  'jspsych/wav/'|add:trial.stimulus  %}',
+          {% else %}
+          stimulus: '{{ trial.stimulus|safe }}',
+          {% endif %}
+          prompt: '{{ trial.prompt|safe }}',
+          choices: {{ trial.choices|safe }}
+        };
+        timeline.push(jstrial);
+        {% else %}
+        var jstrial = {
+          type: '{{ trial.plugin }}',
+          stimulus: '<p>{{ trial.prompt|safe }}</p>',
+          choices: {{ trial.choices|safe }}
+        };
+        timeline.push(jstrial);
+        {% endif %}
+    {% endfor %}
 
+
+    /* Instruction Phase -- REMOVE ONE */
     {% for inst in task.instructions %}
         var welcome = {
           type: 'html-button-response',
           choices: ['Continue'],
           stimulus: '{{ inst }}'
         };
-    timeline.push(welcome);
     {% endfor %}
+    var welcome = {
+    type: 'instructions',
+    pages: {{ task.instructions|safe }},
+    show_clickable_nav: true
+    }
+    timeline.push(welcome);
 
+    /* Actual trials */
     {% for trial in task.trials %}
         {% if trial.plugin == 'hari-audio-button-response' %}
         var jstrial = {

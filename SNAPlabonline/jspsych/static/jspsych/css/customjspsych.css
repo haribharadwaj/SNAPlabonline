@@ -16,7 +16,11 @@
  }
 
  .jspsych-display-element:focus {
-   outline: none;
+   /*outline: none; */
+   outline-color: black;
+   outline-style: solid;
+   outline-offset: -4px;
+   outline-width: medium;
  }
 
  .jspsych-content-wrapper {
@@ -43,7 +47,7 @@
 /* fonts and type */
 
 .jspsych-display-element {
-  font-family: 'Open Sans', 'Arial', sans-serif;
+  /* font-family: 'Open Sans', 'Arial', sans-serif; */
   font-size: 22px;
   line-height: 1.6em;
 }
@@ -51,8 +55,8 @@
 /* Form elements like input fields and buttons */
 
 .jspsych-display-element input[type="text"] {
-  font-family: 'Open Sans', 'Arial', sans-serif;
-  font-size: 14px;
+  /* font-family: 'Open Sans', 'Arial', sans-serif; */
+  font-size: 18px;
 }
 
 /* borrowing Bootstrap style for btn elements, but combining styles a bit */
@@ -62,7 +66,7 @@
   margin: 12px;
   font-size: 18px;
   font-weight: 400;
-  font-family: 'Open Sans', 'Arial', sans-serif;
+  /* font-family: 'Open Sans', 'Arial', sans-serif; */
   cursor: pointer;
   line-height: 1.4;
   text-align: center;

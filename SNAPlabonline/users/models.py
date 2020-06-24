@@ -1,7 +1,5 @@
 from django.db import models
 from django.utils import timezone
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 
 
 # Model for anonymous subjects (not authenticated users)
@@ -21,18 +19,11 @@ class Subject(models.Model):
         return f'Subject: {self.subjid}'
 
 
-def adults_only(age):
-    message = _('Age of 18+ is needed for participation')
-    code = 'invalid'
-    if age < 18:
-        raise ValidationError(message=message, code=code)
-
-
 # Model for storing core hearing profile and demographic info
 class SubjectProfile(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     age = models.PositiveSmallIntegerField(help_text='Enter your age in years',
-        null=True, validators=[adults_only,])
+        null=True)
 
     
     # Useful for multiple fields
