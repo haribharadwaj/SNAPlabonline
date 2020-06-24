@@ -4,7 +4,9 @@
 {% block content %}
   <div class="mt-4">
     <h2 class="text-center"> About You </h2>
+        <p> Thank you for participating in this study. Below are some basic demographic questions about you, along with questions about your hearing. Please respond to them as accurately as you can. A response to each question marked with a "*" is required for submission. </p>
     <h4>Participant ID: {{ context.subjid }} </h4>
+
   	<form method="POST" class="content-section">
   		{% csrf_token %}
   		<fieldset class="form-group pt-2 pl-2 pr-2">
@@ -18,7 +20,7 @@
         </div>
 
         <div class="form-row">
-          <p class="ml-1 mt-2"> Our federal funding agencies (e.g., National Institutes of Health) request us to report the percentage of study participants in each of their race/etthnicity categories. This is optional, so feel free to choose "Prefer Not To Answer": </p>
+          <p class="ml-1 mt-2"> Our federal funding agencies (e.g., National Institutes of Health) request us to report the percentage of study participants in each of their <a target="_blank" rel="noopener noreferrer" href="https://grants.nih.gov/grants/guide/notice-files/not-od-15-089.html">race/ethnicity categories</a>. This is optional, so feel free to choose "Prefer Not To Answer": </p>
           <div class="form-group col-md mb-2">
             {{ context.form.ethnicity|as_crispy_field }}
           </div>

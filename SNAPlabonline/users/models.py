@@ -140,7 +140,7 @@ class SubjectProfile(models.Model):
         (OTHER, 'Other')
         )
 
-    hl_degree = models.CharField(max_length=2, default=UNKNOWN, blank=True,
+    hl_degree = models.CharField(max_length=2, blank=True,
         verbose_name=('If you selected "Yes" to being diagnosed with hearing loss, '
             'what is the degree of your hearing loss'), choices=hl_degree_choices,
         help_text='If you happen to know your most recent diagnosis, please enter here')
