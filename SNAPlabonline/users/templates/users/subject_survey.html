@@ -31,7 +31,9 @@
 
           <div class="mt-4 mb-4">
             {{ context.form.american_english|as_crispy_field }}
-            {{ context.form.right_handed|as_crispy_field }}
+            {% comment "Only needed in the lab for EEG" %}
+              {{ context.form.right_handed|as_crispy_field }}
+            {% endcomment %}
           </div>
 
 

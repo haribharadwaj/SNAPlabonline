@@ -120,7 +120,9 @@ def get_task_context(task_url, subject):
     serveraudio = info['serveraudio']
 
     resps_subject = OneShotResponse.objects.filter(subject_id=subject)
-    if not resps_subject:
+    resps_subject_task = resps_subject.filter(parent_task_id=task.pk)
+
+    if not resps_subject_task:
         done = False
     else:
         done = True

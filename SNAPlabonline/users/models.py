@@ -89,17 +89,18 @@ class SubjectProfile(models.Model):
         verbose_name='Are you a native speaker of North American English?',
         help_text='For example, did you grow up in the United States/Canada from a young age (< 10 years)?')
 
-    RIGHT = 'R'
-    LEFT = 'L'
-    BOTH = 'B'
-    handed_choices = (
-        (RIGHT, 'Right'),
-        (LEFT, 'Left'),
-        (BOTH, 'I Use Both Equally')
-        )
-    right_handed = models.CharField(max_length=1, choices=handed_choices,
-        verbose_name='Are you right or left handed?',
-        help_text='Select an option that best describes you')
+    
+    # RIGHT = 'R'
+    # LEFT = 'L'
+    # BOTH = 'B'
+    # handed_choices = (
+    #     (RIGHT, 'Right'),
+    #     (LEFT, 'Left'),
+    #     (BOTH, 'I Use Both Equally')
+    #     )
+    # right_handed = models.CharField(max_length=1, choices=handed_choices,
+    #     verbose_name='Are you right or left handed?',
+    #     help_text='Select an option that best describes you')
 
     neuro = models.CharField(max_length=2, null=True, choices=YN_choices,
         verbose_name='Have you been diagnosed with a neurological disorder?',
