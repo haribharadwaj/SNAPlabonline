@@ -59,14 +59,18 @@
         var welcome = {
           type: 'html-button-response',
           choices: ['Continue'],
-          stimulus: '{{ inst }}'
+          stimulus: '{{ inst|safe }}'
         };
     {% endfor %}
+
+    // Below uses the instructions plugin if we want that later
+    /*
     var welcome = {
     type: 'instructions',
     pages: {{ task.instructions|safe }},
     show_clickable_nav: true
     }
+    */
     timeline.push(welcome);
 
     /* Actual trials */

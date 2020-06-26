@@ -5,33 +5,41 @@
  * experiments look polished without any additional styles.
  */
 
- @import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
 
 /* Container holding jsPsych content */
 
  .jspsych-display-element {
-   display: flex;
-   flex-direction: column;
-   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
  }
 
  .jspsych-display-element:focus {
-   /*outline: none; */
-   outline-color: black;
+   outline-color: #0d120f;
    outline-style: solid;
-   outline-offset: -4px;
+   outline-offset: -8px;
    outline-width: medium;
  }
+
+.bg-anthracite {
+  background-color: #0d120f;
+}
+
+.bg-purduesilver{
+  background-color: #8e8981;
+}
+
 
  .jspsych-content-wrapper {
    display: flex;
    margin: auto;
+   margin-bottom: 40px;
    flex: 1 1 100%;
    width: 100%;
  }
 
  .jspsych-content {
-   max-width: 75%;
+   max-width: 50%;
    text-align: center;
    margin: auto; /* this is for overflowing content */
  }
@@ -53,7 +61,6 @@
 }
 
 /* Form elements like input fields and buttons */
-
 .jspsych-display-element input[type="text"] {
   /* font-family: 'Open Sans', 'Arial', sans-serif; */
   font-size: 18px;
@@ -65,8 +72,6 @@
   padding: 6px 6px;
   margin: 12px;
   font-size: 18px;
-  font-weight: 400;
-  /* font-family: 'Open Sans', 'Arial', sans-serif; */
   cursor: pointer;
   line-height: 1.4;
   text-align: center;
@@ -93,7 +98,6 @@
 }
 
 /* jsPsych progress bar */
-
 #jspsych-progressbar-container {
   color: #555;
   border-bottom: 1px solid #dedede;

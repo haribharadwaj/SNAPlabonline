@@ -35,4 +35,6 @@ class SubjectProfileForm(forms.ModelForm):
         code = 'invalid'
         if age < 18:
             raise ValidationError(message=message, code=code)
+        return age
+
 

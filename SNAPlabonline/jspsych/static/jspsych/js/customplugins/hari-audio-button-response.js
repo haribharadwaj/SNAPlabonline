@@ -40,7 +40,7 @@ jsPsych.plugins["hari-audio-button-response"] = (function() {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Prompt',
         default: null,
-        description: 'Any content here will be displayed above the stimulus.'
+        description: 'Any content here will be displayed below the stimulus.'
       },
       trial_duration: {
         type: jsPsych.plugins.parameterType.INT,
@@ -51,7 +51,7 @@ jsPsych.plugins["hari-audio-button-response"] = (function() {
       margin_vertical: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Margin vertical',
-        default: '0px',
+        default: '2px',
         description: 'Vertical margin of button.'
       },
       margin_horizontal: {
