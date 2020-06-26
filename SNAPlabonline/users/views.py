@@ -27,9 +27,10 @@ def register(request):
 
 
 def subject_entry(request, *args, **kwargs):
-    next_url = kwargs['next']
+    # next_url = kwargs['next']
     if request.method == 'POST':
         form = SubjectForm(request.POST)
+        next_url = request.GET.get('next')
         if form.is_valid():
             print('Posting entry form!')
             subjid = form.cleaned_data.get('subjid')
@@ -52,9 +53,10 @@ def subject_entry(request, *args, **kwargs):
 
 
 def subject_consent(request, *args, **kwargs):
-    next_url = kwargs['next']
+    # next_url = kwargs['next']
     if request.method == 'POST':
         form = ConsentForm(request.POST)
+        next_url = request.GET.get('next')
         if form.is_valid():
             consented = form.cleaned_data.get('consented')
             subjid = request.session.get('subjid', None)
