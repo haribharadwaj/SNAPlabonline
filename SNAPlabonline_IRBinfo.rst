@@ -24,11 +24,13 @@ We will refer to websites offering such services as “PARTICIPANT MARKETPLACES�
 Nature of Task and Surveys
 ==========================
 We have created our own TASK WEBSITE [www.snaplabonline.com] within which our lab members (i.e., personnel on this protocol) will create experiments. We will then post links to these experiments on the PARTICIPANT MARKETPLACE website for people to choose to participate in if they like. Upon visiting our TASK WEBSITE, participants can complete the task using their own computer and browser. These experiments will involve answering questions such making judgments about sounds or images, or responding to short survey/demographics questions. A typical experiment might involve 10 - 100 sound/image stimuli, and 5 - 20 survey questions and may be organized in multiple parts for ease of flow.  Participants will answer each question by pressing a few keystrokes, typing simple words or short sentences, or clicking with the mouse. Each question should take only a few seconds to answer.  The entire experiment should take no longer than 2 hours, but more commonly only about 20 minutes. If the experiment is longer than 20 minutes, it will be setup into multiple parts such that they can take breaks and don’t have to complete it in one sitting.
+
 Below are examples of questions that may feature in our experiments:
+
 * The participant will hear three short sounds separated by silent gaps, and asked to judge which of the three sounds is different from the other two.
 * The participant will hear spoken words or sentences in the presence of background noise and asked to type out the words or sentences.
 * The participant will be shown images of arrows and asked to respond by pressing the arrow key that points the same direction as the image (i.e., left-right-up-OR-down). 
-* The participant is asked to provide demographic information (e.g., age)  or other information their hearing (e.g., have they been ever been diagnosed with hearing loss).
+* The participant is asked to provide demographic information (e.g., age, have they been ever been diagnosed with hearing loss?).
 
 Under no circumstances will the participants be asked to reveal any personally identifying information (PII) such as names, email addresses, full DOB, etc.
 
@@ -65,5 +67,5 @@ In addition to taking advantage of anonymous PARTICIPANT MARKETPLACES, we may al
 
 Benefits to be Gained by the Individual and/or Society
 ======================================================
-There are no direct benefits to individual participants. We anticipate that the information gained from this research will help us understand better how our hearing and brains work.  Further, we may gain a better understanding of the mechanisms underlying certain hearing disorders.  This may lead to benefits to society at large, such as through improved diagnostics and treatment strategies, or improved audio technologies.
+There are no direct benefits to individual participants besides being compensated for their time. We anticipate that the information gained from this research will help us understand better how our hearing and brains work.  Further, we may gain a better understanding of the mechanisms underlying certain hearing disorders.  This may lead to benefits to society at large, such as through improved diagnostics and treatment strategies, or improved audio technologies.
 
