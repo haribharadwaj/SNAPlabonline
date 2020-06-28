@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from tasks import views as task_views
@@ -61,7 +61,8 @@ urlpatterns = [
         name='password_reset_complete'),
     path('admin/', admin.site.urls),
     path('savejspdata/', jspsych_views.create_OneShotResponse, name='savejspdata'),
-    path('savejsptrial/', jspsych_views.create_TrialResponse, name='savejsptrial')
+    path('savejsptrial/', jspsych_views.create_TrialResponse, name='savejsptrial'),
+    path('study/', include(studytree.urls))
 ]
 
 if settings.DEBUG:

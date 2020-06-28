@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'tasks',
     'users',
     'jspsych',
+    'studytree',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
