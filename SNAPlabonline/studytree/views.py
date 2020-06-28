@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import (login_required,
     permission_required)
 from .models import StudyRoot, TaskNode, BranchNode, LeafNode
 from .lookups import create_study_slug, get_current_leaf
+from .forms import AddTaskForm
 
 
 
@@ -30,6 +31,7 @@ class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMix
     permission_required = 'studytree.add_studyroot'
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = TaskNode
+    form_class = AddTaskForm
     success_url = 'study-create'
 
     def form_valid(self, form):
