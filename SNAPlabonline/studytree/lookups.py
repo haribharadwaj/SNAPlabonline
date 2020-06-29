@@ -14,7 +14,7 @@ def create_study_slug(length=32):
     return link
 
 
-def get_current_leaf(root_node):
+def get_leaves(root_node):
     # Leaf has no children
     # BUT there could be multiple leaves
     curr_child = root_node.child_node
