@@ -4,9 +4,9 @@ Welcome and Consent
 
 Thank you for participating in this online research study conducted by the Systems Neuroscience of Auditory Perception Lab (SNAPlab) at Purdue University! We appreciate it!
 
-Purpose
-=======
-The purpose of this research is to help understand how our ears and brains help us interpret sounds. The long-term goals are to help those whose hearing is impaired, and to help improve how machines process sounds.
+Purpose and Nature of Tasks
+===========================
+The purpose of this research is to help understand how our ears and brains help us interpret sounds. The long-term goals are to help those whose hearing is impaired, and to help improve how machines process sounds. As part of this study you will asked to use your own computer and headphones to make judgments about sounds (e.g., which of these three sounds is softest?), transcribe sounds (e.g., type the sentence spoken by the voice), or make simple judgments about images (e.g., which way is the arrow pointing?).
 
 Privacy/Confidentiality
 =======================
