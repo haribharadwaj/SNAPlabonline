@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import Http404
 from django.contrib.auth.mixins import (LoginRequiredMixin,
     PermissionRequiredMixin, UserPassesTestMixin)
 from django.core.exceptions import PermissionDenied
@@ -131,15 +132,22 @@ class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTe
             return False
 
 
-# Function-based views for study tree and subject view
-def experimenter_view(request):
-	pass
+class MyStudies(LoginRequiredMixin, ListView):
+    template_name = 'studytree/study_list.html'
+    def get_queryset(self):
+        # Return only tasks of logged in experimenter from new to old
+        return StudyRoot.objects.filter(experimenter=self.request.user).order_by('-date_created')
 
 
-def subject_view(request):
-	pass
+
+# Function-based views for study tree and subject detail views
+def experimenter_view(request, *args, **kwargs):
+	raise Http404('We are still building that page for you!')
 
 
-def mystudies(request):
-	pass
+# MAIN VIEW FOR SUBJECT
+def subject_view(request, *args, **kwargs):
+	raise Http404('We are still building that page for you!')
+
+
 
