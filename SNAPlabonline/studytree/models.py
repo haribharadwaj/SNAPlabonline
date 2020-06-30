@@ -8,10 +8,12 @@ from django.utils import timezone
 
 # Use multitable inheritance (essentially OneToOneField mapping)
 class BaseNode(models.Model):
-    parent_node = models.ForeignKey(BaseNode, null=True,
-        on_delete=models.CASCADE)
-    child_node = models.ForeignKey(BaseNode, null=True,
-        on_delete=models.CASCADE)
+    parent_node = models.ForeignKey('self', null=True,
+        related_name='parentof_set',
+        on_delete=models.CASCADE)  # Delete subtree if parent gone
+    child_node = models.ForeignKey('self', null=True,
+        related_name='childof_set',
+        on_delete=models.SET_NULL) # Keep parent if child deleted
     ROOT = 'Root'
     TASK = 'Task'
     FORK = 'Fork'
@@ -32,8 +34,8 @@ class StudyRoot(BaseNode):
         verbose_name='Name')
     slug = models.SlugField(max_length=32, unique=True)
     displayname = models.CharField(max_length=80,
-        help_text='Experimenter/Subject-friendly title or name for the task',
-        default='',
+        help_text='Experimenter/Subject-friendly title or name for the study',
+        default='SNAPlab Hearing Study',
         verbose_name= 'Display Name')
     descr = models.CharField(max_length=255, default='',
         help_text='Please provide a one sentence description',
@@ -53,6 +55,7 @@ class TaskNode(BaseNode):
 
 class BranchNode(BaseNode):
     child_alternate = models.ForeignKey(BaseNode, null=True,
+        related_name='altnodeof_set',
         on_delete=models.SET_NULL)
     SCORE_GREATER = 'ScGr'
     SCORE_LESSER = 'ScLs'

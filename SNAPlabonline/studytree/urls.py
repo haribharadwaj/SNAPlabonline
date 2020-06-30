@@ -1,17 +1,18 @@
-from django.urls import include, path
+from django.urls import path
 from .views import (
 	StudyCreateView, AddTaskView, AddBranchView,
 	AddAltTaskView, AddAltBranchView,
-	ExperimenterView, SubjectView
+	experimenter_view, subject_view, mystudies
 	)
 
 
 urlpatterns = [
-	path('/create/', StudyCreateView.as_view(), 'study-create'),
-	path('/run/<studyslug>/', SubjectView.as_view(), 'study-run'),
-	path('/viewedit/<studyslug>/', ExperimenterView.as_view(), 'study-viewedit'),
-	path('/addtask/<int:parentpk>/', AddTaskView.as_view(), 'study-addtask'),
-	path('/addtask/alt/<int:parentpk>/', AddAltTaskView.as_view(), 'study-addtask-alt'),
-	path('/addbranch/<int:parentpk>/', AddBranchView.as_view(), 'study-addbranch'),
-	path('/addbranch/alt/<int:parentpk>/', AddAltBranchView.as_view(), 'study-addbranch-alt')
+	path('create/', StudyCreateView.as_view(), name='study-create'),
+	path('addtask/<int:parentpk>/', AddTaskView.as_view(), name='study-addtask'),
+	path('addtask/alt/<int:parentpk>/', AddAltTaskView.as_view(), name='study-addtask-alt'),
+	path('addbranch/<int:parentpk>/', AddBranchView.as_view(), name='study-addbranch'),
+	path('addbranch/alt/<int:parentpk>/', AddAltBranchView.as_view(), name='study-addbranch-alt'),
+	path('', mystudies, name='study-home'),
+	path('run/<studyslug>/', subject_view, name='study-run'),
+	path('viewedit/<studyslug>/', experimenter_view, name='study-viewedit'),
 	]

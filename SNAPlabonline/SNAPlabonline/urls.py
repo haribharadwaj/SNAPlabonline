@@ -62,7 +62,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('savejspdata/', jspsych_views.create_OneShotResponse, name='savejspdata'),
     path('savejsptrial/', jspsych_views.create_TrialResponse, name='savejsptrial'),
-    path('study/', include(studytree.urls))
+    path('study/', include('studytree.urls'))
 ]
 
 if settings.DEBUG:

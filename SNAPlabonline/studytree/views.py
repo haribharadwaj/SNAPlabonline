@@ -129,3 +129,17 @@ class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTe
             return True
         else:
             return False
+
+
+# Function-based views for study tree and subject view
+def experimenter_view(request):
+	pass
+
+
+def subject_view(request):
+	pass
+
+
+def mystudies(request):
+	pass
+
