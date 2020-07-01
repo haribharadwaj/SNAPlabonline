@@ -140,7 +140,7 @@ def run_task(request, **kwargs):
 
 
 @login_required
-@permission_required('tasks.add_task', raise_exception=PermissionDenied)
+@permission_required('jspsych.add_task', raise_exception=PermissionDenied)
 def download_task_results(request, **kwargs):
     task_url = kwargs['taskurl']
     experimenter = request.user
