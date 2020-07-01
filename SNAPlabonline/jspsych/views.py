@@ -71,7 +71,7 @@ def create_TrialResponse(request):
 
 
 class TaskCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    permission_required = 'jspsych.add_jstask'
+    permission_required = 'jspsych.add_task'
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = Task
     form_class = TaskForm
