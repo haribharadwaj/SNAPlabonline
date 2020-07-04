@@ -24,6 +24,8 @@ class BaseNode(models.Model):
         )
     node_type = models.CharField(max_length=4,
         choices=node_types)
+    experimenter = models.ForeignKey(User, null=True,
+                                     on_delete=models.SET_NULL)
 
 
 class StudyRoot(BaseNode):
@@ -40,8 +42,6 @@ class StudyRoot(BaseNode):
     descr = models.CharField(max_length=255, default='',
         help_text='Please provide a one sentence description',
         verbose_name='Short description')
-    experimenter = models.ForeignKey(User, null=True,
-                                     on_delete=models.SET_NULL)
     end_url = models.URLField(verbose_name='End URL', null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
 

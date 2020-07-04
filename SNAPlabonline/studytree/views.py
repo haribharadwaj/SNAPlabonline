@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.mixins import (LoginRequiredMixin,
     PermissionRequiredMixin, UserPassesTestMixin)
 from django.core.exceptions import PermissionDenied
@@ -19,11 +19,12 @@ class StudyCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = StudyRoot
     fields = ['name', 'displayname', 'descr', 'end_url']
-    success_url = 'study-viewedit'
+    success_url = '/study/'
 
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
         form.instance.node_type = BaseNode.ROOT
+        form.instance.parent_node = None
         form.instance.slug = create_study_slug()
         return super().form_valid(form)
 
@@ -33,24 +34,27 @@ class StudyCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 # Add task to study
 class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, CreateView):
     permission_required = 'studytree.add_studyroot'
-    permission_denied_message = 'Experimenter credentials needed to create tasks'
+    permission_denied_message = 'Experimenter credentials needed to add taks'
     model = TaskNode
     form_class = AddTaskForm
-    success_url = 'study-viewedit'
+    success_url = '/study/'
 
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
         form.instance.node_type = BaseNode.TASK
-        pk_parent = self.request.kwargs['parentpk']
+        pk_parent = self.kwargs['parentpk']
         form.instance.parent_node = BaseNode.objects.get(pk=pk_parent)
         # Tell parent node that this is the child node
+        form.save()  # Needed before assigning form.instance as foreign key
         form.instance.parent_node.child_node = form.instance
-        form.instance.parent_node.save()  #form_valid only saves form.instance
-        return super().form_valid(form)
+        form.instance.parent_node.save()
+        # No need to call super().form_valid() as form already saved
+        # Just redirect to success_url
+        return HttpResponseRedirect(self.success_url)
 
     def test_func(self):
-        task_node = self.get_object()
-        if self.request.user == task_node.experimenter:
+        parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
+        if self.request.user == parent_node.experimenter:
             return True
         else:
             return False
@@ -58,28 +62,30 @@ class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMix
 
 class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, CreateView):
     permission_required = 'studytree.add_studyroot'
-    permission_denied_message = 'Experimenter credentials needed to create tasks'
+    permission_denied_message = 'Experimenter credentials needed to add taks'
     model = TaskNode
     form_class = AddTaskForm
-    success_url = 'study-viewedit'
+    success_url = '/study/'
 
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
         form.instance.node_type = BaseNode.TASK
-        pk_parent = self.request.kwargs['parentpk']
+        pk_parent = self.kwargs['parentpk']
         form.instance.parent_node = BaseNode.objects.get(pk=pk_parent)
-        # Tell parent node that this is the alternate child node
+        # Tell parent node that this is the child node
+        form.save()  # Needed before assigning form.instance as foreign key
         form.instance.parent_node.child_alternate = form.instance
-        form.instance.parent_node.save()  #form_valid only saves form.instance
-        return super().form_valid(form)
+        form.instance.parent_node.save()
+        # No need to call super().form_valid() as form already saved
+        # Just redirect to success_url
+        return HttpResponseRedirect(self.success_url)
 
     def test_func(self):
-        task_node = self.get_object()
-        if self.request.user == task_node.experimenter:
+        parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
+        if self.request.user == parent_node.experimenter:
             return True
         else:
             return False
-
 
 # Add branch to study
 class AddBranchView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, CreateView):
@@ -87,7 +93,7 @@ class AddBranchView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestM
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = BranchNode
     form_class = AddBranchForm
-    success_url = 'study-viewedit'
+    success_url = '/study/'
 
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
@@ -112,7 +118,7 @@ class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTe
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = TaskNode
     form_class = AddTaskForm
-    success_url = 'study-viewedit'
+    success_url = '/study/'
 
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
