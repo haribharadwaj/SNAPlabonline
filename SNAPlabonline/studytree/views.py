@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.mixins import (LoginRequiredMixin,
     PermissionRequiredMixin, UserPassesTestMixin)
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError 
 from django.views.generic import (ListView,
     CreateView, UpdateView, DeleteView)
 from django.contrib.auth.decorators import (login_required,
@@ -30,11 +30,13 @@ class StudyCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 
 # For clarity, using not-totally-DRY views for adding tasks and branches below
+# Thus, a different view class for each node type with slight code variations
 
 # Add task to study
-class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, CreateView):
+class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin,
+    UserPassesTestMixin, CreateView):
     permission_required = 'studytree.add_studyroot'
-    permission_denied_message = 'Experimenter credentials needed to add taks'
+    permission_denied_message = 'Experimenter credentials needed, or adding to the wrong study'
     model = TaskNode
     form_class = AddTaskForm
     success_url = '/study/'
@@ -43,7 +45,17 @@ class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMix
         form.instance.experimenter = self.request.user
         form.instance.node_type = BaseNode.TASK
         pk_parent = self.kwargs['parentpk']
-        form.instance.parent_node = BaseNode.objects.get(pk=pk_parent)
+        try:
+            parent_node = BaseNode.objects.get(pk=pk_parent)
+        except BaseNode.DoesNotExist:
+            val_err = ValidationError('The parent node you are adding child to does not exist')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        if parent_node.child_node is not None:
+            val_err = ValidationError('Parent already has a child')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        form.instance.parent_node = parent_node
         # Tell parent node that this is the child node
         form.save()  # Needed before assigning form.instance as foreign key
         form.instance.parent_node.child_node = form.instance
@@ -53,16 +65,20 @@ class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMix
         return HttpResponseRedirect(self.success_url)
 
     def test_func(self):
-        parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
+        try:
+            parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
+        except BaseNode.DoesNotExist:
+            return False
         if self.request.user == parent_node.experimenter:
             return True
         else:
             return False
 
 
-class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, CreateView):
+class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin,
+    UserPassesTestMixin, CreateView):
     permission_required = 'studytree.add_studyroot'
-    permission_denied_message = 'Experimenter credentials needed to add taks'
+    permission_denied_message = 'Experimenter credentials needed, or adding to the wrong study'
     model = TaskNode
     form_class = AddTaskForm
     success_url = '/study/'
@@ -71,7 +87,21 @@ class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTest
         form.instance.experimenter = self.request.user
         form.instance.node_type = BaseNode.TASK
         pk_parent = self.kwargs['parentpk']
-        form.instance.parent_node = BaseNode.objects.get(pk=pk_parent)
+        try:
+            parent_node = BaseNode.objects.get(pk=pk_parent)
+        except BaseNode.DoesNotExist:
+            val_err = ValidationError('The parent node you are adding child to does not exist')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        if parent_node.node_type != BaseNode.FORK:
+            val_err = ValidationError('You can only add alternate after branching')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        if parent_node.child_alternate is not None:
+            val_err = ValidationError('Parent already has an alternate child')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        form.instance.parent_node = parent_node
         # Tell parent node that this is the child node
         form.save()  # Needed before assigning form.instance as foreign key
         form.instance.parent_node.child_alternate = form.instance
@@ -81,16 +111,21 @@ class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTest
         return HttpResponseRedirect(self.success_url)
 
     def test_func(self):
-        parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
+        try:
+            parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
+        except BaseNode.DoesNotExist:
+            return False
         if self.request.user == parent_node.experimenter:
             return True
         else:
             return False
 
+
 # Add branch to study
-class AddBranchView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, CreateView):
+class AddBranchView(LoginRequiredMixin, PermissionRequiredMixin,
+    UserPassesTestMixin, CreateView):
     permission_required = 'studytree.add_studyroot'
-    permission_denied_message = 'Experimenter credentials needed to create tasks'
+    permission_denied_message = 'Experimenter credentials needed, or adding to the wrong study'
     model = BranchNode
     form_class = AddBranchForm
     success_url = '/study/'
@@ -98,41 +133,78 @@ class AddBranchView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestM
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
         form.instance.node_type = BaseNode.FORK
-        pk_parent = self.request.kwargs['parentpk']
-        form.instance.parent_node = BaseNode.objects.get(pk=pk_parent)
+        pk_parent = self.kwargs['parentpk']
+        try:
+            parent_node = BaseNode.objects.get(pk=pk_parent)
+        except BaseNode.DoesNotExist:
+            val_err = ValidationError('The parent node you are adding child to does not exist')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        if parent_node.child_node is not None:
+            val_err = ValidationError('Parent already has a child')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        form.instance.parent_node = parent_node
         # Tell parent node that this is the child node
+        form.save()  # Needed before assigning form.instance as foreign key
         form.instance.parent_node.child_node = form.instance
-        form.instance.parent_node.save()  #form_valid only saves form.instance
-        return super().form_valid(form)
+        form.instance.parent_node.save()
+        # No need to call super().form_valid() as form already saved
+        # Just redirect to success_url
+        return HttpResponseRedirect(self.success_url)
 
     def test_func(self):
-        task_node = self.get_object()
-        if self.request.user == task_node.experimenter:
+        try:
+            parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
+        except BaseNode.DoesNotExist:
+            return False
+        if self.request.user == parent_node.experimenter:
             return True
         else:
             return False
 
 
-class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, CreateView):
+class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin,
+    UserPassesTestMixin, CreateView):
     permission_required = 'studytree.add_studyroot'
-    permission_denied_message = 'Experimenter credentials needed to create tasks'
-    model = TaskNode
-    form_class = AddTaskForm
+    permission_denied_message = 'Experimenter credentials needed, or adding to the wrong study'
+    model = BranchNode
+    form_class = AddBranchForm
     success_url = '/study/'
 
     def form_valid(self, form):
         form.instance.experimenter = self.request.user
         form.instance.node_type = BaseNode.FORK
-        pk_parent = self.request.kwargs['parentpk']
-        form.instance.parent_node = BaseNode.objects.get(pk=pk_parent)
-        # Tell parent node that this is the alternate child node
+        pk_parent = self.kwargs['parentpk']
+        try:
+            parent_node = BaseNode.objects.get(pk=pk_parent)
+        except BaseNode.DoesNotExist:
+            val_err = ValidationError('The parent node you are adding child to does not exist')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        if parent_node.node_type != BaseNode.FORK:
+            val_err = ValidationError('You can only add alternate after branching')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        if parent_node.child_node is not None:
+            val_err = ValidationError('Parent already has an alternate child')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
+        form.instance.parent_node = parent_node
+        # Tell parent node that this is the child node
+        form.save()  # Needed before assigning form.instance as foreign key
         form.instance.parent_node.child_alternate = form.instance
-        form.instance.parent_node.save()  #form_valid only saves form.instance
-        return super().form_valid(form)
+        form.instance.parent_node.save()
+        # No need to call super().form_valid() as form already saved
+        # Just redirect to success_url
+        return HttpResponseRedirect(self.success_url)
 
     def test_func(self):
-        task_node = self.get_object()
-        if self.request.user == task_node.experimenter:
+        try:
+            parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
+        except BaseNode.DoesNotExist:
+            return False
+        if self.request.user == parent_node.experimenter:
             return True
         else:
             return False
