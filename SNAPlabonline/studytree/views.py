@@ -8,7 +8,7 @@ from django.views.generic import (ListView,
 from django.contrib.auth.decorators import (login_required,
     permission_required)
 from .models import BaseNode, StudyRoot, TaskNode, BranchNode
-from .lookups import create_study_slug, get_leaves
+from .lookups import create_study_slug, get_leaves, get_studytree_context
 from .forms import AddTaskForm, AddBranchForm
 
 
@@ -97,15 +97,15 @@ class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin,
             val_err = ValidationError('You can only add alternate after branching')
             form.add_error(None, val_err)  # Non-field error
             return super().form_invalid(form)
-        if parent_node.child_alternate is not None:
+        if parent_node.branchnode.child_alternate is not None:
             val_err = ValidationError('Parent already has an alternate child')
             form.add_error(None, val_err)  # Non-field error
             return super().form_invalid(form)
         form.instance.parent_node = parent_node
         # Tell parent node that this is the child node
         form.save()  # Needed before assigning form.instance as foreign key
-        form.instance.parent_node.child_alternate = form.instance
-        form.instance.parent_node.save()
+        form.instance.parent_node.branchnode.child_alternate = form.instance
+        form.instance.parent_node.branchnode.save()
         # No need to call super().form_valid() as form already saved
         # Just redirect to success_url
         return HttpResponseRedirect(self.success_url)
@@ -186,15 +186,15 @@ class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin,
             val_err = ValidationError('You can only add alternate after branching')
             form.add_error(None, val_err)  # Non-field error
             return super().form_invalid(form)
-        if parent_node.child_node is not None:
+        if parent_node.branchnode.child_alternate is not None:
             val_err = ValidationError('Parent already has an alternate child')
             form.add_error(None, val_err)  # Non-field error
             return super().form_invalid(form)
         form.instance.parent_node = parent_node
         # Tell parent node that this is the child node
         form.save()  # Needed before assigning form.instance as foreign key
-        form.instance.parent_node.child_alternate = form.instance
-        form.instance.parent_node.save()
+        form.instance.parent_node.branchnode.child_alternate = form.instance
+        form.instance.parent_node.branchnode.save()
         # No need to call super().form_valid() as form already saved
         # Just redirect to success_url
         return HttpResponseRedirect(self.success_url)
@@ -219,8 +219,26 @@ class MyStudies(LoginRequiredMixin, ListView):
 
 
 # Function-based views for study tree and subject detail views
+@login_required
+@permission_required('studytree.add_studyroot',
+    raise_exception=PermissionDenied('Experimenter credentials needed to visit this page'))
 def experimenter_view(request, *args, **kwargs):
-	raise Http404('We are still building that page for you!')
+    slug = kwargs.get('slug', None)
+    if slug is None:
+        raise Http404('You are requesting a null study')
+    else:
+        try:
+            root_node = StudyRoot.objects.get(slug=slug)
+        except StudyRoot.DoesNotExist:
+            raise Http404('Study does not seem to exist')
+        if root_node.experimenter == request.user:
+            return render(request,'studytree/study_detail.html',
+                {'treedict': get_studytree_context(root_node)})
+        else:
+            message = f'Does not seem to be your study: You are logged in as {request.user}.'
+            raise PermissionDenied(message)            
+
+	
 
 
 # MAIN VIEW FOR SUBJECT

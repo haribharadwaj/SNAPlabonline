@@ -1,0 +1,11 @@
+<li class="ml-8">
+  <h4> {{ treedict.title }} </h4>
+  <p> {{ treedict.descr }} </p>
+  <ul class="list-group">
+  {% for child in treedict.children %}
+    {% with treedict=child %}
+      {% include 'studytree/treelist.html' %}
+    {% endwith %}
+  {% endfor %}
+  </ul>
+</li>

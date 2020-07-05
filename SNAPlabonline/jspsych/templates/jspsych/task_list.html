@@ -5,7 +5,7 @@
     <h2> Your tasks </h2>
   </div>
  
-  <div class="row">
+  <div class="row mb-4">
     {% for task in object_list %}
       <div class="card shadow-sm mt-4 ml-4 hoverable" style="width: 18rem;">
         <img src="{% get_media_prefix %}/taskicons/task_default.png" class="card-img-top" alt="">
@@ -30,9 +30,9 @@
       </div>
     {% empty %}
       <p class="ml-4"> No tasks found.
-      <a href="{% url 'create-task' %}"> Create One? </a>
       </p>
     {% endfor %}
   </div>
+  <a href="{% url 'study-create' %}" class="ml-2"> Create Task? </a>
 
 {% endblock content %}

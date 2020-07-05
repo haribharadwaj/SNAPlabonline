@@ -46,7 +46,7 @@ class StudyRoot(BaseNode):
     date_created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'Task: {self.displayname}'
+        return f'Study: {self.displayname}'
 
 
 class TaskNode(BaseNode):

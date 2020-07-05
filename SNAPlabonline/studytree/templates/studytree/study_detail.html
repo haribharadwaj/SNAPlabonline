@@ -1,0 +1,9 @@
+{% extends "tasks/base.html" %}
+{% load static %}
+{% block content %}
+  <div class="list-group mt-4">
+    <ul>
+      {% include 'studytree/treelist.html' %}
+    </ul>
+  </div>
+{% endblock content %}

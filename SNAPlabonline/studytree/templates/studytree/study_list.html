@@ -5,7 +5,7 @@
     <h2> Your studies </h2>
   </div>
  
-  <div class="row">
+  <div class="row mb-4">
     {% for study in object_list %}
       <div class="card shadow-sm mt-4 ml-4 hoverable" style="width: 18rem;">
         <img src="{% get_media_prefix %}/taskicons/task_default.png" class="card-img-top" alt="">
@@ -13,7 +13,7 @@
           <h5 class="card-title"> {{ study.displayname }} </h5>
           <p class="card-text"> {{ study.descr }} </p>
           <a href="#" class="btn btn-outline-primary btn-lg btn-block">
-          Run Study
+          View Study Details
           </a>
         </div>
         <div class="d-flex justify-content-between border-top">
@@ -27,9 +27,9 @@
       </div>
     {% empty %}
       <p class="ml-4"> No studies found.
-      <a href="{% url 'study-create' %}"> Create One? </a>
       </p>
     {% endfor %}
   </div>
+  <a href="{% url 'study-create' %}" class="ml-2"> Create New Study? </a>
 
 {% endblock content %}
