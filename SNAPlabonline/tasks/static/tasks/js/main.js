@@ -6,10 +6,10 @@ $(document).ready(function() {
         $( ".card" ).hover(
         function() {
           $(this).addClass('shadow-lg').css('cursor', 'pointer');
-          $(this).addClass('mt-2').css('cursor', 'pointer');
+          // $(this).addClass('mt-2').css('cursor', 'pointer');
         }, function() {
           $(this).removeClass('shadow-lg');
-          $(this).removeClass('mt-2');
+          // $(this).removeClass('mt-2');
         }
       );
   

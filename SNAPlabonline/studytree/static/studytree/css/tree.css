@@ -3,34 +3,43 @@
     padding:0;
     list-style:none
 }
+
+
 .tree ul {
     margin-left:1em;
     position:relative
 }
+
+
 .tree ul ul {
     margin-left:.5em
 }
+
+
 .tree ul:before {
     content:"";
     display:block;
     width:0;
     position:absolute;
-    top:0;
+    top:-1em;
     bottom:0;
     left:0;
     border-left:2px solid
 }
+
+
 .tree li {
     margin:0;
-    padding:0 1em;
-    line-height:2em;
+    padding:0 2em;
+    line-height:1.5em;
     position:relative
 }
 
+
 .tree ul li:before {
     content:"";
-    display:block;
-    width:10px;
+    display:inline;
+    width:24px;
     height:0;
     border-top:2px solid;
     margin-top:-1px;
@@ -38,6 +47,7 @@
     top:1em;
     left:0
 }
+
 
 .tree ul li:last-child:before {
     background: #fafafa;

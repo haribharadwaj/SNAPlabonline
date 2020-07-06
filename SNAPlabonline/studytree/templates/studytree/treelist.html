@@ -1,7 +1,21 @@
 {% load static %}
 <li>
-  <h4 class="caret"> {{ treedict.title }} </h4>
-  <p> {{ treedict.descr }} </p>
+  {% if treedict.ntype == 'Root' %}
+    <div class="card shadow-sm mb-4" style="width: 24rem;">
+    <h4 class="card-header">{{ treedict.title }}</h4>
+  {% elif treedict.ntype == 'Task' %}
+    <div class="card shadow-sm border-info mb-4" style="width: 18rem;">
+    <h5 class="card-header bg-info text-white">{{ treedict.title }}</h5>
+  {% else %}
+    <div class="card shadow-sm border-warning mb-4" style="width: 18rem;">
+    <h5 class="card-header bg-warning">{{ treedict.title }}</h5>
+  {% endif %}
+      <div class="card-body">
+        <p class="card-text">{{ treedict.descr }}</p>
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+      </div>
+    </div>
   <ul>
   {% if treedict.children %}
     {% for child in treedict.children %}
@@ -11,7 +25,7 @@
     {% endfor %}
   {% else %}
   <li>
-    <img style="width: 60px" src="{% static 'studytree/img/finish.png' %}" alt="Done" class="img-circle">
+    <img style="width: 10rem" src="{% static 'studytree/img/finish.png' %}" alt="Done" class="img-circle mb-4">
   </li>
   {% endif %}
   </ul>
