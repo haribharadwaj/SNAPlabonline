@@ -1,11 +1,18 @@
-<li class="ml-8">
-  <h4> {{ treedict.title }} </h4>
+{% load static %}
+<li>
+  <h4 class="caret"> {{ treedict.title }} </h4>
   <p> {{ treedict.descr }} </p>
-  <ul class="list-group">
-  {% for child in treedict.children %}
-    {% with treedict=child %}
-      {% include 'studytree/treelist.html' %}
-    {% endwith %}
-  {% endfor %}
+  <ul>
+  {% if treedict.children %}
+    {% for child in treedict.children %}
+      {% with treedict=child %}
+        {% include 'studytree/treelist.html' %}
+      {% endwith %}
+    {% endfor %}
+  {% else %}
+  <li>
+    <img style="width: 60px" src="{% static 'studytree/img/finish.png' %}" alt="Done" class="img-circle">
+  </li>
+  {% endif %}
   </ul>
 </li>
