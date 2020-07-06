@@ -9,7 +9,9 @@ from .models import (
 
 
 # Creates a cryptopgraphically good slug unique for task
-def create_task_slug(length=32):
+def create_task_slug(length=24):
+    # Note length here us bytes of randomness
+    # URLsafe is base64, so you get 24*1.3 = 32 chars
     while True:
         # Generate url-safe token
         link = token_urlsafe(length)
@@ -19,8 +21,11 @@ def create_task_slug(length=32):
             break
     return link
 
+
 # Creates a cryptopgraphically good slug unique for study
-def create_study_slug(length=32):
+def create_study_slug(length=24):
+    # Note length here us bytes of randomness
+    # URLsafe is base64, so you get 24*1.3 = 32 chars
     while True:
         # Generate url-safe token
         link = token_urlsafe(length)
