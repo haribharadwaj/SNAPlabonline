@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
 	StudyCreateView, AddTaskView, AddBranchView,
 	AddAltTaskView, AddAltBranchView, MyStudies,
-	experimenter_view, subject_view,
+	StudyDeleteView, experimenter_view, subject_view,
 	)
 
 
@@ -15,4 +15,5 @@ urlpatterns = [
 	path('', MyStudies.as_view(), name='study-home'),
 	path('run/<slug>/', subject_view, name='study-run'),
 	path('viewedit/<slug>/', experimenter_view, name='study-viewedit'),
+	path('<pk>/delete/', StudyDeleteView.as_view(), name='study-delete'),
 	]

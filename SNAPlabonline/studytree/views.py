@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.urls import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.mixins import (LoginRequiredMixin,
     PermissionRequiredMixin, UserPassesTestMixin)
@@ -27,6 +28,21 @@ class StudyCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         form.instance.parent_node = None
         form.instance.slug = create_study_slug()
         return super().form_valid(form)
+
+
+# Initializing a study
+class StudyDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'studytree.add_studyroot'
+    permission_denied_message = 'Experimenter credentials needed to create tasks'
+    model = StudyRoot
+    success_url = '/study/'
+
+    def test_func(self):
+        task = self.get_object()
+        if self.request.user == task.experimenter:
+            return True
+        else:
+            return False
 
 
 # For clarity, using not-totally-DRY views for adding tasks and branches below
@@ -62,7 +78,7 @@ class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin,
         form.instance.parent_node.save()
         # No need to call super().form_valid() as form already saved
         # Just redirect to success_url
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(self.get_success_url())
 
     def test_func(self):
         try:
@@ -73,6 +89,18 @@ class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin,
             return True
         else:
             return False
+
+    def get_success_url(self):
+        pk_parent = self.kwargs['parentpk']
+        try:
+            parent_node = BaseNode.objects.get(pk=pk_parent)
+            print(parent_node)
+            while parent_node.node_type != BaseNode.ROOT:
+                parent_node = parent_node.parent_node
+            slug = parent_node.studyroot.slug
+        except BaseNode.DoesNotExist:
+            return self.success_url
+        return reverse('study-viewedit', kwargs={'slug': slug})
 
 
 class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin,
@@ -108,7 +136,7 @@ class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin,
         form.instance.parent_node.branchnode.save()
         # No need to call super().form_valid() as form already saved
         # Just redirect to success_url
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(self.get_success_url())
 
     def test_func(self):
         try:
@@ -119,6 +147,18 @@ class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin,
             return True
         else:
             return False
+
+    def get_success_url(self):
+        pk_parent = self.kwargs['parentpk']
+        try:
+            parent_node = BaseNode.objects.get(pk=pk_parent)
+            print(parent_node)
+            while parent_node.node_type != BaseNode.ROOT:
+                parent_node = parent_node.parent_node
+            slug = parent_node.studyroot.slug
+        except BaseNode.DoesNotExist:
+            return self.success_url
+        return reverse('study-viewedit', kwargs={'slug': slug})
 
 
 # Add branch to study
@@ -140,6 +180,10 @@ class AddBranchView(LoginRequiredMixin, PermissionRequiredMixin,
             val_err = ValidationError('The parent node you are adding child to does not exist')
             form.add_error(None, val_err)  # Non-field error
             return super().form_invalid(form)
+        if parent_node.node_type == BaseNode.ROOT:
+            val_err = ValidationError('You have to add a task first')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
         if parent_node.child_node is not None:
             val_err = ValidationError('Parent already has a child')
             form.add_error(None, val_err)  # Non-field error
@@ -151,7 +195,7 @@ class AddBranchView(LoginRequiredMixin, PermissionRequiredMixin,
         form.instance.parent_node.save()
         # No need to call super().form_valid() as form already saved
         # Just redirect to success_url
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(self.get_success_url())
 
     def test_func(self):
         try:
@@ -162,6 +206,18 @@ class AddBranchView(LoginRequiredMixin, PermissionRequiredMixin,
             return True
         else:
             return False
+
+    def get_success_url(self):
+        pk_parent = self.kwargs['parentpk']
+        try:
+            parent_node = BaseNode.objects.get(pk=pk_parent)
+            print(parent_node)
+            while parent_node.node_type != BaseNode.ROOT:
+                parent_node = parent_node.parent_node
+            slug = parent_node.studyroot.slug
+        except BaseNode.DoesNotExist:
+            return self.success_url
+        return reverse('study-viewedit', kwargs={'slug': slug})
 
 
 class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin,
@@ -182,6 +238,10 @@ class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin,
             val_err = ValidationError('The parent node you are adding child to does not exist')
             form.add_error(None, val_err)  # Non-field error
             return super().form_invalid(form)
+        if parent_node.node_type == BaseNode.ROOT:
+            val_err = ValidationError('You have to add a task first')
+            form.add_error(None, val_err)  # Non-field error
+            return super().form_invalid(form)
         if parent_node.node_type != BaseNode.FORK:
             val_err = ValidationError('You can only add alternate after branching')
             form.add_error(None, val_err)  # Non-field error
@@ -197,7 +257,7 @@ class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin,
         form.instance.parent_node.branchnode.save()
         # No need to call super().form_valid() as form already saved
         # Just redirect to success_url
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(self.get_success_url())
 
     def test_func(self):
         try:
@@ -208,6 +268,18 @@ class AddAltBranchView(LoginRequiredMixin, PermissionRequiredMixin,
             return True
         else:
             return False
+
+    def get_success_url(self):
+        pk_parent = self.kwargs['parentpk']
+        try:
+            parent_node = BaseNode.objects.get(pk=pk_parent)
+            print(parent_node)
+            while parent_node.node_type != BaseNode.ROOT:
+                parent_node = parent_node.parent_node
+            slug = parent_node.studyroot.slug
+        except BaseNode.DoesNotExist:
+            return self.success_url
+        return reverse('study-viewedit', kwargs={'slug': slug})
 
 
 class MyStudies(LoginRequiredMixin, ListView):
@@ -238,7 +310,6 @@ def experimenter_view(request, *args, **kwargs):
             message = f'Does not seem to be your study: You are logged in as {request.user}.'
             raise PermissionDenied(message)            
 
-	
 
 
 # MAIN VIEW FOR SUBJECT

@@ -27,21 +27,42 @@ def get_leaves(root_node):
 
 
 def get_info(node):
-    # Get printable info 
+    # Get printable info
+    nodeid = node.id  # Just in case pk was not int
+    if node.child_node == None:
+        nochild = True
+    else:
+        nochild = False
+
+    altbadge = False  # Default
+    if node.parent_node is not None:
+        if node.parent_node.node_type == BaseNode.FORK:
+            if node.parent_node.branchnode.child_alternate_id == nodeid:
+                altbadge = True
+
     if node.node_type == BaseNode.ROOT:
+        noalt = False
         title = node.studyroot.displayname
         descr = node.studyroot.descr
-        return (BaseNode.ROOT, title, descr)
+        return (BaseNode.ROOT, title, descr,
+            nodeid, nochild, noalt, altbadge)
     if node.node_type == BaseNode.TASK:
+        noalt = False
         title = node.tasknode.task.displayname
         descr = node.tasknode.task.descr
-        return (BaseNode.TASK, title, descr)
+        return (BaseNode.TASK, title, descr,
+            nodeid, nochild, noalt, altbadge)
     if node.node_type == BaseNode.FORK:
+        if node.branchnode.child_alternate is None:
+            noalt = True
+        else:
+            noalt = False
         title = 'Decision Rule'
         cdict = dict(node.branchnode.check_choices)
         descr = (f'{cdict[node.branchnode.check_type]} {node.branchnode.threshold}'
             f' in condition {node.branchnode.condition}')
-        return (BaseNode.FORK, title, descr)
+        return (BaseNode.FORK, title, descr,
+            nodeid, nochild, noalt, altbadge)
     return (None, None, None)
 
 
@@ -49,8 +70,9 @@ def get_info(node):
 def get_studytree_context(root_node):
     # construct tree dictionary recursively
     # this can be used for nested list in templates
-    ntype, title, descr = get_info(root_node)
-    treedict = dict(ntype=ntype, title=title, descr=descr)
+    ntype, title, descr, nodeid, nochild, noalt, altbadge = get_info(root_node)
+    treedict = dict(ntype=ntype, title=title, descr=descr,
+        nodeid=nodeid, nochild=nochild, noalt=noalt, altbadge=altbadge)
     children = []
     # All node types could have a child
     if root_node.child_node is not None:

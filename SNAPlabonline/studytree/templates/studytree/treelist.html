@@ -5,15 +5,63 @@
     <h4 class="card-header">{{ treedict.title }}</h4>
   {% elif treedict.ntype == 'Task' %}
     <div class="card shadow-sm border-info mb-4" style="width: 18rem;">
-    <h5 class="card-header bg-info text-white">{{ treedict.title }}</h5>
+    <h5 class="card-header bg-info text-white">
+      {{ treedict.title }}
+      {% if treedict.altbadge %}
+        <span class="badge badge-pill badge-danger">Alternate</span>
+      {% endif %}
+    </h5>
   {% else %}
     <div class="card shadow-sm border-warning mb-4" style="width: 18rem;">
-    <h5 class="card-header bg-warning">{{ treedict.title }}</h5>
+    <h5 class="card-header bg-warning">
+      {{ treedict.title }}
+      {% if treedict.altbadge %}
+        <span class="badge badge-pill badge-danger">Alternate</span>
+      {% endif %}
+    </h5>
   {% endif %}
       <div class="card-body">
         <p class="card-text">{{ treedict.descr }}</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
+        {% if treedict.ntype == 'Fork' %}
+          {% if treedict.nochild %}
+          <div class="d-flex justify-content-between">
+            <a href="{% url 'study-addtask' treedict.nodeid %}" class="btn btn-outline-secondary btn-sm mt-2 mb-2">
+            Add Task
+            </a>
+            <a href="{% url 'study-addbranch' treedict.nodeid %}" class="btn btn-outline-secondary btn-sm mt-2 mb-2">
+            Add Rule
+            </a>
+          </div>
+          {% elif treedict.noalt %}
+          <div class="d-flex justify-content-between">
+            <a href="{% url 'study-addtask-alt' treedict.nodeid %}" class="btn btn-outline-secondary btn-sm mt-2">
+            Alternate Task
+            </a>
+            <a href="{% url 'study-addbranch-alt' treedict.nodeid %}" class="btn btn-outline-secondary btn-sm mt-2">
+            Alternate Rule
+            </a>
+          </div>
+          {% endif %}
+        {% else %}  
+          {% if treedict.nochild %}
+            {% if treedict.ntype == 'Root' %}
+              <div class="d-flex justify-content-between">
+                <a href="{% url 'study-addtask' treedict.nodeid %}" class="btn btn-outline-secondary btn-sm mt-2">
+                Add Task
+                </a>
+              </div>
+            {% else %}
+              <div class="d-flex justify-content-between">
+                <a href="{% url 'study-addtask' treedict.nodeid %}" class="btn btn-outline-secondary btn-sm mt-2">
+                Add Task
+                </a>
+                <a href="{% url 'study-addbranch' treedict.nodeid %}" class="btn btn-outline-secondary btn-sm mt-2">
+                Add Rule
+                </a>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endif %}
       </div>
     </div>
   <ul>

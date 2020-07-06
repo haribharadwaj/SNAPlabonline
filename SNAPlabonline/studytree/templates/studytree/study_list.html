@@ -12,15 +12,15 @@
         <div class="card-body">
           <h5 class="card-title"> {{ study.displayname }} </h5>
           <p class="card-text"> {{ study.descr }} </p>
-          <a href="#" class="btn btn-outline-primary btn-lg btn-block">
-          View Study Details
+          <a href="{% url 'study-viewedit' study.slug %}" class="btn btn-outline-primary btn-lg btn-block">
+          View/Edit Study Details
           </a>
         </div>
         <div class="d-flex justify-content-between border-top">
           <a href="#" class="btn btn-outline-secondary btn-sm ml-2 mb-2 mt-2">
-          Edit
+          Subject View
           </a>
-          <a href="#" class="btn btn-outline-danger btn-sm mr-2 mb-2 mt-2">
+          <a href="{% url 'study-delete' pk=study.name %}" class="btn btn-outline-danger btn-sm mr-2 mb-2 mt-2">
           Delete
           </a>
         </div>

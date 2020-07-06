@@ -1,9 +1,12 @@
 {% extends "tasks/base.html" %}
 {% load static %}
 {% block content %}
-  <div class="mt-4">
-    <ul class="tree">
-      {% include 'studytree/treelist.html' %}
-    </ul>
-  </div>
+    <div class="mt-4">
+        <a href="{% url 'study-home' %}"> Back to List of All Studies </a>
+    </div>
+    <div class="mt-4">
+        <ul class="tree">
+            {% include 'studytree/treelist.html' %}
+        </ul>
+    </div>
 {% endblock content %}
