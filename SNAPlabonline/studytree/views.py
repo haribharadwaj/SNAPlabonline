@@ -8,6 +8,7 @@ from django.views.generic import (ListView,
     CreateView, UpdateView, DeleteView)
 from django.contrib.auth.decorators import (login_required,
     permission_required)
+from users.decorators import subjid_required, consent_required
 from .models import BaseNode, StudyRoot, TaskNode, BranchNode
 from .lookups import create_study_slug, get_leaves, get_studytree_context
 from .forms import AddTaskForm, AddBranchForm
@@ -313,8 +314,27 @@ def experimenter_view(request, *args, **kwargs):
 
 
 # MAIN VIEW FOR SUBJECT
+@subjid_required
+@consent_required
 def subject_view(request, *args, **kwargs):
-	raise Http404('We are still building that page for you!')
+    slug = kwargs.get('slug', None)
+    if slug is None:
+        raise Http404('You are requesting a null study')
+    else:
+        try:
+            root_node = StudyRoot.objects.get(slug=slug)
+            treedict = get_studytree_context(root_node)
+        except StudyRoot.DoesNotExist:
+            raise Http404('Study does not seem to exist')
+
+    subjid = request.session.get('subjid')
+
+    study = dict(displayname='Test Study',
+        marketplace='Prolific', subjid=subjid)
+    return render(request, 'studytree/study_subject.html', {'study': study})
+
+
+
 
 
 
