@@ -6,6 +6,6 @@
   </div>
   <div class="mt-2 content-section">
     <h4> Your {{ study.marketplace }} ID: {{ study.subjid }} </h4>
-    <a href="#"> Not Your ID? </a>
+    <a href="{% url 'study-wrongid' %}"> Not Your ID? </a>
   </div>
 {% endblock content %}

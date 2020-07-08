@@ -1,0 +1,16 @@
+{% extends "tasks/base.html" %}
+
+{% block content %}
+  <div class="mt-4 border-bottom">
+    <h2> Oops ... </h2>
+  </div>
+  <div class="mt-2">
+    {% if study.marketplace %}
+    <p> Sorry! Not quite sure why you were routed to this page! To get back to where you were in the study, please go to {{study.marketplace}} and click on the study link once again. The website will remember what you have completed so far and you can pickup where you left off. </p>
+    <p>If you have any questions/concerns, please feel free to contact the researcher from {{ study.marketplace }}.</p>
+    {% else %}
+    <p> Sorry! Not quite sure why you were routed to this page! To get back to where you were in the study, please go to <a href="https://Prolific.co">Prolific</a> and click on the study link once again. The website will remember what you have completed so far and you can pickup where you left off. </p>
+    <p> If you have any questions/concerns, please feel free to contact the researcher from Prolific.  </p>
+    {% endif %}
+  </div>
+{% endblock content %}

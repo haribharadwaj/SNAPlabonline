@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.mixins import (LoginRequiredMixin,
@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import (login_required,
     permission_required)
 from users.decorators import subjid_required, consent_required
 from .models import BaseNode, StudyRoot, TaskNode, BranchNode
-from .lookups import create_study_slug, get_leaves, get_studytree_context
+from .lookups import create_study_slug, get_studytree_context
 from .forms import AddTaskForm, AddBranchForm
 
 
@@ -318,6 +318,8 @@ def experimenter_view(request, *args, **kwargs):
 @consent_required
 def subject_view(request, *args, **kwargs):
     slug = kwargs.get('slug', None)
+    # Keep track of which one the subject is doing
+    request.session['studyslug'] = slug  
     if slug is None:
         raise Http404('You are requesting a null study')
     else:
@@ -335,6 +337,21 @@ def subject_view(request, *args, **kwargs):
 
 
 
+@subjid_required
+def wrong_id(request, *args, **kwargs):
+    studyslug = request.session.get('studyslug', None)
+    if studyslug is None:
+        next_url = request.META.get('HTTP_REFERER', None)
+        if next_url is None:
+            next_url = reverse('study-routingfail')
+    else:
+        next_url = reverse('study-run', kwargs={'slug': studyslug})
 
+    request.session.flush()
+    return redirect(next_url)
+
+
+def routing_fail(request):
+    return render(request, 'studytree/routing_fail.html')
 
 
