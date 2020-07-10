@@ -149,8 +149,7 @@
     {% endif %}
       on_finish: function() {
         saveData(jsPsych.data.get().json(), subjid, task_url, jsPsych.data.getInteractionData().json());
-        jsPsych.data.displayData();
       }
     });
-
+    toStudy();
 {% endblock script %}

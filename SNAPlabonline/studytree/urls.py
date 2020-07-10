@@ -3,7 +3,7 @@ from .views import (
 	StudyCreateView, AddTaskView, AddBranchView,
 	AddAltTaskView, AddAltBranchView, MyStudies,
 	StudyDeleteView, experimenter_view, subject_view,
-	wrong_id, routing_fail
+	wrong_id, routing_fail, redirect_home
 	)
 
 
@@ -18,5 +18,6 @@ urlpatterns = [
 	path('viewedit/<slug>/', experimenter_view, name='study-viewedit'),
 	path('<pk>/delete/', StudyDeleteView.as_view(), name='study-delete'),
 	path('wrongid/', wrong_id, name='study-wrongid'),
-	path('routingfail/', routing_fail, name='study-routingfail')
+	path('routingfail/', routing_fail, name='study-routingfail'),
+	path('redirecthome/', redirect_home, name='study-redirecthome')
 	]

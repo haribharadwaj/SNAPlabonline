@@ -355,3 +355,12 @@ def routing_fail(request):
     return render(request, 'studytree/routing_fail.html')
 
 
+def redirect_home(request):
+    studyslug = request.session.get('studyslug', None)
+    if studyslug is None:
+        next_url = request.META.get('HTTP_REFERER', None)
+        if next_url is None:
+            next_url = reverse('study-routingfail')
+    else:
+        next_url = reverse('study-run', kwargs={'slug': studyslug})
+    return redirect(next_url)

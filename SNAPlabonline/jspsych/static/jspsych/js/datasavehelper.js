@@ -14,11 +14,12 @@ function saveData(data, subjid, task_url, interactionData){
 		    	'interactionData': interactionData,
 			},
 		    success: function(){
-
+		    	window.location.href = '/study/redirecthome/';
 		    } 
 		}
 	);
 }
+
 
 // Function to save data from single trial
 function saveSingleTrial(data, subjid, task_url, trialnum, correct){
