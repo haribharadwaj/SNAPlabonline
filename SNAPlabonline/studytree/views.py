@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import (login_required,
     permission_required)
 from users.decorators import subjid_required, consent_required
 from .models import BaseNode, StudyRoot, TaskNode, BranchNode
-from .lookups import create_study_slug, get_studytree_context
+from .lookups import (create_study_slug, get_studytree_context,
+    get_next_task, get_max_tasks, get_info)
 from .forms import AddTaskForm, AddBranchForm
 
 
@@ -317,22 +318,30 @@ def experimenter_view(request, *args, **kwargs):
 @subjid_required
 @consent_required
 def subject_view(request, *args, **kwargs):
-    slug = kwargs.get('slug', None)
+    studyslug = kwargs.get('slug', None)
     # Keep track of which one the subject is doing
-    request.session['studyslug'] = slug  
-    if slug is None:
+    request.session['studyslug'] = studyslug  
+    subjid = request.session.get('subjid')
+    if studyslug is None:
         raise Http404('You are requesting a null study')
     else:
-        try:
-            root_node = StudyRoot.objects.get(slug=slug)
-            treedict = get_studytree_context(root_node)
-        except StudyRoot.DoesNotExist:
+        if StudyRoot.objects.filter(slug=studyslug).exists():
+            node = StudyRoot.objects.get(slug=studyslug)
+            ntasks_max = get_max_tasks(node)
+            task, n_completed = get_next_task(node, studyslug, subjid)
+            if n_completed < ntasks_max:
+                if task is None:
+                    status = 'Concluded Early'
+                else:
+                    status = 'In Progress'
+            else:
+                status = 'Completed'
+        else:
             raise Http404('Study does not seem to exist')
 
-    subjid = request.session.get('subjid')
-
-    study = dict(displayname='Test Study',
-        marketplace='Prolific', subjid=subjid)
+    study = dict(displayname=node.studyroot.displayname, status=status,
+        marketplace='Prolific', subjid=subjid, task=task,
+        ntasks_max=ntasks_max, n_completed=n_completed)
     return render(request, 'studytree/study_subject.html', {'study': study})
 
 

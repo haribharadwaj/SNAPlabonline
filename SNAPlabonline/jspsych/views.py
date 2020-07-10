@@ -129,10 +129,11 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 def run_task(request, **kwargs):
     task_url = kwargs['taskurl']
     subject = request.session['subjid']
+    studyslug = request.session.get('studyslug', None)
 
 
     # Gets the info for where the subject left off
-    taskcontext = get_task_context(task_url, subject)    
+    taskcontext = get_task_context(task_url, subject, studyslug)    
 
     if taskcontext['done']:
         return render(request, 'jspsych/task_done.html',

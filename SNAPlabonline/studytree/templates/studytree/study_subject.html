@@ -1,11 +1,44 @@
 {% extends "tasks/base.html" %}
+{% load static %}
 
 {% block content %}
   <div class="mt-4">
-    <h2> Welcome to the {{study.displayname}} study! </h2>
+    <h2> Welcome to {{study.displayname}}! </h2>
   </div>
-  <div class="mt-2 content-section">
+  <div class="mt-4 content-section">
     <h4> Your {{ study.marketplace }} ID: {{ study.subjid }} </h4>
     <a href="{% url 'study-wrongid' %}"> Not Your ID? </a>
   </div>
+
+  <div class="mt-4">
+    {% if study.status == 'In Progress' %}
+    <h4> Status: <span class="badge badge-warning"> In Progress </span></h4>
+    {% elif study.status == 'Concluded Early' %}
+    <h4> Status: <span class="badge badge-danger"> Concluded Early </span></h4>
+    {% elif study.status == 'Concluded Early' %}
+    <h4> Status: <span class="badge badge-danger"> Concluded Early </span></h4>
+    {% elif study.status == 'Completed' %}
+    <h4> Status: <span class="badge badge-success"> Study Completed </span></h4>
+    {% else %}
+    <h4> Status: <span class="badge badge-secondary"> Unknown </span></h4>
+    {% endif %}
+    <p> You have completed <span class="font-weight-bold">{{ study.n_completed }}</span> out of <span class="font-weight-bold">{{ study.ntasks_max}}</span> possible parts. </p>
+  </div>
+
+  {% if study.task %}
+  <p> Below is your next available part. </p>
+  <div class="card shadow-sm mt-4 ml-4 hoverable" style="width: 18rem;">
+    <img src="{% get_media_prefix %}/taskicons/task_default.png" class="card-img-top" alt="">
+    <div class="card-header">
+    <h3> PART {{ study.n_completed|add:"1" }}</h3>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title"> {{ study.task.displayname }} </h5>
+      <p class="card-text"> {{ study.task.descr }} </p>
+      <a href="{% url 'run-task' taskurl=study.task.task_url %}" class="btn btn-outline-primary btn-lg btn-block stretched-link">
+      Do Task
+      </a>
+    </div>
+  </div>
+  {% endif %}
 {% endblock content %}

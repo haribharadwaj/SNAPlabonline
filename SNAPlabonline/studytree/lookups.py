@@ -1,8 +1,9 @@
 from .models import StudyRoot, TaskNode, BranchNode, BaseNode
 from secrets import token_urlsafe
+from jspsych.lookups import get_scores
 
 
-# Creates a cryptopgraphically good slug unique for task
+# Creates a cryptopgraphically good slug unique for study
 def create_study_slug(length=24):
     # Note length here us bytes of randomness
     # URLsafe is base64, so you get 24*1.3 = 32 chars
@@ -14,16 +15,6 @@ def create_study_slug(length=24):
             # If token not in use, then done
             break
     return link
-
-
-def get_leaves(root_node):
-    # Leaf has no children
-    # BUT there could be multiple leaves
-    curr_child = root_node.child_node
-    while curr_child is not None:
-        curr_child = curr_child.child_node
-
-    return curr_child
 
 
 def get_info(node):
@@ -84,3 +75,57 @@ def get_studytree_context(root_node):
     # children: list of subtrees rooted at each child
     treedict['children'] = [get_studytree_context(child) for child in children]
     return treedict
+
+
+def get_max_tasks(root_node):
+    ntasks = 0
+    while root_node.child_node is not None:
+        node = root_node.child_node
+        if node.node_type == BaseNode.TASK:
+            ntasks += 1
+        root_node = node
+    return ntasks
+
+
+
+def get_next_task(node, studyslug, subjid, n_completed=0):
+    if node is None:
+        return (None, n_completed)
+    else:
+        if node.node_type == BaseNode.ROOT:
+            return get_next_task(node.child_node, studyslug,
+                subjid, n_completed)
+        if node.node_type == BaseNode.TASK:
+            taskslug = node.tasknode.task.task_url
+            scores = get_scores(taskslug, studyslug, subjid)
+            if not scores:
+                return (node.tasknode.task, n_completed)
+            else:
+                n_completed += 1
+                return get_next_task(node.child_node, studyslug,
+                    subjid, n_completed)
+        if node.node_type == BaseNode.FORK:
+            parent_base_node = node.parent_node
+            while parent_base_node.node_type != BaseNode.TASK:
+                parent_base_node = parent_base_node.parent_node
+
+            taskslug = parent_base_node.tasknode.task.task_url
+            scores = get_scores(taskslug, studyslug, subjid)
+
+            if node.branchnode.check_type == BranchNode.SCORE_GREATER:
+                if scores[node.branchnode.condition - 1] > node.branchnode.threshold:
+                    passing = True
+                else:
+                    passing = False
+            else:
+                if scores[node.branchnode.condition - 1] < node.branchnode.threshold:
+                    passing = True
+                else:
+                    passing = False
+
+            if passing:
+                return get_next_task(node.child_node, studyslug, subjid, n_completed)
+
+            else:
+                return get_next_task(node.branchnode.child_alternate,
+                    studyslug, subjid, n_completed)

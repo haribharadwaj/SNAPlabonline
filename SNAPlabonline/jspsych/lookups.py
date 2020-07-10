@@ -103,7 +103,7 @@ def subj_next_trial(task_url, subject):
             'subject': subject}
 
 
-def get_task_context(task_url, subject):
+def get_task_context(task_url, subject, studyslug):
     task = Task.objects.get(task_url=task_url)
     display_name = task.displayname
     task_name = task.name
@@ -127,10 +127,10 @@ def get_task_context(task_url, subject):
     resps_subject = OneShotResponse.objects.filter(subject_id=subject)
     resps_subject_task = resps_subject.filter(parent_task_id=task.pk)
 
-    if not resps_subject_task:
-        done = False
-    else:
+    if resps_subject_task.filter(parent_study_slug=studyslug).exists():
         done = True
+    else:
+        done = False
 
     return {'instructions': instructions, 'trials': trials,
             'feedback': feedback, 'display_name': display_name,
