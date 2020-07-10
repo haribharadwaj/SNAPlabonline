@@ -47,50 +47,9 @@ class Task(models.Model):
 
 
 
-# Model for a study session that we can direct participants to
-# Studies can have up to 12 different tasks
-class Study(models.Model):
-    title = models.CharField(default='SNAPlab Study',
-        max_length=24,
-        help_text='Short title for study')
-    welcome_message = models.TextField(default='',
-        help_text=('A welcome screen message suitable for display '
-            'in the landing page for your subjects'))
-    task1 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task1_set', null=True)
-    task2 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task2_set', null=True)
-    task3 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task3_set', null=True)
-    task4 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task4_set', null=True)
-    task5 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task5_set', null=True)
-    task6 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task6_set', null=True)
-    task7 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task7_set', null=True)
-    task8 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task8_set', null=True)
-    task9 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task9_set', null=True)
-    task10 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task10_set', null=True)
-    task11 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task11_set', null=True)
-    task12 = models.ForeignKey(Task, on_delete=models.SET_NULL,
-        related_name='study_task12_set', null=True)
-
-    experimenter = models.ForeignKey(User, null=True,
-                                     on_delete=models.SET_NULL)
-    study_url = models.SlugField(max_length=32, unique=True)
-    date_created = models.DateTimeField(default=timezone.now)
-
-
 class OneShotResponse(models.Model):
     parent_task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    parent_study = models.ForeignKey(Study, on_delete=models.SET_NULL,
-        null=True)
+    parent_study_slug = models.SlugField(max_length=32, null=True, blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     data = models.TextField()
     interactions = models.TextField()
@@ -102,8 +61,7 @@ class OneShotResponse(models.Model):
 
 class SingleTrialResponse(models.Model):
     parent_task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    parent_study = models.ForeignKey(Study, on_delete=models.SET_NULL,
-        null=True)
+    parent_study_slug = models.SlugField(max_length=32, null=True, blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     data = models.TextField()
     correct = models.BooleanField(null=True)

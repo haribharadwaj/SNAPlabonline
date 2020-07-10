@@ -35,7 +35,7 @@
         var jstrial = {
           type: '{{ trial.plugin }}',
           {% if task.serveraudio %}
-          stimulus: '{% get_media_prefix %}stimuli/{{trial.stimulus}}',
+          stimulus: '{% static  'jspsych/wav/'|add:trial.stimulus  %}',
           {% else %}
           stimulus: '{{ trial.stimulus|safe }}',
           {% endif %}
@@ -46,7 +46,7 @@
         {% else %}
         var jstrial = {
           type: '{{ trial.plugin }}',
-          stimulus: '{{ trial.prompt|safe }}',
+          stimulus: '<p>{{ trial.prompt|safe }}</p>',
           choices: {{ trial.choices|safe }}
         };
         timeline.push(jstrial);
@@ -79,7 +79,7 @@
         var jstrial = {
           type: '{{ trial.plugin }}',
           {% if task.serveraudio %}
-          stimulus: '{% get_media_prefix %}stimuli/{{trial.stimulus}}',
+          stimulus: '{% static  'jspsych/wav/'|add:trial.stimulus  %}',
           {% else %}
           stimulus: '{{ trial.stimulus|safe }}',
           {% endif %}
@@ -126,7 +126,7 @@
         {% else %}
         var jstrial = {
           type: '{{ trial.plugin }}',
-          stimulus: '{{ trial.prompt|safe }}',
+          stimulus: '<p>{{ trial.prompt|safe }}</p>',
           choices: {{ trial.choices|safe }}
         };
         timeline.push(jstrial);

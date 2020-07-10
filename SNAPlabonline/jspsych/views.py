@@ -35,9 +35,11 @@ def create_OneShotResponse(request):
         task_url = request.POST['task_url']
         task = Task.objects.get(task_url=task_url)
         interactions = request.POST['interactionData']
+        studyslug = request.session.get('studyslug', None)
         resp = OneShotResponse(data=dat,
             subject=subj,
             parent_task=task,
+            parent_study_slug=studyslug,
             interactions=interactions)
         resp.save()
         json_resp = {'success': True, 
@@ -58,9 +60,11 @@ def create_TrialResponse(request):
         task = Task.objects.get(task_url=task_url)
         trialnum = json.loads(request.POST['trialnum'])  # Coerse to number
         correct = json.loads(request.POST['correct'])  # Coerse to boolean
+        studyslug = request.session.get('studyslug', None)
         resp = SingleTrialResponse(data=dat,
             subject=subj,
             parent_task=task,
+            parent_study_slug=studyslug,
             trialnum=trialnum,
             correct=correct)
         resp.save()

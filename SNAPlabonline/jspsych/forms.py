@@ -46,13 +46,14 @@ const_stim_schema = """
                         },
                     "stimulus": {"type": "string", "pattern": "(wav)$"},
                     "answer": {"type": "integer", "minimum": 1},
+                    "cond": {"type": "integer", "minimum": 1},
                     "annot": {"type": "object"}
                     },
                 "if": {
                 "properties": {"plugin": {"const": "hari-audio-button-response"}}
                 },
                 "then": {
-                "required": ["plugin", "prompt", "stimulus", "answer"]
+                "required": ["plugin", "prompt", "stimulus", "answer", "cond"]
                 },
                 "else": {
                 "required": ["plugin", "prompt"]
