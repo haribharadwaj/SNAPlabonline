@@ -155,13 +155,13 @@ def get_task_results(task_url, experimenter):
 
 
 
-def get_subj_scores(taskslug, studyslug, subjid):
+def get_scores(taskslug, studyslug, subjid):
     task = Task.objects.get(task_url=taskslug)
     resp_all = OneShotResponse.objects.filter(parent_task=task)
     resp_study = resp_all.filter(parent_study_slug=studyslug)
     scores = []  # One entry per conditions
-    if resp_study.filter(subect_id=subjid).exists():
-        resp = resp_study.get(subect_id=subjid)
+    if resp_study.filter(subject_id=subjid).exists():
+        resp = resp_study.get(subject_id=subjid)
         dat = json.loads(resp.data)
         # At most, you can have as many conditions as trial entries
         # Usually lot fewer
@@ -180,10 +180,9 @@ def get_subj_scores(taskslug, studyslug, subjid):
             for trial in dat:
                 if 'cond' in trial.keys():
                     if trial['cond'] == (c + 1):
-                        nconds += 1
+                        ntotal += 1
                         if trial['correct'] == True:
                             ncorrect += 1.
-                            ntotal += 1.
             score = ncorrect * 100. / ntotal
             scores += [score,]
     # If scores is empty =>
