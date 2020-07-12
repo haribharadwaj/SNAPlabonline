@@ -378,6 +378,7 @@ def demo_view(request, *args, **kwargs):
     if subjid is None or not subjid.startswith('DEMO'):
         subjid = create_demo_subject()
         request.session['subjid'] = subjid
+        request.session['isdemo'] = True
     subj, was_just_created = Subject.objects.get_or_create(subjid=subjid)
     subj.latest_visit = timezone.now()
     subj.save()
@@ -394,6 +395,7 @@ def pilot_view(request, *args, **kwargs):
     if subjid is None or not subjid.startswith('PILOT'):
         subjid = create_pilot_subject()
         request.session['subjid'] = subjid
+        request.session['ispilot'] = True
     subj, was_just_created = Subject.objects.get_or_create(subjid=subjid)
     subj.latest_visit = timezone.now()
     subj.save()
@@ -425,10 +427,17 @@ def routing_fail(request):
 
 def redirect_home(request):
     studyslug = request.session.get('studyslug', None)
+    isdemo = request.session.get('isdemo', False)
+    ispilot = request.session.get('ispilot', False)
     if studyslug is None:
         next_url = request.META.get('HTTP_REFERER', None)
         if next_url is None:
             next_url = reverse('study-routingfail')
     else:
-        next_url = reverse('study-run', kwargs={'slug': studyslug})
+        if isdemo:
+            next_url = reverse('study-demo', kwargs={'slug': studyslug})
+        elif ispilot:
+            next_url = reverse('study-pilot', kwargs={'slug': studyslug})
+        else:
+            next_url = reverse('study-run', kwargs={'slug': studyslug})
     return redirect(next_url)
