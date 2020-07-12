@@ -358,8 +358,14 @@ def subject_view(request, *args, **kwargs):
         else:
             raise Http404('Study does not seem to exist')
 
-    isdemo = kwargs.get('isdemo', False)
-    ispilot = kwargs.get('ispilot', False)
+    isdemo = kwargs.get('isdemo', None)
+    ispilot = kwargs.get('ispilot', None)
+    if isdemo is None:
+        isdemo = request.session.get('isdemo', False)
+
+    if ispilot is None:
+        ispilot = request.session.get('ispilot', False)
+    
     if isdemo or ispilot:
         totalcomp = 0.00
         taskcomp = 0.00
