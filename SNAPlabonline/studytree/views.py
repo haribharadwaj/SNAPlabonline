@@ -8,10 +8,14 @@ from django.views.generic import (ListView,
     CreateView, UpdateView, DeleteView)
 from django.contrib.auth.decorators import (login_required,
     permission_required)
+from django.utils import timezone
+from django.contrib import messages
 from users.decorators import subjid_required, consent_required
+from users.models import Subject
 from .models import BaseNode, StudyRoot, TaskNode, BranchNode
 from .lookups import (create_study_slug, get_studytree_context,
-    get_next_task, get_max_tasks, get_info)
+    get_next_task, get_max_tasks, get_info,
+    create_demo_subject, create_pilot_subject)
 from .forms import AddTaskForm, AddBranchForm
 
 
@@ -146,6 +150,13 @@ class AddAltTaskView(LoginRequiredMixin, PermissionRequiredMixin,
         # No need to call super().form_valid() as form already saved
         # Just redirect to success_url
         return HttpResponseRedirect(self.get_success_url())
+
+    # Need to update kwargs passed to FormClass to have user
+    # This is so form can filter queryset for ModelChoiceField
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super(AddAltTaskView, self).get_form_kwargs(*args, **kwargs)
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
     def test_func(self):
         try:
@@ -347,13 +358,51 @@ def subject_view(request, *args, **kwargs):
         else:
             raise Http404('Study does not seem to exist')
 
+    isdemo = kwargs.get('isdemo', False)
+    ispilot = kwargs.get('ispilot', False)
+    if isdemo or ispilot:
+        totalcomp = 0.00
+        taskcomp = 0.00
+
     study = dict(displayname=node.studyroot.displayname,
         status=status, taskcomp=taskcomp,
         marketplace='Prolific', subjid=subjid, task=task,
         ntasks_max=ntasks_max, n_completed=n_completed,
-        totalcomp=totalcomp)
+        totalcomp=totalcomp, isdemo=isdemo, ispilot=ispilot)
     return render(request, 'studytree/study_subject.html', {'study': study})
 
+
+
+def demo_view(request, *args, **kwargs):
+    subjid = request.session.get('subjid', None)
+    if subjid is None or not subjid.startswith('DEMO'):
+        subjid = create_demo_subject()
+        request.session['subjid'] = subjid
+    subj, was_just_created = Subject.objects.get_or_create(subjid=subjid)
+    subj.latest_visit = timezone.now()
+    subj.save()
+    if was_just_created:
+        messages.success(request,
+            f'Because this is a demo study, we generated a random ID for you: {subjid}')
+    # Pass to regular subject view, with demo ID
+    kwargs.update({'isdemo': True})
+    return subject_view(request, *args, **kwargs)
+
+
+def pilot_view(request, *args, **kwargs):
+    subjid = request.session.get('subjid', None)
+    if subjid is None or not subjid.startswith('PILOT'):
+        subjid = create_pilot_subject()
+        request.session['subjid'] = subjid
+    subj, was_just_created = Subject.objects.get_or_create(subjid=subjid)
+    subj.latest_visit = timezone.now()
+    subj.save()
+    if was_just_created:
+        messages.success(request,
+            f'Because this is a pilot study, we generated a random ID for you: {subjid}')
+    # Pass to regular subject view, with demo ID
+    kwargs.update({'ispilot': True})
+    return subject_view(request, *args, **kwargs)
 
 
 @subjid_required

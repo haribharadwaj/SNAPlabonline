@@ -1,11 +1,12 @@
 from .models import StudyRoot, TaskNode, BranchNode, BaseNode
+from users.models import Subject
 from secrets import token_urlsafe
 from jspsych.lookups import get_scores
 
 
 # Creates a cryptopgraphically good slug unique for study
 def create_study_slug(length=24):
-    # Note length here us bytes of randomness
+    # Note length here is bytes of randomness
     # URLsafe is base64, so you get 24*1.3 = 32 chars
     while True:
         # Generate url-safe token
@@ -133,3 +134,31 @@ def get_next_task(node, studyslug, subjid, n_completed=0, totalcomp=0):
             else:
                 return get_next_task(node.branchnode.child_alternate,
                     studyslug, subjid, n_completed, totalcomp)
+
+
+# Creates a cryptopgraphically good demo subject ID
+def create_demo_subject(length=6):
+    # Note length here is bytes of randomness
+    # URLsafe is base64, so you get 6*1.3 = 8 chars
+    while True:
+        # Generate url-safe token
+        subjid = 'DEMO' + token_urlsafe(length)
+        # Check if token is already used by a Task instance
+        if not Subject.objects.filter(subjid=subjid):
+            # If token not in use, then done
+            break
+    return subjid
+
+
+# Creates a cryptopgraphically good pilot subject ID
+def create_pilot_subject(length=6):
+    # Note length here is bytes of randomness
+    # URLsafe is base64, so you get 6*1.3 = 8 chars
+    while True:
+        # Generate url-safe token
+        subjid = 'PILOT' + token_urlsafe(length)
+        # Check if token is already used by a Task instance
+        if not Subject.objects.filter(subjid=subjid):
+            # If token not in use, then done
+            break
+    return subjid

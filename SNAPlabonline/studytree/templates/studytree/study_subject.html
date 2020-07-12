@@ -6,8 +6,14 @@
     <h2> Welcome to {{study.displayname}}! </h2>
   </div>
   <div class="mt-4 content-section">
+    {% if study.isdemo %}
+    <h4> Your Participant ID: {{ study.subjid }} </h4>
+    {% elif study.ispilot %}
+    <h4> Your Participant ID: {{ study.subjid }} </h4>
+    {% else %}
     <h4> Your {{ study.marketplace }} ID: {{ study.subjid }} </h4>
     <a href="{% url 'study-wrongid' %}"> Not Your ID? </a>
+    {% endif %}
   </div>
 
   <div class="mt-4 border-bottom">
