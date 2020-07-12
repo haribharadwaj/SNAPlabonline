@@ -82,6 +82,13 @@ class AddTaskView(LoginRequiredMixin, PermissionRequiredMixin,
         # Just redirect to success_url
         return HttpResponseRedirect(self.get_success_url())
 
+    # Need to update kwargs passed to FormClass to have user
+    # This is so form can filter queryset for ModelChoiceField
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super(AddTaskView, self).get_form_kwargs(*args, **kwargs)
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
     def test_func(self):
         try:
             parent_node = BaseNode.objects.get(pk=self.kwargs['parentpk'])
@@ -328,7 +335,8 @@ def subject_view(request, *args, **kwargs):
         if StudyRoot.objects.filter(slug=studyslug).exists():
             node = StudyRoot.objects.get(slug=studyslug)
             ntasks_max = get_max_tasks(node)
-            task, n_completed = get_next_task(node, studyslug, subjid)
+            task, taskcomp, n_completed, totalcomp = get_next_task(node,
+                studyslug, subjid)
             if n_completed < ntasks_max:
                 if task is None:
                     status = 'Concluded Early'
@@ -339,9 +347,11 @@ def subject_view(request, *args, **kwargs):
         else:
             raise Http404('Study does not seem to exist')
 
-    study = dict(displayname=node.studyroot.displayname, status=status,
+    study = dict(displayname=node.studyroot.displayname,
+        status=status, taskcomp=taskcomp,
         marketplace='Prolific', subjid=subjid, task=task,
-        ntasks_max=ntasks_max, n_completed=n_completed)
+        ntasks_max=ntasks_max, n_completed=n_completed,
+        totalcomp=totalcomp)
     return render(request, 'studytree/study_subject.html', {'study': study})
 
 

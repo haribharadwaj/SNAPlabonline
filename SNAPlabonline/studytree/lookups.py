@@ -88,22 +88,25 @@ def get_max_tasks(root_node):
 
 
 
-def get_next_task(node, studyslug, subjid, n_completed=0):
+def get_next_task(node, studyslug, subjid, n_completed=0, totalcomp=0):
+    # returns (task, taskcomp, n_completed, totalcomp)
     if node is None:
-        return (None, n_completed)
+        return (None, None, n_completed, totalcomp)
     else:
         if node.node_type == BaseNode.ROOT:
             return get_next_task(node.child_node, studyslug,
-                subjid, n_completed)
+                subjid, n_completed, totalcomp)
         if node.node_type == BaseNode.TASK:
             taskslug = node.tasknode.task.task_url
             scores = get_scores(taskslug, studyslug, subjid)
             if not scores:
-                return (node.tasknode.task, n_completed)
+                return (node.tasknode.task, node.tasknode.pay,
+                    n_completed, totalcomp)
             else:
                 n_completed += 1
+                totalcomp += node.tasknode.pay
                 return get_next_task(node.child_node, studyslug,
-                    subjid, n_completed)
+                    subjid, n_completed, totalcomp)
         if node.node_type == BaseNode.FORK:
             parent_base_node = node.parent_node
             while parent_base_node.node_type != BaseNode.TASK:
@@ -124,8 +127,9 @@ def get_next_task(node, studyslug, subjid, n_completed=0):
                     passing = False
 
             if passing:
-                return get_next_task(node.child_node, studyslug, subjid, n_completed)
+                return get_next_task(node.child_node, studyslug,
+                    subjid, n_completed, totalcomp)
 
             else:
                 return get_next_task(node.branchnode.child_alternate,
-                    studyslug, subjid, n_completed)
+                    studyslug, subjid, n_completed, totalcomp)

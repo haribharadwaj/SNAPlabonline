@@ -51,6 +51,9 @@ class StudyRoot(BaseNode):
 
 class TaskNode(BaseNode):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    pay = models.DecimalField(max_digits=4, decimal_places=2,
+        default=0.00, null=True,
+        verbose_name='Compensation (US$)')
 
 
 class BranchNode(BaseNode):

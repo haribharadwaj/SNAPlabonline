@@ -10,30 +10,50 @@
     <a href="{% url 'study-wrongid' %}"> Not Your ID? </a>
   </div>
 
+  <div class="mt-4 border-bottom">
+    <p> Thank you for participating in the study! Because our research is about perception of sounds, it is very important that you use <span class="font-weight-bold">headphones</span> or <span class="font-weight-bold">earphones</span> when completing the tasks in this study, and do so in a <span class="font-weight-bold">quiet room</span>. Please do <span class="font-italic">not</span> use desktop speakers or speakers built into your laptop. </p>
+    <p> Please avoid bluetooth or <span class="font-italic">wireless</span> headphones when possible as this can sometimes cause problems leading to less accurate responses. </p>
+    <img src="{% static 'studytree/img/hphone.png' %}" class="w-50 rounded mx-auto d-block" alt="">
+    <p> This study has <span class="font-weight-bold">{{ study.ntasks_max}}</span> possible PARTs. Your progress through the study and completion status will be displayed below. Instructions for each PART will be provided when you begin those PARTs. As mentioned in the consent form, if our algorithms determine that your performance meets criteria for early conclusion, you may not see all the PARTs. To proceed, please click on the card for the next available part below.</p>
+  </div>
+
   <div class="mt-4">
     {% if study.status == 'In Progress' %}
     <h4> Status: <span class="badge badge-warning"> In Progress </span></h4>
+    <p> Partial compensation thus far for the study is: <span class="font-weight-bold">${{study.totalcomp}}</span></p>
     {% elif study.status == 'Concluded Early' %}
     <h4> Status: <span class="badge badge-danger"> Concluded Early </span></h4>
-    {% elif study.status == 'Concluded Early' %}
-    <h4> Status: <span class="badge badge-danger"> Concluded Early </span></h4>
+    <p> Partial compensation for the study is: <span class="font-weight-bold">${{study.totalcomp}}</span> </p>
+    <p> Because the study was concluded early, this compensation will be paid as a "bonus" rather than regular pay. Please return your submission to {{ study.marketplace }}. </p>
     {% elif study.status == 'Completed' %}
     <h4> Status: <span class="badge badge-success"> Study Completed </span></h4>
+    <p> Total compensation for the study is: <span class="font-weight-bold">${{study.totalcomp}}</span> </p>
     {% else %}
     <h4> Status: <span class="badge badge-secondary"> Unknown </span></h4>
     {% endif %}
-    <p> You have completed <span class="font-weight-bold">{{ study.n_completed }}</span> out of <span class="font-weight-bold">{{ study.ntasks_max}}</span> possible parts. </p>
+
+    {% if study.status == 'Completed' %}
+    {% else %}
+    {% endif %}
+
+    <p> You have completed <span class="font-weight-bold">{{ study.n_completed }}</span> out of <span class="font-weight-bold">{{ study.ntasks_max}}</span> possible parts.
+    {% if study.task %}
+    Below is the next available PART for you.
+    {% endif %}
+    </p>
   </div>
 
   {% if study.task %}
-  <p> Below is your next available part. </p>
-  <div class="card shadow-sm mt-4 ml-4 hoverable" style="width: 18rem;">
-    <img src="{% get_media_prefix %}/taskicons/task_default.png" class="card-img-top" alt="">
+  <div class="card shadow-sm mt-4 mb-4 ml-4 hoverable" style="width: 18rem;">
     <div class="card-header">
+    <img src="{% get_media_prefix %}/taskicons/task_default.png" class="card-img-top w-25 float-right" alt="">
     <h3> PART {{ study.n_completed|add:"1" }}</h3>
     </div>
     <div class="card-body">
       <h5 class="card-title"> {{ study.task.displayname }} </h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        Compensation: ${{ study.taskcomp }}
+      </h6>
       <p class="card-text"> {{ study.task.descr }} </p>
       <a href="{% url 'run-task' taskurl=study.task.task_url %}" class="btn btn-outline-primary btn-lg btn-block stretched-link">
       Do Task
