@@ -17,6 +17,7 @@ from .lookups import (create_study_slug, get_studytree_context,
     get_next_task, get_max_tasks, get_info, survey_done,
     create_demo_subject, create_pilot_subject)
 from .forms import AddTaskForm, AddBranchForm
+from decimal import Decimal
 
 
 
@@ -347,7 +348,7 @@ def subject_view(request, *args, **kwargs):
             node = StudyRoot.objects.get(slug=studyslug)
             ntasks_max = get_max_tasks(node)
             do_survey = node.addcoresurvey
-            surveycomp = 0.5  # Hardcoding compensation for survey!!
+            surveycomp = Decimal(0.5)  # Hardcoding compensation for survey!!
             if do_survey:
                 ntasks_max += 1
                 survey_completed = survey_done(studyslug, subjid)
