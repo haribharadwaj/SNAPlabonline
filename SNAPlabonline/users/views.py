@@ -74,13 +74,15 @@ def subject_consent(request, *args, **kwargs):
 @subjid_required
 @consent_required
 def core_survey(request, *args, **kwargs):
-    next_url = kwargs.get('next', 'tasks-home')
+    next_url = kwargs.get('next', 'study-redirecthome')
     subjid = request.session.get('subjid', None)
+    studyslug = request.session.get('studyslug', None)
     if request.method == 'POST':
         form = SubjectProfileForm(request.POST)
         if form.is_valid():
             subj = Subject.objects.get(subjid=subjid)
             form.instance.subject = subj
+            form.instance.parent_study_slug = studyslug
             form.save()
             messages.success(request, f'Responses submitted for {subj.subjid}')
             return redirect(next_url)
@@ -88,3 +90,4 @@ def core_survey(request, *args, **kwargs):
         form = SubjectProfileForm()
     context = {'form': form, 'subjid': subjid}
     return render(request, 'users/subject_survey.html', {'context': context})
+

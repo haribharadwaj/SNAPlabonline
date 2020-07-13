@@ -14,7 +14,7 @@ from users.decorators import subjid_required, consent_required
 from users.models import Subject
 from .models import BaseNode, StudyRoot, TaskNode, BranchNode
 from .lookups import (create_study_slug, get_studytree_context,
-    get_next_task, get_max_tasks, get_info,
+    get_next_task, get_max_tasks, get_info, survey_done,
     create_demo_subject, create_pilot_subject)
 from .forms import AddTaskForm, AddBranchForm
 
@@ -25,7 +25,7 @@ class StudyCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = 'studytree.add_studyroot'
     permission_denied_message = 'Experimenter credentials needed to create tasks'
     model = StudyRoot
-    fields = ['name', 'displayname', 'descr', 'end_url']
+    fields = ['name', 'displayname', 'descr', 'addcoresurvey', 'end_url']
     success_url = '/study/'
 
     def form_valid(self, form):
@@ -346,8 +346,27 @@ def subject_view(request, *args, **kwargs):
         if StudyRoot.objects.filter(slug=studyslug).exists():
             node = StudyRoot.objects.get(slug=studyslug)
             ntasks_max = get_max_tasks(node)
-            task, taskcomp, n_completed, totalcomp = get_next_task(node,
-                studyslug, subjid)
+            do_survey = node.addcoresurvey
+            surveycomp = 0.5  # Hardcoding compensation for survey!!
+            if do_survey:
+                ntasks_max += 1
+            
+            if survey_done(studyslug, subjid):
+                n_completed_init = 1
+                totalcomp_init = surveycomp
+                task, taskcomp, n_completed, totalcomp = get_next_task(node,
+                    studyslug, subjid, n_completed=n_completed_init,
+                    totalcomp=totalcomp_init)
+                issurvey = False
+            else:
+                task = dict(displayname='Brief Survey',
+                    descr='Initial survey about your demographic information and hearing status')
+                taskcomp = surveycomp
+                n_completed = 0
+                totalcomp = 0.
+                issurvey = True
+
+
             if n_completed < ntasks_max:
                 if task is None:
                     status = 'Concluded Early'
@@ -365,7 +384,7 @@ def subject_view(request, *args, **kwargs):
 
     if ispilot is None:
         ispilot = request.session.get('ispilot', False)
-    
+
     if isdemo or ispilot:
         totalcomp = 0.00
         taskcomp = 0.00
@@ -374,7 +393,8 @@ def subject_view(request, *args, **kwargs):
         status=status, taskcomp=taskcomp,
         marketplace='Prolific', subjid=subjid, task=task,
         ntasks_max=ntasks_max, n_completed=n_completed,
-        totalcomp=totalcomp, isdemo=isdemo, ispilot=ispilot)
+        totalcomp=totalcomp, isdemo=isdemo, ispilot=ispilot,
+        issurvey=issurvey)
     return render(request, 'studytree/study_subject.html', {'study': study})
 
 

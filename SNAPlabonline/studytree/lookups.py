@@ -1,5 +1,5 @@
 from .models import StudyRoot, TaskNode, BranchNode, BaseNode
-from users.models import Subject
+from users.models import Subject, SubjectProfile
 from secrets import token_urlsafe
 from jspsych.lookups import get_scores
 
@@ -16,6 +16,13 @@ def create_study_slug(length=24):
             # If token not in use, then done
             break
     return link
+
+
+def survey_done(studyslug, subjid):
+    # Check if survey was done as part of current study
+    return (SubjectProfile.objects.filter(subject_id=subjid).
+        filter(parent_study_slug=studyslug).exists())
+
 
 
 def get_info(node):

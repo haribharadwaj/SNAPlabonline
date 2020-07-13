@@ -39,6 +39,9 @@ class StudyRoot(BaseNode):
         help_text='Experimenter/Subject-friendly title or name for the study',
         default='SNAPlab Hearing Study',
         verbose_name= 'Display Name')
+    addcoresurvey = models.BooleanField(default=False, blank=True,
+        verbose_name='Add core survey to study?',
+        help_text='Check the box to add our core survey as the first item in the study')
     descr = models.CharField(max_length=255, default='',
         help_text='Please provide a one sentence description',
         verbose_name='Short description')

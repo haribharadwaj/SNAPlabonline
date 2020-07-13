@@ -20,9 +20,11 @@ class SubjectForm(forms.Form):
     subjid = forms.CharField(max_length=32, label='Participant ID',
         help_text='Please enter or confirm your ID one more time')
 
+
 class ConsentForm(forms.Form):
     consented = forms.BooleanField(required=True,
         label='I understand the information presented here and am OK to proceed')
+
 
 class SubjectProfileForm(forms.ModelForm):
     class Meta:

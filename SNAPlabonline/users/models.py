@@ -22,6 +22,7 @@ class Subject(models.Model):
 # Model for storing core hearing profile and demographic info
 class SubjectProfile(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    parent_study_slug = models.SlugField(max_length=32, null=True, blank=True)
     age = models.PositiveSmallIntegerField(help_text='Enter your age in years',
         null=True)
 
@@ -113,7 +114,7 @@ class SubjectProfile(models.Model):
 
     hl_dur = models.PositiveSmallIntegerField(null=True, blank=True,
         verbose_name=('If you selected "Yes" to being diagnosed with hearing loss, '
-            'how long would you say you have had hearing loss?'),
+            'for how many YEARS have you had hearing loss?'),
         help_text='Number of years since you were first given a hearing-loss diagnosis')
 
     MILD = 'MI'
@@ -146,7 +147,7 @@ class SubjectProfile(models.Model):
     YELLOW = 'Y'
     RED = 'R'
     hl_subjective_choices = (
-        (GREEN, 'Is similar to or better than or others my age'),
+        (GREEN, 'Is similar to (or) better than others my age'),
         (YELLOW, ('I have more trouble than others when there is background noise '
             '(e.g., at restaurants, busy streets)')),
         (RED, 'I have more trouble than others my age in most situations')
