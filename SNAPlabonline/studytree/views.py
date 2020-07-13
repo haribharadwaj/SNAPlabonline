@@ -350,22 +350,25 @@ def subject_view(request, *args, **kwargs):
             surveycomp = 0.5  # Hardcoding compensation for survey!!
             if do_survey:
                 ntasks_max += 1
-            
-            if survey_done(studyslug, subjid):
-                n_completed_init = 1
-                totalcomp_init = surveycomp
-                task, taskcomp, n_completed, totalcomp = get_next_task(node,
-                    studyslug, subjid, n_completed=n_completed_init,
-                    totalcomp=totalcomp_init)
-                issurvey = False
+                survey_completed = survey_done(studyslug, subjid)
+                if survey_completed:
+                    n_completed_init = 1
+                    totalcomp_init = surveycomp
+                    task, taskcomp, n_completed, totalcomp = get_next_task(node,
+                        studyslug, subjid, n_completed=n_completed_init,
+                        totalcomp=totalcomp_init)
+                    issurvey = False
+                else:
+                    task = dict(displayname='Brief Survey',
+                        descr='Initial survey about your demographic information and hearing status')
+                    taskcomp = surveycomp
+                    n_completed = 0
+                    totalcomp = 0.
+                    issurvey = True
             else:
-                task = dict(displayname='Brief Survey',
-                    descr='Initial survey about your demographic information and hearing status')
-                taskcomp = surveycomp
-                n_completed = 0
-                totalcomp = 0.
-                issurvey = True
-
+                task, taskcomp, n_completed, totalcomp = get_next_task(node,
+                    studyslug, subjid)
+                issurvey = False
 
             if n_completed < ntasks_max:
                 if task is None:
