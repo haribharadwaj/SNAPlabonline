@@ -61,6 +61,7 @@
           choices: ['Continue'],
           stimulus: '{{ inst|safe }}'
         };
+        timeline.push(welcome);
     {% endfor %}
 
     // Below uses the instructions plugin if we want that later
@@ -70,8 +71,9 @@
     pages: {{ task.instructions|safe }},
     show_clickable_nav: true
     }
-    */
     timeline.push(welcome);
+    */
+    
 
     /* Actual trials */
     {% for trial in task.trials %}
