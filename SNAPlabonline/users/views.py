@@ -27,7 +27,7 @@ def register(request):
 
 
 def subject_entry(request, *args, **kwargs):
-    # next_url = kwargs['next']
+    
     if request.method == 'POST':
         form = SubjectForm(request.POST)
         next_url = request.GET.get('next')
@@ -47,6 +47,9 @@ def subject_entry(request, *args, **kwargs):
             return redirect(next_url)
     else:
         subjid = request.session.get('subjid', None)
+        if subjid is None:
+            # Check if first visit from Prolific
+            subjid = request.GET.get('PROLIFIC_PID', None)
         form = SubjectForm(initial={'subjid': subjid})
     context = {'form': form, 'marketplace': 'Prolific'}
     return render(request, 'users/subject_entry_confirm.html', {'context': context})

@@ -14,9 +14,16 @@ def subjid_required(orig_func_view):
         subjid = request.session.get('subjid', None)
         # TO DO: Check logic for logged-in users (usually experimenter)
         if subjid is None:
-            # Assume SUBJID_URL view accepts <path:next> parameter 
-            # return redirect(settings.SUBJID_URL, next=request.path)
-            return redirect(f'{reverse(settings.SUBJID_URL)}?next={request.path}')
+            # Check if PROLIFIC_PID is in GET parameters
+            # but still get subject confirmation:
+            subjid = request.GET.get('PROLIFIC_PID', None)
+            if subjid is None:
+                # Assume SUBJID_URL view accepts GET parameter called next
+                return redirect(f'{reverse(settings.SUBJID_URL)}?next={request.path}')
+            else:
+                return redirect(
+                    f'{reverse(settings.SUBJID_URL)}'
+                    f'?next={request.path}&PROLIFIC_PID={subjid}')
         else:
             return orig_func_view(request, *args, **kwargs)
     return _wrapper
