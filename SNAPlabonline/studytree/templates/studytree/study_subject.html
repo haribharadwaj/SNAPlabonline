@@ -75,10 +75,25 @@
   {% endif %}
   {% if study.isdemo is not True %}
   {% if study.ispilot is not True %}
+  {% if study.status == 'In Progress' %}
   <div class="mt-4 border-top border-bottom mb-4">
     <h4 class="mt-2"> Want to leave the study early?</h4>
     <p> If you would like to leave the study before completion, or if you face any technical issues with our website, please go back to <a href="https://Prolific.co">Prolific</a> and <span class="font-weight-bold">return</span> the study. We will remember your partial compensation and pay that as a <span class="font-weight-bold">bonus</span> via Prolific within ~2 weeks. </p>
   </div>
+  {% elif study.status == 'Concluded Early' %}
+  <div class="mt-4 border-top border-bottom mb-4">
+    <h4 class="mt-2"> Study concluded early ...</h4>
+    <p> Our algorithms have analyzed your responses and determined that they did not meet criteria for continuing with the study. Not to worry though, please go back to <a href="https://Prolific.co">Prolific</a> and <span class="font-weight-bold">return</span> the study. We will remember your partial compensation and pay that as a <span class="font-weight-bold">bonus</span> via Prolific within ~2 weeks (likely much sooner). </p>
+    <p> Thank you very much for your participation! </p>
+  </div>
+  {% elif study.status == 'Completed' %}
+  <div class="mt-4 border-top border-bottom mb-4">
+    <h4 class="mt-2"> All done! </h4>
+    <p> You have completed the study! Thank you very much for your participation! Click on the link below to submit the confirmation code to Prolific: </p>
+    <a href="{{study.endurl}}">{{study.endurl}}</a>
+  </div>
+  {% endif %}
+
   {% endif %}
   {% endif %}
 {% endblock content %}

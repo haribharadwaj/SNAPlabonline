@@ -348,6 +348,7 @@ def subject_view(request, *args, **kwargs):
             node = StudyRoot.objects.get(slug=studyslug)
             ntasks_max = get_max_tasks(node)
             do_survey = node.addcoresurvey
+            endurl = node.end_url
             surveycomp = Decimal(0.5)  # Hardcoding compensation for survey!!
             if do_survey:
                 ntasks_max += 1
