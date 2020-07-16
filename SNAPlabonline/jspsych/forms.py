@@ -102,7 +102,7 @@ const_stim_schema = """
             }
         },
     "required": ["instructions", "feedback", "holdfeedback",
-        "randomize", "serveraudio", "trials", "isi"],
+        "randomize", "serveraudio", "trials", "isi", "volume"],
     "additionalProperties": false
 }
 """
