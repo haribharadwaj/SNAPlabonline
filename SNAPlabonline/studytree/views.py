@@ -399,7 +399,7 @@ def subject_view(request, *args, **kwargs):
         marketplace='Prolific', subjid=subjid, task=task,
         ntasks_max=ntasks_max, n_completed=n_completed,
         totalcomp=totalcomp, isdemo=isdemo, ispilot=ispilot,
-        issurvey=issurvey)
+        issurvey=issurvey, endurl=endurl)
     return render(request, 'studytree/study_subject.html', {'study': study})
 
 
