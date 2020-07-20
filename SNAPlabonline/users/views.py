@@ -1,4 +1,7 @@
+import csv
+import datetime
 from django.shortcuts import render, redirect
+from django.http import HttpResponse 
 from django.contrib import messages
 from django.utils import timezone
 from .forms import (
@@ -7,7 +10,10 @@ from .forms import (
     ConsentForm,
     SubjectProfileForm
     )
-from .models import Subject
+from django.contrib.auth.decorators import (login_required,
+    permission_required)
+from django.core.exceptions import PermissionDenied
+from .models import Subject, SubjectProfile
 from .decorators import subjid_required, consent_required
 
 
@@ -94,3 +100,47 @@ def core_survey(request, *args, **kwargs):
     context = {'form': form, 'subjid': subjid}
     return render(request, 'users/subject_survey.html', {'context': context})
 
+
+@login_required
+@permission_required('jspsych.add_task', raise_exception=PermissionDenied)
+def download_survey_results(request, *args, **kwargs):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="core_survey_results.csv"'
+
+    # Any experimenter can download all profiles
+    survey_fields = SubjectProfile._meta.get_fields()
+    field_names = [f.name for f in survey_fields]
+    profiles = SubjectProfile.objects.all()
+
+    # Write to CSV filepointer
+    writer = csv.writer(response)
+    writer.writerow(field_names)
+    for prof in profiles:
+        vals = [getattr(prof, name) if name != 'subject' else prof.subject.subjid
+                for name in field_names]
+        writer.writerow(vals)
+
+    return response
+
+
+@login_required
+@permission_required('jspsych.add_task', raise_exception=PermissionDenied)
+def download_subjlist(request, *args, **kwargs):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="core_survey_results.csv"'
+
+    # Any experimenter can download list of subjects
+    field_names = ['subjid', 'date_added', 'consented', 'latest_visit', 'latest_consent']
+    subjs = Subject.objects.all()
+
+    # Write to CSV filepointer
+    writer = csv.writer(response)
+    writer.writerow(field_names)
+    for subj in subjs:
+        vals = [getattr(subj, name) if type(getattr(subj, name)) != datetime.datetime
+                else getattr(subj, name).strftime('%d-%b-%Y %H:%M:%S (%Z)')
+                for name in field_names]
+        writer.writerow(vals)
+    return response

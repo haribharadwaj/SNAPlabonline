@@ -45,6 +45,8 @@ urlpatterns = [
     # path('consent/<path:next>/', users_views.subject_consent, name='consent'),
     path('consent/', users_views.subject_consent, name='consent'),
     path('coresurvey/', users_views.core_survey, name='core-survey'),
+    path('coresurvey/results/', users_views.download_survey_results, name='core-survey-results'),
+    path('getsubjlist/', users_views.download_subjlist, name='subject-list'),
 	path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
 	path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('password-reset/',
