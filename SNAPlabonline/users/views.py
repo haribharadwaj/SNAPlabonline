@@ -129,7 +129,7 @@ def download_survey_results(request, *args, **kwargs):
 def download_subjlist(request, *args, **kwargs):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="core_survey_results.csv"'
+    response['Content-Disposition'] = 'attachment; filename="subjlist.csv"'
 
     # Any experimenter can download list of subjects
     field_names = ['subjid', 'date_added', 'consented', 'latest_visit', 'latest_consent']
