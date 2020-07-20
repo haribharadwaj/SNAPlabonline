@@ -28,9 +28,9 @@
     <h4> Status: <span class="badge badge-warning"> In Progress </span></h4>
     <p> Partial compensation thus far for the study is: <span class="font-weight-bold">${{study.totalcomp}}</span></p>
     {% elif study.status == 'Concluded Early' %}
-    <h4> Status: <span class="badge badge-danger"> Concluded Early </span></h4>
+    <h4> Status: <span class="badge badge-danger"> Quality Check Failed </span></h4>
     <p> Partial compensation for the study is: <span class="font-weight-bold">${{study.totalcomp}}</span> </p>
-    <p> Because the study was concluded early, this compensation will be paid as a "bonus" rather than regular pay. Please return your submission to {{ study.marketplace }}. </p>
+    <p> Because the study was concluded early due to failed quality check, this compensation will be paid as a "bonus" rather than regular pay. Please return your submission to {{ study.marketplace }}. </p>
     {% elif study.status == 'Completed' %}
     <h4> Status: <span class="badge badge-success"> Study Completed </span></h4>
     <p> Total compensation for the study is: <span class="font-weight-bold">${{study.totalcomp}}</span> </p>
@@ -83,7 +83,7 @@
   {% elif study.status == 'Concluded Early' %}
   <div class="mt-4 border-top border-bottom mb-4">
     <h4 class="mt-2"> Study concluded early ...</h4>
-    <p> Our algorithms have analyzed your responses and determined that they did not meet criteria for continuing with the study. Not to worry though, please go back to <a href="https://Prolific.co">Prolific</a> and <span class="font-weight-bold">return</span> the study. We will remember your partial compensation and pay that as a <span class="font-weight-bold">bonus</span> via Prolific within ~2 weeks (likely much sooner). </p>
+    <p> Your responses did not pass our attention/quality checks, or there may have been a technical difficulty. Thus the study is concluded early. Not to worry though, please go back to <a href="https://Prolific.co">Prolific</a> and <span class="font-weight-bold">return</span> the study. We will remember your partial compensation and pay that as a <span class="font-weight-bold">bonus</span> via Prolific within ~2 weeks (likely much sooner). </p>
     <p> Thank you very much for your participation! </p>
   </div>
   {% elif study.status == 'Completed' %}
