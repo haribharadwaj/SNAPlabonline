@@ -56,7 +56,10 @@ class OneShotResponse(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return 'One shot response'
+        return (f'One shot response - '
+            f'Subject:{self.subject.subjid}, '
+            f'Task: {self.parent_task.name}, '
+            f'Study: {self.parent_study_slug}')
 
 
 class SingleTrialResponse(models.Model):
@@ -69,4 +72,7 @@ class SingleTrialResponse(models.Model):
     trialnum = models.PositiveSmallIntegerField(null=True)
 
     def __str__(self):
-        return 'Single Trial Response'
+        return (f'Single Trial Response - '
+            f'Subject:{self.subject.subjid}, '
+            f'Task: {self.parent_task.name}, Trial: {self.trialnum}, '
+            f'Study: {self.parent_study_slug}')

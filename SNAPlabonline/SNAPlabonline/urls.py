@@ -29,6 +29,10 @@ from jspsych.views import (
     )
 
 
+admin.site.site_header = 'SNAPlabonline Administration'
+admin.site.index_title = 'Admin'
+admin.site.site_title = 'SNAPlabonline admin'
+
 urlpatterns = [
 	path('', task_views.index, name='tasks-home'),
 	# path('createtask/', task_views.create_task, name='create-task'),
