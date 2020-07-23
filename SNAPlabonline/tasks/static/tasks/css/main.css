@@ -35,4 +35,6 @@ pre code {
   padding: 20px;
   margin-left: 20px;
   margin-right: 20px;
+  white-space: pre-wrap;       /* css-3 */
+  word-wrap: break-word;
 }

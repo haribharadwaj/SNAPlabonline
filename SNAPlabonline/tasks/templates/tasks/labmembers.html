@@ -37,19 +37,39 @@
     </thead>
       <tr>
         <th scope="col">instructions</th>
-        <td>A list of strings. Each string in the list will be used as a separate instruction bullet. </td>
+        <td>A list of strings. Each string in the list will be used as a separate instruction bullet. You can have simple HTML tags to format your text if needed. </td>
       </tr>
       <tr>
         <th scope="col">feedback</th>
         <td>A boolean value. If true, feedback will be provided as message boxes at the end of each trial. </td>
       </tr>
       <tr>
+        <th scope="col">holdfeedback</th>
+        <td>A boolean value. If true, the feedback screen will have a button that the subjects can click to proceed to the next trial. If false, the feedback will be shown for <strong>feedbackdur</strong> and then proceed automatically.</td>
+      </tr>
+      <tr>
         <th scope="col">serveraudio</th>
-        <td>A boolean value. If true, this means that you will upload the audio stimuli for your task directly into the file system of our web server. This is possible if the total size of your audio files is less than 200 MB or so. For larger tasks, please upload your files to a separate storage server (e.g., AWS S3 bucket, or your Purdue WWW folder) and use links from the server for specifying your stimuli.</td>
+        <td>A boolean value. If true, this means that you will upload the audio stimuli for your task directly into the file system of our web server. This is possible if the total size of your audio files is less than 200 MB or so. For larger tasks, please upload your files to a separate storage server (e.g., AWS S3 bucket, or your Purdue WWW folder) and use links from the server for specifying your stimuli. Note that cross-origin media servers will need CORS headers (<a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/add-cors-configuration.html">see this example for AWS S3</a>) to allow our server to read the filed via javascript. This is a security feature that browsers have to prevent javascripts from one server to load content from another server.</td>
       </tr>
       <tr>
         <th scope="col">trials</th>
         <td>A list of trial objects. Each trial object has four fields for specifying the stimulus, prompt, response choices, and correct answer for that trial. </td>
+      </tr>
+      <tr>
+        <th scope="col">volume</th>
+        <td>This is just like a list of trial objects, but should guide the subject to adjust their computer volume. It is best to use standard language for this as in the example below. </td>
+      </tr>
+      <tr>
+        <th scope="col">randomize</th>
+        <td>If true, the trial order will be shuffled. </td>
+      </tr>
+      <tr>
+        <th scope="col">feedbackdur</th>
+        <td>Number. Duration of feedback in milliseconds. This value is ignored if <strong>holdfeedback</strong> is true.</td>
+      </tr>
+      <tr>
+        <th scope="col">isi</th>
+        <td>Number. Inter-stimulus interval in milliseconds.</td>
       </tr>
     </table>
 
@@ -63,8 +83,12 @@
       </tr>
     </thead>
       <tr>
+        <th scope="col">plugin</th>
+        <td> The type of jsPsych plugin to use. For our nAFC audio trials, this is "hari-audio-button-response". For trials with just a message without sounds, you can use "html-button-response". </td>
+      </tr>
+      <tr>
         <th scope="col">prompt</th>
-        <td> A sting that is used as thte prompt message for the trial. </td>
+        <td> A string that is used as the prompt message for the trial. </td>
       </tr>
       <tr>
         <th scope="col">choices</th>
@@ -72,57 +96,126 @@
       </tr>
       <tr>
         <th scope="col">stimulus</th>
-        <td>A string which specifies the filename (if stored on this webserver), or preferably, a URL pointing to the audio file that is served from a different storage server (like AWS S3 bucket or Purdue WWW folder).</td>
+        <td>This is needed only for audio trials. A string which specifies the filename (if stored on this webserver), or preferably, a URL pointing to the audio file that is served from a different storage server (like AWS S3 bucket).</td>
       </tr>
       <tr>
         <th scope="col">answer</th>
         <td>Integer. A value indicating which item in the choices list is the correct answer for the trial. This is used to provide feedback (if <strong>feedback</strong> is true for the task), and used by backend programs to calculate scores and other metrics. </td>
       </tr>
+      <tr>
+        <th scope="col">cond</th>
+        <td>This is a positive integer (i.e., starting at 1) giving each stimulus condition a number. Even if you have only one condition, this is required. This will be important when you build a study that includes this task. The "decision rule" nodes in a study tree can compare score in a given condition number to a threshold.</td>
+      </tr>
+      <tr>
+        <th scope="col">annot</th>
+        <td>This is a json object where you can have any annotations you want for the trial. These extra annotations will be saved with the trial, so might come in handy during data analysis later. </td>
+      </tr>
     </table>
 
     The contents of an example JSON file are shown below.
     With the JSON format, objects are placed within curly brackets, as in { and },
-    lists within [ and ] and strings within " and ". 
+    lists/arrays within square brackets as in [ and ], and strings within quotes as in " and ". 
     <pre>
       <code>
 {
-  "instructions": ["Wear Headphones", "Do Task"],
+  "instructions": ["Great! Welcome to the task itself. To begin, make sure you are still wearing your headphones or earphones. Once you are ready, click <strong>Continue</strong> for further instructions.","On each screen, you will hear a sequence of three \"beeps\". Your task is to pick whether the FIRST, SECOND (or) the THIRD beep is the SOFTEST"],
   "feedback": true,
+  "holdfeedback": false,
+  "feedbackdur": 600,
   "serveraudio": true,
+  "estimatedduration": 4,
+  "randomize":false,
+  "isi": 600,
+  "volume":[
+    {
+    "plugin": "html-button-response",
+    "prompt": "Welcome! This task involves listening to sounds and providing responses. As a first step, we need to set an appropriate volume level for our task. Please bring down your computer volume to 10-20% of maximum. Then, click Continue to proceed.",
+    "choices": ["Continue"]
+    },
+    {
+    "plugin": "hari-audio-button-response",
+    "prompt": "Now adjust your computer volume up to a comfortable (but not too loud) level.",
+    "stimulus": "volumeSetStim.wav",
+    "choices": ["I have adjusted the volume, let's continue"]
+    },
+    {
+    "plugin": "html-button-response",
+    "prompt": "Thanks for adjusting your computer volume. We will use this volume setting for the remainder of the task. Please do not adjust the volume anymore throughout the task, as that could lead to sounds being too loud or too soft. If this sounds OK, click <strong>Continue</strong> to begin the task.",
+    "choices": ["Continue"]
+    }
+  ],
   "trials":[
     {
-    "prompt": "Select one of the three options",
-    "choices": ["FIRST", "SECOND", "THIRD"],
-    "stimulus": "aud.wav",
-    "answer": 3
+    "plugin": "hari-audio-button-response",
+    "prompt": "Of the three sounds, pick the one that is <strong>SOFTEST</strong>",
+    "choices": ["FIRST was SOFTEST", "SECOND was SOFTEST", "THIRD was SOFTEST"],
+    "stimulus": "woodstrial1.wav",
+    "answer": 2,
+    "cond": 1,
+    "annot": {"condname": "Woods et al., 2017"}
     },
     {
-    "prompt": "Select one of the three options",
-    "choices": ["FIRST", "SECOND", "THIRD"],
-    "stimulus": "aud.wav",
-    "answer": 1
+    "plugin": "hari-audio-button-response",
+    "prompt": "Of the three sounds, pick the one that is <strong>SOFTEST</strong>",
+    "choices": ["FIRST was SOFTEST", "SECOND was SOFTEST", "THIRD was SOFTEST"],
+    "stimulus": "woodstrial2.wav",
+    "answer": 1,
+    "cond": 1,
+    "annot": {"condname": "Woods et al., 2017"}
     },
     {
-    "prompt": "Select one of the three options",
-    "choices": ["FIRST", "SECOND", "THIRD"],
-    "stimulus": "aud.wav",
-    "answer": 2
+    "plugin": "hari-audio-button-response",
+    "prompt": "Of the three sounds, pick the one that is <strong>SOFTEST</strong>",
+    "choices": ["FIRST was SOFTEST", "SECOND was SOFTEST", "THIRD was SOFTEST"],
+    "stimulus": "woodstrial3.wav",
+    "answer": 2,
+    "cond": 1,
+    "annot": {"condname": "Woods et al., 2017"}
+    },
+    {
+    "plugin": "hari-audio-button-response",
+    "prompt": "Of the three sounds, pick the one that is <strong>SOFTEST</strong>",
+    "choices": ["FIRST was SOFTEST", "SECOND was SOFTEST", "THIRD was SOFTEST"],
+    "stimulus": "woodstrial4.wav",
+    "answer": 3,
+    "cond": 1,
+    "annot": {"condname": "Woods et al., 2017"}
+    },
+    {
+    "plugin": "hari-audio-button-response",
+    "prompt": "Of the three sounds, pick the one that is <strong>SOFTEST</strong>",
+    "choices": ["FIRST was SOFTEST", "SECOND was SOFTEST", "THIRD was SOFTEST"],
+    "stimulus": "woodstrial5.wav",
+    "answer": 3,
+    "cond": 1,
+    "annot": {"condname": "Woods et al., 2017"}
+    },
+    {
+    "plugin": "hari-audio-button-response",
+    "prompt": "Of the three sounds, pick the one that is <strong>SOFTEST</strong>",
+    "choices": ["FIRST was SOFTEST", "SECOND was SOFTEST", "THIRD was SOFTEST"],
+    "stimulus": "woodstrial6.wav",
+    "answer": 2,
+    "cond": 1,
+    "annot": {"condname": "Woods et al., 2017"}
     }
   ]
 }
+
       </code>
     </pre>
   
-  This task has three trials, and incidentally happens to use the same audio file in all three trials (not common).
-  For a typical 3-AFC task using the method of constant stimuli to construct psychometric functions,
+  This task has six trials. For a typical 3-AFC task using the method of constant stimuli to construct psychometric functions,
   all trials will have the same three strings in the <strong>choices</strong> field,
   have the same <strong>prompt</strong>, but different <strong>stimulus</strong> files for each trial.
   However, requiring the JSON file to specify a list of choices and prompts for each trial allows the experimenter to interleave arbitrarily different kinds of trials.
-  For instance, you might have a main task with one type of trials, and then mix in trials that help test whether the subject is wearing headphones, or mix in trials that might help get a metric of data quality and whether the subject is paying attention to the task at hand, and so on.
-
+  For instance, you might have a main task with one type of trials, and then mix in catch trials that might help get a metric of data quality and whether the subject is paying attention to the task at hand, and so on.
   </p>
   <p>
-  Note that when using files like "aud.wav" that are to be hosted on the server, talk to the PI to see how to get your audio files there. The preferred method will be to host your files somewhere else on the web and include URLs to them, for instance "https://web.ics.purdue.edu/~mypurduename/media/trial1.wav".
+  Note that when using files like "woodtrial1.wav" that are to be hosted on the server, talk to the PI to see how to get your audio files there. The alternate method will be to host your files somewhere else on the web and include URLs to them, for instance "https://some_bucket_name.s3.us-east-2.amazonaws.com/some_folder/obscurely_named_file.wav". For files that are not on our server, it is recommended that you use a long random string in the filename to make it harder for humans to guess other filenames in your audio directory from just one or two examples.
+  </p>
+  <p>
+    For testing purposes, there is a file called "aud.wav" on the server that you can set as the stimulus for any trial to see if your JSON file has the right info for the task. You can also use an online JSON validator like <a href="https://jsonlint.com/">JSONLINT</a> to check if your entry is valid JSON.
   </p>
 
   <p> Happy experimenting!  </p>
