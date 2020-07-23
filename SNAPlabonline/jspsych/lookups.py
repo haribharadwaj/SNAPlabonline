@@ -183,7 +183,11 @@ def get_scores(taskslug, studyslug, subjid):
                         ntotal += 1
                         if trial['correct'] == True:
                             ncorrect += 1.
-            score = ncorrect * 100. / ntotal
+            if ntotal == 0:
+                # Extra check to avoid ZeroDivision
+                score = 0
+            else:
+                score = ncorrect * 100. / ntotal
             scores += [score,]
     # If scores is empty =>
     # then subject didn't complete task within this study
