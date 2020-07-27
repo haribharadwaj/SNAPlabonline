@@ -116,6 +116,19 @@
                   return wrong_feedback_stim;
                 }
               },
+              {% if trial.showanswerwithfeedback %}
+              prompt: function(){
+                if (correct){
+                  return '<p>You got that one!</p>';
+                } else {
+                  var choices_temp = {{ trial.choices|safe }};
+                  var prompt_str = choices_temp[{{ trial.answer }} - 1];
+                  var carrier_pre = '<p> The correct answer was "';
+                  var carrier_post = '"</p>';
+                  return carrier_pre.concat(prompt_str, carrier_post);
+                }
+              },
+              {% endif %}
               stimulus_height: 200,
               stimulus_duration: feedbackdur,
               trial_duration: feedbackdur,

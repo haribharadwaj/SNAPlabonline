@@ -47,6 +47,7 @@ const_stim_schema = """
                     "stimulus": {"type": "string", "pattern": "(wav)$"},
                     "answer": {"type": "integer", "minimum": 1},
                     "cond": {"type": "integer", "minimum": 1},
+                    "showanswerwithfeedback": {"type": "boolean"},
                     "annot": {"type": "object"}
                     },
                 "if": {
