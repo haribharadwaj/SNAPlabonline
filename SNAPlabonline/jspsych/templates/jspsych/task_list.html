@@ -11,6 +11,7 @@
         <img src="{% get_media_prefix %}/taskicons/task_default.png" class="card-img-top" alt="">
         <div class="card-body">
           <h5 class="card-title"> {{ task.displayname }} </h5>
+          <h6 class="card-subtitle mb-2 text-muted">Code: {{ task.name }}</h6>
           <p class="card-text"> {{ task.descr }} </p>
           <a href="{% url 'run-task' taskurl=task.task_url %}" class="btn btn-outline-primary btn-lg btn-block">
           Run Task
