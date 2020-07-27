@@ -15,7 +15,7 @@ from .lookups import (get_task_context, create_task_slug,
     get_task_results)
 from users.decorators import subjid_required, consent_required
 import json  # Needed to parse AJAX posts
-from .forms import TaskForm
+from .forms import TaskForm, TaskUpdateForm
 
 
 
@@ -96,7 +96,7 @@ class TaskListView(LoginRequiredMixin, ListView):
 
 class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
-    form_class = TaskForm
+    form_class = TaskUpdateForm
     success_url = '/mytasks/'
 
     def form_valid(self, form):

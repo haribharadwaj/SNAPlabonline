@@ -147,3 +147,22 @@ class TaskForm(ModelForm):
                 code='invalid')
             self.add_error('task_type', valerr)
             self.add_error('trialinfo', valerr)
+
+
+class TaskUpdateForm(ModelForm):
+    class Meta:
+        model = Task
+        # Different form needed because 'name' is PK and can't be edited.
+        fields = ['displayname', 'descr', 'task_type', 'trialinfo']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        task_type = cleaned_data.get('task_type')
+        trialinfo = cleaned_data.get('trialinfo')
+        if task_type == self.instance.CONST_STIM:
+            conststim_json_validate(trialinfo)
+        else:
+            valerr = ValidationError('Only "Constant Stimulus n-AFC" supported for now',
+                code='invalid')
+            self.add_error('task_type', valerr)
+            self.add_error('trialinfo', valerr)
