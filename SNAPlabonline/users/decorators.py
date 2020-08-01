@@ -43,7 +43,7 @@ def consent_required(orig_func_view):
         if subj.consented:
             if subj.latest_consent is not None:
                 delta = timezone.now() - subj.latest_consent
-                if delta.days < 183:
+                if delta.days < 7:
                     return orig_func_view(request, *args, **kwargs)
 
         # If consent is absent (or) date unmarked (or) older than 6 months:
