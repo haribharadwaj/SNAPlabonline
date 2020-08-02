@@ -1,0 +1,40 @@
+{% extends "tasks/base.html" %}
+{% load static %}
+{% block content %}
+    <div class="mt-4">
+    	<h4> Study Progress Sheet for {{context.studyname}} [Code: {{context.studycode}}]</h4>
+        <a href="{% url 'study-home' %}"> Back to List of All Studies </a>
+    </div>
+    {% if context.entries %}
+    <div class="mt-4">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Task</th>
+					<th scope="col">Posted</th>
+					<th scope="col">Scores</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for entry in context.entries %}
+				<tr>
+					<th scope="row"> {{ entry.subjid }} </th>
+					<td> {{ entry.taskname }}</td>
+					<td> {{ entry.date_posted|date:"M d, Y H:i:s T"}}</td>
+					<td> 
+						{% for score in entry.scores %}
+						<span class="text-muted"> Condition {{forloop.counter}}:</span> {{ score|floatformat}} %<br>
+						{% endfor %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+    </div>
+    {% else %}
+    <div class="mt-4">
+    	<p> Sorry! No entries yet! </p>
+    </div>
+    {% endif %}
+{% endblock content %}
