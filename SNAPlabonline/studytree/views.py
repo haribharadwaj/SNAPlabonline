@@ -15,7 +15,7 @@ from users.models import Subject
 from .models import BaseNode, StudyRoot, TaskNode, BranchNode
 from .lookups import (create_study_slug, get_studytree_context,
     get_next_task, get_max_tasks, get_info, survey_done,
-    create_demo_subject, create_pilot_subject)
+    get_completedtasks_study, create_demo_subject, create_pilot_subject)
 from .forms import AddTaskForm, AddBranchForm
 from decimal import Decimal
 
@@ -331,6 +331,29 @@ def experimenter_view(request, *args, **kwargs):
             message = f'Does not seem to be your study: You are logged in as {request.user}.'
             raise PermissionDenied(message)            
 
+
+@login_required
+@permission_required('studytree.add_studyroot',
+    raise_exception=PermissionDenied('Experimenter credentials needed to visit this page'))
+def progress_view(request, *args, **kwargs):
+    slug = kwargs.get('slug', None)
+    if slug is None:
+        raise Http404('You are requesting a null study')
+    else:
+        try:
+            root_node = StudyRoot.objects.get(slug=slug)
+        except StudyRoot.DoesNotExist:
+            raise Http404('Study does not seem to exist')
+        if root_node.experimenter == request.user:
+            context = {'studyslug': slug,
+                'studyname': root_node.displayname,
+                'studycode': root_node.name,
+                'entries': get_completedtasks_study(slug)}
+            return render(request,'studytree/study_progress.html',
+                {'context': context})
+        else:
+            message = f'Does not seem to be your study: You are logged in as {request.user}.'
+            raise PermissionDenied(message)
 
 
 # MAIN VIEW FOR SUBJECT

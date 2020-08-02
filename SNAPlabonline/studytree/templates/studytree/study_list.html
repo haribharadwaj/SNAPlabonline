@@ -32,6 +32,11 @@
           Delete
           </a>
         </div>
+        <div class="d-flex justify-content-center border-top">
+          <a href="{% url 'study-progress' study.slug %}" class="btn btn-outline-info btn-sm mb-2 mt-2">
+          Progress Sheet
+          </a>
+        </div>
       </div>
     {% empty %}
       <p class="ml-4"> No studies found.

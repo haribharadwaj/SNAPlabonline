@@ -2,6 +2,7 @@ from .models import StudyRoot, TaskNode, BranchNode, BaseNode
 from users.models import Subject, SubjectProfile
 from secrets import token_urlsafe
 from jspsych.lookups import get_scores
+from jspsych.models import OneShotResponse
 
 
 # Creates a cryptopgraphically good slug unique for study
@@ -141,6 +142,21 @@ def get_next_task(node, studyslug, subjid, n_completed=0, totalcomp=0):
             else:
                 return get_next_task(node.branchnode.child_alternate,
                     studyslug, subjid, n_completed, totalcomp)
+
+
+def get_completedtasks_study(studyslug):
+    # Grabs completed "OneShotResponses" and "SubjectProfiles" for a given study
+    # OneShotResponses first
+    resps = OneShotResponse.objects.filter(parent_study_slug=studyslug).order_by('-date_posted')
+    entries = []
+    for resp in resps:
+        entry = {'subjid': resp.subject.subjid,
+        'taskname': resp.parent_task.displayname,
+        'date_posted': resp.date_posted,
+        'scores': get_scores(resp.parent_task.task_url, studyslug, resp.subject.subjid)
+        }
+        entries += [entry, ]
+    return entries
 
 
 # Creates a cryptopgraphically good demo subject ID
