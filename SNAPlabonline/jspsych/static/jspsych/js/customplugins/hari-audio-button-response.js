@@ -51,13 +51,13 @@ jsPsych.plugins["hari-audio-button-response"] = (function() {
       margin_vertical: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Margin vertical',
-        default: '2px',
+        default: '12px',
         description: 'Vertical margin of button.'
       },
       margin_horizontal: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Margin horizontal',
-        default: '8px',
+        default: '20px',
         description: 'Horizontal margin of button.'
       },
       enable_buttons_after_audio: {
