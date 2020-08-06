@@ -40,7 +40,7 @@ jsPsych.plugins["hari-audio-button-response"] = (function() {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Prompt',
         default: null,
-        description: 'Any content here will be displayed below the stimulus.'
+        description: 'Any content here will be displayed above the buttons.'
       },
       trial_duration: {
         type: jsPsych.plugins.parameterType.INT,
@@ -59,6 +59,12 @@ jsPsych.plugins["hari-audio-button-response"] = (function() {
         pretty_name: 'Margin horizontal',
         default: '8px',
         description: 'Horizontal margin of button.'
+      },
+      enable_buttons_after_audio: {
+        type: jsPsych.plugins.parameterType.BOOL,
+        pretty_name: 'Enable buttons after audio',
+        default: true,
+        description: 'If true, buttons will be disabled until sound is done playing.'
       },
       response_ends_trial: {
         type: jsPsych.plugins.parameterType.BOOL,
@@ -86,6 +92,18 @@ jsPsych.plugins["hari-audio-button-response"] = (function() {
     } else {
       var audio = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
       audio.currentTime = 0;
+    }
+
+
+    // setup event to enable buttons at end of audio
+    if(trial.enable_buttons_after_audio){
+      if(context !== null){
+        source.onended = function() {
+          enable_buttons();
+        }
+      } else {
+        audio.addEventListener('ended', enable_buttons);
+      }
     }
 
     // set up end event if trial needs it
@@ -195,7 +213,26 @@ jsPsych.plugins["hari-audio-button-response"] = (function() {
       jsPsych.finishTrial(trial_data);
     };
 
-		// start time
+    // function to enable buttons
+    function enable_buttons() {
+      // enable buttons after audio ends
+      var btns = document.querySelectorAll('.jspsych-audio-button-response-button button');
+      for(var i=0; i<btns.length; i++){
+        //btns[i].removeEventListener('click');
+        btns[i].removeAttribute('disabled');
+      }
+    };
+
+    
+    
+		// Final checks and then start time
+    // Check if buttons need to be disabled at the beginning of trial and disable them
+    if (trial.enable_buttons_after_audio) {
+      var btns = document.querySelectorAll('.jspsych-audio-button-response-button button');
+      for(var i=0; i<btns.length; i++){
+        btns[i].setAttribute('disabled', 'disabled');
+      }
+    }
     var start_time = performance.now();
 
 		// start audio
