@@ -161,7 +161,8 @@ def get_scores(taskslug, studyslug, subjid):
     resp_study = resp_all.filter(parent_study_slug=studyslug)
     scores = []  # One entry per conditions
     if resp_study.filter(subject_id=subjid).exists():
-        resp = resp_study.get(subject_id=subjid)
+        # Normally only one entry per study per subject per task is expected
+        resp = resp_study.filter(subject_id=subjid).latest('date_posted')
         dat = json.loads(resp.data)
         # At most, you can have as many conditions as trial entries
         # Usually lot fewer
