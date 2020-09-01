@@ -107,37 +107,70 @@
         };
         timeline.push(jstrial);
 
-          {% if task.feedback %}
-            var feedback = {
-              type: 'image-button-response',
-              stimulus: function(){
-                if (correct){
-                  return correct_feedback_stim;
-                } else {
-                  return wrong_feedback_stim;
-                }
-              },
-              {% if trial.showanswerwithfeedback %}
-              prompt: function(){
-                if (correct){
-                  return '<p>You got that one!</p>';
-                } else {
-                  var choices_temp = {{ trial.choices|safe }};
-                  var prompt_str = choices_temp[{{ trial.answer }} - 1];
-                  var carrier_pre = '<p> The correct answer was "';
-                  var carrier_post = '"</p>';
-                  return carrier_pre.concat(prompt_str, carrier_post);
-                }
-              },
+          {% if trial.trialfeedback is not None %}
+            {% if trial.trialfeedback is True %}
+              var feedback = {
+                type: 'image-button-response',
+                stimulus: function(){
+                  if (correct){
+                    return correct_feedback_stim;
+                  } else {
+                    return wrong_feedback_stim;
+                  }
+                },
+                {% if trial.showanswerwithfeedback %}
+                prompt: function(){
+                  if (correct){
+                    return '<p>You got that one!</p>';
+                  } else {
+                    var choices_temp = {{ trial.choices|safe }};
+                    var prompt_str = choices_temp[{{ trial.answer }} - 1];
+                    var carrier_pre = '<p> The correct answer was "';
+                    var carrier_post = '"</p>';
+                    return carrier_pre.concat(prompt_str, carrier_post);
+                  }
+                },
+                {% endif %}
+                stimulus_height: 200,
+                stimulus_duration: feedbackdur,
+                trial_duration: feedbackdur,
+                choices: choices_feedback
+              };
+
+              timeline.push(feedback);
+            {% endif %}
+          {% else %}
+            {% if task.feedback %}
+              var feedback = {
+                  type: 'image-button-response',
+                  stimulus: function(){
+                    if (correct){
+                      return correct_feedback_stim;
+                    } else {
+                      return wrong_feedback_stim;
+                    }
+                  },
+                  {% if trial.showanswerwithfeedback %}
+                  prompt: function(){
+                    if (correct){
+                      return '<p>You got that one!</p>';
+                    } else {
+                      var choices_temp = {{ trial.choices|safe }};
+                      var prompt_str = choices_temp[{{ trial.answer }} - 1];
+                      var carrier_pre = '<p> The correct answer was "';
+                      var carrier_post = '"</p>';
+                      return carrier_pre.concat(prompt_str, carrier_post);
+                    }
+                  },
+                  {% endif %}
+                  stimulus_height: 200,
+                  stimulus_duration: feedbackdur,
+                  trial_duration: feedbackdur,
+                  choices: choices_feedback
+                };
+
+                timeline.push(feedback);
               {% endif %}
-              stimulus_height: 200,
-              stimulus_duration: feedbackdur,
-              trial_duration: feedbackdur,
-              choices: choices_feedback
-            };
-
-            timeline.push(feedback);
-
           {% endif %}
         {% else %}
         var jstrial = {

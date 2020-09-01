@@ -48,6 +48,7 @@ const_stim_schema = """
                     "answer": {"type": "integer", "minimum": 1},
                     "cond": {"type": "integer", "minimum": 1},
                     "showanswerwithfeedback": {"type": "boolean"},
+                    "trialfeedback": {"type": "boolean"},
                     "annot": {"type": "object"}
                     },
                 "if": {
