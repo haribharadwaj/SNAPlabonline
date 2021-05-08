@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/267509217.svg)](https://zenodo.org/badge/latestdoi/267509217)
+
 # SNAPlab Online -- A Web Application for Online Psychoacoustics
 
 
