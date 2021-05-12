@@ -71,6 +71,15 @@ can be installed by saying:
 pipenv sync
 ``` 
 
+Note that cloning this repository will give you not only the code,
+but also the front-end elements like logos,
+and the HTML text that is specific to our lab.
+You will probably want to replace those with your own images/text.
+If you would like to keep/adapt the images/text that come with the repository,
+please note they are made available under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/),
+as noted in the License section.
+
+
 ## Validation Data
 A [recent preprint](https://www.biorxiv.org/content/10.1101/2021.05.10.443520v1) describes 
 our approach to web-based psychoacoustics in greater detail
