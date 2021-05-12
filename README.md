@@ -61,7 +61,7 @@ git clone https://github.com/haribharadwaj/SNAPlabonline.git
 ```
 
 The required libraries/dependencies for this project
-are capture in the ```Pipfile``` and ```Pipfile.lock``` files
+are captured in the ```Pipfile``` and ```Pipfile.lock``` files
 created by [pipenv](https://github.com/pypa/pipenv).
 Once you have the clone ```pipenv``` can be used to
 replicate the exact environment
