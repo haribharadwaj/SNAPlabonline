@@ -100,5 +100,5 @@ The text and images contained in this repository (c) 2020 by Hari Bharadwaj are 
 ![CC](https://mirrors.creativecommons.org/presskit/icons/cc.svg)![BY](https://mirrors.creativecommons.org/presskit/icons/by.svg)![NC](https://mirrors.creativecommons.org/presskit/icons/nc.svg)![SA](https://mirrors.creativecommons.org/presskit/icons/sa.svg)
 
 ### Code
-The source code for SNAPlabOnline (c) 2020 by Hari Bharadwaj is licensed under the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
+The source code for SNAPlabOnline (c) 2020 by Hari Bharadwaj is licensed under the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) license.
 
