@@ -50,6 +50,19 @@ The goals of this web app (some features not fully developed/tested) are:
 
 -	Allow for future extensions and enhancements using python code.
 
+
+## Validation Data
+The following preprint describes our approach to web-based psychoacoustics in greater detail
+and documents the results from some basic validation experiments.
+Overall, the results are encouraging!
+
+```
+Mok BA, Viswanathan V, Borjigin A, Singh R, Kafi HI, & Bharadwaj HM (2021).
+Web-based Psychoacoustics: Hearing Screening, Infrastructure, and Validation
+bioRxiv 2021.05.10.443520; doi: https://doi.org/10.1101/2021.05.10.443520.
+```
+
+
 ## License
 ### Text and images
 The text and images contained in this repository (c) 2020 by Hari Bharadwaj are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
