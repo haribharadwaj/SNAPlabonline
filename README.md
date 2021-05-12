@@ -51,8 +51,29 @@ The goals of this web app (some features not fully developed/tested) are:
 -	Allow for future extensions and enhancements using python code.
 
 
+## Adapting the Code
+The license for the code is highly permissive.
+Interested researchers are welcome to adapt the code as needed for their purposes.
+The best way to get a working copy is to clone this repository using ```git``` as:
+
+```
+git clone https://github.com/haribharadwaj/SNAPlabonline.git
+```
+
+The required libraries/dependencies for this project
+are capture in the ```Pipfile``` and ```Pipfile.lock``` files
+created by [pipenv](https://github.com/pypa/pipenv).
+Using ```pipenv```, the exact environment
+that this project was last tested on
+can be installed by saying:
+
+```
+pipenv sync
+``` 
+
 ## Validation Data
-The following preprint describes our approach to web-based psychoacoustics in greater detail
+A [recent preprint](https://www.biorxiv.org/content/10.1101/2021.05.10.443520v1) describes 
+our approach to web-based psychoacoustics in greater detail
 and documents the results from some basic validation experiments.
 Overall, the results are encouraging!
 
